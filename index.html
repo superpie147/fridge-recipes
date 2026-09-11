@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2b2622">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="今天煮什麼">
+<title>今天煮什麼？｜冰箱食譜</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --paper:#faf6ee;--paper-deep:#f1eadb;--ink:#2b2622;--muted:#8a817a;--line:rgba(43,38,34,0.1);
+  --tomato:#d9573b;--tomato-bg:#fbe9e3;--leaf:#4f8a5b;--leaf-bg:#e6f2e8;--gold:#c8860a;--gold-bg:#fbf0d6;
+  --ice:#eef4f9;--ice-deep:#3d6f8e;--ice-bg:#dbe8f2;--ice-line:rgba(61,111,142,0.18);
+  --card:#fff;--radius:14px;--head-h:52px;
+  --font:'Noto Sans TC','Noto Sans JP',sans-serif;--font-title:'Zen Maru Gothic','Noto Sans TC',sans-serif;
+}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font-family:var(--font);font-size:14px;color:var(--ink)}
+button{cursor:pointer;border:none;background:none}
+input,select,textarea{outline:none}
+h1,h2,h3{font-family:var(--font-title);font-weight:700}
+
+/* ── TOP BAR ── */
+.top{height:calc(var(--head-h) + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);background:var(--ink);color:#fff;display:flex;align-items:center;padding-left:16px;padding-right:12px;gap:10px;flex-shrink:0}
+.top .logo{font-family:var(--font-title);font-size:1.15rem;font-weight:700;letter-spacing:0.5px;white-space:nowrap}
+.top .logo span{color:#f0a48c}
+.top .sub{font-size:11px;color:rgba(255,255,255,0.45);margin-left:2px;white-space:nowrap}
+.top .grow{flex:1}
+.version-badge{font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;padding:4px 6px}
+.version-badge:hover{color:#fff}
+.admin-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:#fff;padding:6px 12px;border-radius:50px;font-size:12px;white-space:nowrap}
+.admin-btn:hover{background:rgba(255,255,255,0.18)}
+
+/* ── SPREAD (two pages) ── */
+.spread{flex:1;display:flex;min-height:0}
+.page{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;position:relative}
+#page-recipes{background:var(--paper)}
+#page-fridge{background:var(--ice);border-left:1px solid var(--ice-line)}
+.page-head{padding:14px 16px 10px;flex-shrink:0}
+.page-head .row{display:flex;align-items:center;gap:8px}
+.page-head h2{font-size:1.15rem;flex:1;display:flex;align-items:center;gap:6px}
+.page-head .hint{font-size:12px;color:var(--muted);margin-top:2px}
+#page-fridge .page-head .hint{color:var(--ice-deep);opacity:0.75}
+.page-body{flex:1;overflow-y:auto;padding:0 14px 24px;-webkit-overflow-scrolling:touch}
+.page-body::-webkit-scrollbar{width:6px}.page-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px}
+
+.search{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:50px;padding:7px 12px;flex:1;min-width:0}
+.search input{border:none;background:transparent;flex:1;min-width:0;font-size:13px}
+.search .clr{color:var(--muted);font-size:14px;padding:0 2px;display:none}
+.search.has .clr{display:block}
+.th-box{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.05);border-radius:50px;padding:5px 12px 5px 12px;flex:0 1 240px;min-width:170px}
+.th-l{font-size:11px;color:var(--muted);white-space:nowrap}
+.th-v{font-size:13px;font-weight:700;color:var(--tomato);width:38px;text-align:right;font-variant-numeric:tabular-nums}
+#th-range{flex:1;min-width:60px;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:linear-gradient(to right,var(--tomato) var(--p,70%),rgba(0,0,0,0.12) var(--p,70%));outline:none;cursor:pointer}
+#th-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--tomato);box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+#th-range::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--tomato);box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+#th-range::-moz-range-track{height:6px;border-radius:3px;background:rgba(0,0,0,0.12)}
+#th-range::-moz-range-progress{height:6px;border-radius:3px;background:var(--tomato)}
+.tool-row{display:flex;gap:8px;align-items:center;margin-top:10px}
+.small-btn{padding:6px 11px;border-radius:50px;font-size:12px;background:#fff;border:1px solid var(--line);white-space:nowrap}
+.small-btn:hover{background:var(--paper-deep)}
+.small-btn.ice{border-color:var(--ice-line);color:var(--ice-deep)}
+.small-btn.ice:hover{background:var(--ice-bg)}
+.small-btn.danger{color:var(--tomato)}
+.small-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ── RECIPE LIST ── */
+.group-h{display:flex;align-items:center;gap:8px;margin:16px 2px 8px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px}
+.group-h .n{background:rgba(0,0,0,0.07);border-radius:50px;padding:1px 8px;font-size:11px}
+.group-h.toggle{cursor:pointer;user-select:none}
+.group-h.toggle:hover{color:var(--ink)}
+.rcard{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:10px;cursor:pointer;transition:transform 0.12s,box-shadow 0.12s}
+.rcard:hover{box-shadow:0 4px 14px rgba(43,38,34,0.08);transform:translateY(-1px)}
+.rcard:active{transform:scale(0.99)}
+.rcard.dim{opacity:0.62}
+.rimg{width:58px;height:58px;border-radius:12px;background:var(--paper-deep);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden}
+.rimg img{width:100%;height:100%;object-fit:cover}
+.rmain{flex:1;min-width:0}
+.rname{font-family:var(--font-title);font-size:15px;font-weight:700;line-height:1.3;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.rja{font-size:11px;color:var(--muted);font-weight:400;font-family:var(--font)}
+.tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:50px;background:var(--paper-deep);color:var(--muted);vertical-align:middle;font-family:var(--font);font-weight:500}
+.tag.jp{background:#fde8e4;color:#c0392b}.tag.tw{background:#e6f2e8;color:#2e7d4f}.tag.cn{background:#fbf0d6;color:#a16a05}.tag.west{background:#e5ecf7;color:#3b5fa5}
+.bars{margin-top:7px;display:flex;flex-direction:column;gap:4px}
+.bar{display:flex;align-items:center;gap:7px;font-size:11px}
+.bar .bl{width:30px;color:var(--muted);flex-shrink:0}
+.bar .track{flex:1;height:6px;background:rgba(0,0,0,0.07);border-radius:3px;overflow:hidden}
+.bar .fill{height:100%;border-radius:3px;background:var(--tomato);transition:width 0.35s}
+.bar.sea .fill{background:var(--gold)}
+.bar .fill.full{background:var(--leaf)}
+.bar .bv{width:64px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);flex-shrink:0}
+.bar .bv b{font-size:12px}
+.rmiss{margin-top:6px;font-size:11px;color:var(--muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.rmiss i{font-style:normal;color:var(--tomato)}
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:40px 16px;line-height:1.9}
+.empty .big{font-size:40px;margin-bottom:6px}
+
+/* ── FRIDGE ── */
+.fsec{margin-top:10px}
+.fsec h3{font-size:12px;color:var(--ice-deep);letter-spacing:0.5px;margin:12px 2px 6px;display:flex;align-items:center;gap:6px}
+.fsec h3 .n{background:rgba(61,111,142,0.12);border-radius:50px;padding:1px 8px;font-size:11px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--ice-line);border-radius:50px;padding:6px 11px 6px 9px;font-size:13px;line-height:1.2;cursor:pointer;transition:all 0.12s;user-select:none}
+.chip .e{font-size:15px}
+.chip .j{font-size:10px;color:var(--muted);margin-left:1px}
+.chip .x{color:var(--muted);font-size:13px;margin-left:2px}
+.chip:hover{border-color:var(--ice-deep)}
+.chip.in{background:var(--ice-deep);border-color:var(--ice-deep);color:#fff}
+.chip.in .j,.chip.in .x{color:rgba(255,255,255,0.7)}
+.chip.on{background:var(--ice-deep);border-color:var(--ice-deep);color:#fff}
+.chip.on .j{color:rgba(255,255,255,0.7)}
+.chip.sea{border-style:dashed}
+.chip.on.sea,.chip.in.sea{border-style:solid;background:var(--gold);border-color:var(--gold)}
+.fridge-box{background:#fff;border:1px solid var(--ice-line);border-radius:var(--radius);padding:12px 14px 14px;min-height:96px}
+.fridge-empty{text-align:center;color:var(--muted);font-size:12px;padding:20px 0;line-height:1.8}
+.fridge-empty .big{font-size:34px}
+.lib-head{display:flex;align-items:center;gap:8px;margin-top:18px;margin-bottom:8px}
+.lib-head h3{font-size:14px;color:var(--ink);flex:1}
+.cat-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{padding:5px 11px;border-radius:50px;font-size:12px;background:rgba(61,111,142,0.08);color:var(--ice-deep);white-space:nowrap;flex-shrink:0}
+.cat-tab.on{background:var(--ice-deep);color:#fff;font-weight:700}
+.lib-group{margin-bottom:10px}
+.lib-group h4{font-size:11px;color:var(--muted);margin:8px 2px 5px;font-weight:500}
+.lib-none{font-size:12px;color:var(--muted);padding:12px 4px;line-height:1.8}
+.lib-none button{color:var(--ice-deep);text-decoration:underline;font-size:12px}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(43,38,34,0.55);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.overlay.open{display:flex}
+.sheet{background:var(--paper);width:100%;max-width:560px;max-height:92vh;max-height:92dvh;border-radius:22px 22px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:up 0.22s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (min-width:721px){.overlay{align-items:center;padding:20px}.sheet{border-radius:22px;max-height:88vh}}
+.sheet-head{padding:16px 18px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sheet-head h2{font-size:1.2rem;flex:1;line-height:1.3}
+.sheet-close{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.06);font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sheet-close:hover{background:rgba(0,0,0,0.12);color:var(--ink)}
+.sheet-body{padding:0 18px 20px;overflow-y:auto;flex:1}
+.sheet-foot{padding:12px 18px calc(14px + env(safe-area-inset-bottom));display:flex;gap:10px;border-top:1px solid var(--line);flex-shrink:0;background:var(--paper)}
+.btn{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:700;background:rgba(0,0,0,0.06);color:var(--ink)}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.danger{background:var(--tomato-bg);color:var(--tomato)}
+.btn:hover{filter:brightness(0.95)}
+
+/* recipe detail */
+.d-hero{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.d-img{width:84px;height:84px;border-radius:16px;background:var(--paper-deep);display:flex;align-items:center;justify-content:center;font-size:42px;overflow:hidden;flex-shrink:0}
+.d-img img{width:100%;height:100%;object-fit:cover}
+.d-meta{flex:1;min-width:0}
+.d-ja{font-size:13px;color:var(--muted);margin-bottom:6px}
+.d-pcts{display:flex;gap:8px;margin-top:8px}
+.d-pct{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.d-pct .l{font-size:11px;color:var(--muted)}
+.d-pct .v{font-family:var(--font-title);font-size:20px;font-weight:700;line-height:1.2}
+.d-pct .v small{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;font-family:var(--font)}
+.d-pct.ing .v{color:var(--tomato)}.d-pct.sea .v{color:var(--gold)}.d-pct .v.full{color:var(--leaf)}
+.d-sec{margin-top:14px}
+.d-sec h3{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.d-sec h3 small{font-weight:400;font-size:11px}
+.irow{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:6px;cursor:pointer;transition:background 0.12s}
+.irow:hover{background:var(--paper-deep)}
+.irow .ck{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--tomato-bg);color:var(--tomato)}
+.irow.have .ck{background:var(--leaf-bg);color:var(--leaf)}
+.irow .nm{flex:1;min-width:0;font-size:14px}
+.irow .nm .j{font-size:11px;color:var(--muted);margin-left:5px}
+.irow .amt{font-size:13px;color:var(--muted);white-space:nowrap}
+.irow.miss .nm{color:var(--tomato)}
+.d-note{font-size:13px;color:var(--muted);line-height:1.7;background:var(--gold-bg);border-radius:10px;padding:10px 12px;margin-top:14px}
+.d-tip{font-size:11px;color:var(--muted);margin-top:10px;text-align:center}
+
+/* changelog */
+.changelog-entry{margin-bottom:14px}
+.changelog-ver{font-size:13px;font-weight:700;color:var(--tomato);margin-bottom:4px}
+.changelog-content{font-size:12.5px;color:var(--muted);line-height:1.8}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:50px;font-size:13px;opacity:0;pointer-events:none;transition:all 0.25s;z-index:300;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── ADMIN ── */
+#admin{position:fixed;inset:0;background:var(--paper);z-index:90;display:none;flex-direction:column}
+#admin.open{display:flex}
+.a-top{height:calc(var(--head-h) + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);background:var(--ice-deep);color:#fff;display:flex;align-items:center;padding-left:16px;padding-right:12px;gap:10px;flex-shrink:0}
+.a-top h1{font-size:1.1rem;flex:1}
+.a-tabs{display:flex;background:#fff;border-bottom:1px solid var(--line);flex-shrink:0}
+.a-tab{flex:1;padding:12px 4px;font-size:13px;color:var(--muted);border-bottom:2px solid transparent}
+.a-tab.on{color:var(--ice-deep);font-weight:700;border-bottom-color:var(--ice-deep)}
+.a-body{flex:1;overflow-y:auto;padding:14px 16px 40px;max-width:720px;width:100%;margin:0 auto}
+.a-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.a-toolbar .search{background:#fff}
+.a-list{display:flex;flex-direction:column;gap:6px}
+.a-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 12px}
+.a-row .e{font-size:20px;width:26px;text-align:center;flex-shrink:0}
+.a-row .e img{width:26px;height:26px;border-radius:6px;object-fit:cover;vertical-align:middle}
+.a-row .nm{flex:1;min-width:0;font-size:14px;line-height:1.3}
+.a-row .nm .j{font-size:11px;color:var(--muted);margin-left:6px}
+.a-row .nm .s{display:block;font-size:11px;color:var(--muted)}
+.a-row .ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--muted)}
+.a-row .ic:hover{background:var(--paper-deep);color:var(--ink)}
+.a-row .ic.del:hover{background:var(--tomato-bg);color:var(--tomato)}
+.a-group-h{font-size:12px;color:var(--muted);margin:14px 2px 6px;font-weight:700}
+.a-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+.a-card h3{font-size:14px;margin-bottom:8px}
+.a-card p{font-size:13px;color:var(--muted);line-height:1.8}
+.a-card .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stat{display:flex;gap:10px;margin-bottom:12px}
+.stat div{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat .v{font-family:var(--font-title);font-size:22px;font-weight:700;color:var(--ice-deep)}
+.stat .l{font-size:11px;color:var(--muted)}
+
+/* forms */
+.f{display:flex;flex-direction:column;gap:12px}
+.f label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:500}
+.f input[type=text],.f input[type=url],.f select,.f textarea{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;width:100%}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--ice-deep)}
+.f textarea{min-height:64px;resize:vertical}
+.f .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f .grid31{display:grid;grid-template-columns:1fr 84px;gap:10px}
+.f-help{font-size:11px;color:var(--muted);line-height:1.6}
+.builder{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.builder .b-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.b-row{display:flex;align-items:center;gap:8px}
+.b-row .nm{flex:1;min-width:0;font-size:13px}
+.b-row .nm .j{font-size:11px;color:var(--muted);margin-left:4px}
+.b-row input{width:96px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:13px}
+.b-row .rm{color:var(--muted);font-size:16px;padding:4px 6px}
+.b-row .rm:hover{color:var(--tomato)}
+.b-none{font-size:12px;color:var(--muted);padding:4px 0 8px}
+.b-search{position:relative}
+.b-search input{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}
+.b-sug{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.1);z-index:5;max-height:220px;overflow-y:auto;display:none}
+.b-sug.open{display:block}
+.b-sug div{padding:9px 12px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.b-sug div:hover{background:var(--paper)}
+.b-sug div .j{font-size:11px;color:var(--muted)}
+.b-sug div.new{color:var(--ice-deep);font-weight:700}
+.img-box{display:flex;gap:12px;align-items:center}
+.img-prev{width:72px;height:72px;border-radius:12px;background:var(--paper-deep);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;flex-shrink:0}
+.img-prev img{width:100%;height:100%;object-fit:cover}
+.img-acts{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.img-acts .row{display:flex;gap:6px}
+.file-btn{position:relative;overflow:hidden}
+.file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* ── MOBILE: vertical spread ── */
+@media (max-width:720px){
+  .spread{flex-direction:column}
+  #page-recipes{flex:0 0 55%}
+  #page-fridge{flex:1;border-left:none;border-top:2px solid var(--ice-line)}
+  .top .sub{display:none}
+  .page-head{padding:10px 14px 8px}
+  .page-body{padding:0 12px 20px}
+  .top .logo{font-size:1.05rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOP BAR ── -->
+<header class="top">
+  <div class="logo">今天<span>煮</span>什麼？</div>
+  <div class="sub">冰箱食譜提案</div>
+  <div class="grow"></div>
+  <div class="version-badge" onclick="openChangelog()">ver.1.1.0</div>
+  <button class="admin-btn" onclick="openAdmin()">⚙ 後台</button>
+</header>
+
+<!-- ── TWO-PAGE SPREAD ── -->
+<main class="spread">
+
+  <!-- LEFT: recipes -->
+  <section class="page" id="page-recipes">
+    <div class="page-head">
+      <div class="row">
+        <h2>📖 料理提案</h2>
+        <div class="th-box">
+          <span class="th-l">食材門檻</span>
+          <input type="range" id="th-range" min="0" max="100" step="5" value="70">
+          <span class="th-v" id="th-val">70%</span>
+        </div>
+      </div>
+      <div class="hint" id="recipe-hint"></div>
+      <div class="tool-row">
+        <div class="search" id="r-search-box"><span>🔍</span><input id="r-search" placeholder="搜尋料理或食材…"><button class="clr" data-clear="r-search">✕</button></div>
+      </div>
+    </div>
+    <div class="page-body" id="recipe-list"></div>
+  </section>
+
+  <!-- RIGHT: fridge -->
+  <section class="page" id="page-fridge">
+    <div class="page-head">
+      <div class="row">
+        <h2>🧊 我的冰箱</h2>
+        <button class="small-btn ice" onclick="addStaples()">＋ 常備調味料</button>
+        <button class="small-btn ice danger" onclick="clearFridge()">清空</button>
+      </div>
+      <div class="hint" id="fridge-hint"></div>
+    </div>
+    <div class="page-body">
+      <div class="fridge-box" id="fridge-now"></div>
+      <div class="lib-head">
+        <h3>＋ 從食材庫加入</h3>
+        <div class="search" id="f-search-box" style="flex:0 1 220px"><span>🔍</span><input id="f-search" placeholder="中文／日文…"><button class="clr" data-clear="f-search">✕</button></div>
+      </div>
+      <div class="cat-tabs" id="cat-tabs"></div>
+      <div id="lib-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── RECIPE DETAIL MODAL ── -->
+<div class="overlay" id="recipe-modal" onclick="if(event.target===this)closeRecipe()">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="rm-title"></h2><button class="sheet-close" onclick="closeRecipe()">✕</button></div>
+    <div class="sheet-body" id="rm-body"></div>
+    <div class="sheet-foot"><button class="btn" onclick="editCurrentRecipe()">✎ 編輯這道料理</button><button class="btn primary" onclick="closeRecipe()">關閉</button></div>
+  </div>
+</div>
+
+<!-- ── CHANGELOG MODAL ── -->
+<div class="overlay" id="changelog-modal" onclick="if(event.target===this)closeChangelog()">
+  <div class="sheet">
+    <div class="sheet-head"><h2>📋 更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
+    <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.1.0 - 2026年9月12日</div>
+        <div class="changelog-content">
+          🎚 食材門檻改成可拖移的滑桿（0–100%，每 5% 一格）<br>
+          🌐 上線到 GitHub Pages，可用網址分享
+        </div>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.0.0 - 2026年9月12日</div>
+        <div class="changelog-content">
+          🎉 初版上線！<br>
+          📖 左頁「料理提案」：依冰箱內容計算 食材％ 與 調味料％，分開顯示<br>
+          🧊 右頁「我的冰箱」：從食材庫加入手邊的食材與調味料<br>
+          ⚙ 後台：自行新增／編輯食材、調味料、料理，支援料理圖片<br>
+          💾 資料存在這支裝置上，可匯出／匯入 JSON 備份
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN ── -->
+<div id="admin">
+  <div class="a-top">
+    <h1>⚙ 後台管理</h1>
+    <button class="admin-btn" onclick="closeAdmin()">← 回到前台</button>
+  </div>
+  <div class="a-tabs">
+    <button class="a-tab on" data-atab="ingredient">🥕 食材</button>
+    <button class="a-tab" data-atab="seasoning">🧂 調味料</button>
+    <button class="a-tab" data-atab="recipe">🍳 料理</button>
+    <button class="a-tab" data-atab="data">💾 資料</button>
+  </div>
+  <div class="a-body" id="a-body"></div>
+</div>
+
+<!-- ── FORM MODAL (admin) ── -->
+<div class="overlay" id="form-modal" style="z-index:120" onclick="if(event.target===this)closeForm()">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="fm-title"></h2><button class="sheet-close" onclick="closeForm()">✕</button></div>
+    <div class="sheet-body" id="fm-body"></div>
+    <div class="sheet-foot" id="fm-foot"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   資料層 Store
+   ---------------------------------------------------------------------
+   目前：localStorage（單機）。
+   未來要接雲端（Supabase / Firebase）時，只需改寫 Store.load 與 Store.save，
+   其餘程式碼與資料結構（items / recipes / fridge）都不用動。
+   資料結構：
+     items   : [{id, kind:'ingredient'|'seasoning', name, ja, cat, emoji}]
+     recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
+     fridge  : [id, ...]
+   ===================================================================== */
+const APP_VERSION = '1.1.0';
+const STORAGE_KEY = 'fridge_recipes_v1';
+const Store = {
+  load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
+  save(data){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); return true; }catch(e){ toast('⚠️ 儲存失敗：空間不足（圖片太多？）'); return false; } }
+};
+
+/* ── 常數 ── */
+const CATS = { veg:'蔬菜', meat:'肉類', seafood:'海鮮', egg:'蛋豆奶', staple:'主食', other:'其他' };
+const CUISINES = { jp:'日式', tw:'台式', cn:'中華', west:'西式', other:'其他' };
+const STAPLE_SEASONINGS = ['s_salt','s_sugar','s_soy','s_oil','s_pepper'];
+
+/* ── 預設資料 ── */
+const SEED_ITEMS = [
+  // 蔬菜
+  ['i_carrot','紅蘿蔔','にんじん','veg','🥕'],['i_onion','洋蔥','玉ねぎ','veg','🧅'],['i_potato','馬鈴薯','じゃがいも','veg','🥔'],
+  ['i_cabbage','高麗菜','キャベツ','veg','🥬'],['i_daikon','白蘿蔔','大根','veg','🌿'],['i_negi','青蔥','長ねぎ','veg','🌱'],
+  ['i_garlic','蒜','にんにく','veg','🧄'],['i_ginger','薑','しょうが','veg','🫚'],['i_tomato','番茄','トマト','veg','🍅'],
+  ['i_pepper','青椒','ピーマン','veg','🫑'],['i_eggplant','茄子','なす','veg','🍆'],['i_cucumber','小黃瓜','きゅうり','veg','🥒'],
+  ['i_spinach','菠菜','ほうれん草','veg','🥬'],['i_komatsuna','小松菜','小松菜','veg','🥬'],['i_hakusai','大白菜','白菜','veg','🥬'],
+  ['i_moyashi','豆芽菜','もやし','veg','🌱'],['i_shiitake','香菇','しいたけ','veg','🍄'],['i_enoki','金針菇','えのき','veg','🍄'],
+  ['i_shimeji','鴻喜菇','しめじ','veg','🍄'],['i_nira','韭菜','ニラ','veg','🌿'],['i_pumpkin','南瓜','かぼちゃ','veg','🎃'],
+  ['i_broccoli','青花菜','ブロッコリー','veg','🥦'],['i_basil','九層塔','台湾バジル','veg','🌿'],['i_chili','辣椒','唐辛子','veg','🌶️'],
+  ['i_lemon','檸檬','レモン','veg','🍋'],['i_lettuce','生菜','レタス','veg','🥬'],
+  // 肉類
+  ['i_pork_slice','豬肉片','豚こま切れ肉','meat','🥩'],['i_pork_belly','豬五花','豚バラ肉','meat','🥓'],['i_pork_mince','豬絞肉','豚ひき肉','meat','🥩'],
+  ['i_mixed_mince','牛豬混合絞肉','合いびき肉','meat','🥩'],['i_chicken_thigh','雞腿肉','鶏もも肉','meat','🍗'],['i_chicken_breast','雞胸肉','鶏むね肉','meat','🍗'],
+  ['i_beef_slice','牛肉片','牛薄切り肉','meat','🥩'],['i_bacon','培根','ベーコン','meat','🥓'],['i_ham','火腿','ハム','meat','🍖'],['i_sausage','香腸','ソーセージ','meat','🌭'],
+  // 海鮮
+  ['i_salmon','鮭魚','鮭','seafood','🐟'],['i_saba','鯖魚','さば','seafood','🐟'],['i_shrimp','蝦','えび','seafood','🦐'],
+  ['i_asari','蛤蜊','あさり','seafood','🐚'],['i_squid','花枝','いか','seafood','🦑'],['i_tuna_can','鮪魚罐頭','ツナ缶','seafood','🥫'],['i_shirasu','吻仔魚','しらす','seafood','🐟'],
+  // 蛋豆奶
+  ['i_egg','雞蛋','卵','egg','🥚'],['i_tofu','豆腐','豆腐','egg','🧈'],['i_atsuage','油豆腐','厚揚げ','egg','🧈'],['i_aburaage','豆皮','油揚げ','egg','🟫'],
+  ['i_natto','納豆','納豆','egg','🫘'],['i_milk','牛奶','牛乳','egg','🥛'],['i_cheese','起司','チーズ','egg','🧀'],['i_cream','鮮奶油','生クリーム','egg','🥛'],
+  // 主食
+  ['i_rice','白飯','ご飯','staple','🍚'],['i_udon','烏龍麵','うどん','staple','🍜'],['i_pasta','義大利麵','パスタ','staple','🍝'],['i_ramen','中華麵','中華麺','staple','🍜'],
+  ['i_bread','吐司','食パン','staple','🍞'],['i_bihun','米粉','ビーフン','staple','🍜'],['i_gyoza_skin','水餃皮','餃子の皮','staple','🥟'],['i_flour','麵粉','小麦粉','staple','🌾'],
+  // 其他
+  ['i_wakame','海帶芽','わかめ','other','🌊'],['i_nori','海苔','のり','other','⬛'],['i_kamaboko','魚板','かまぼこ','other','🍥'],['i_chikuwa','竹輪','ちくわ','other','🍥'],
+  ['i_konnyaku','蒟蒻','こんにゃく','other','⬜'],['i_edamame','毛豆','枝豆','other','🫛'],['i_kimchi','泡菜','キムチ','other','🥬'],
+  ['i_corn_can','玉米罐頭','コーン缶','other','🌽'],['i_tomato_can','番茄罐頭','トマト缶','other','🥫'],
+];
+const SEED_SEASONINGS = [
+  ['s_salt','鹽','塩','🧂'],['s_sugar','糖','砂糖','🍬'],['s_soy','醬油','醤油','🫗'],['s_mirin','味醂','みりん','🍶'],['s_sake','料理酒','料理酒','🍶'],
+  ['s_miso','味噌','味噌','🥣'],['s_vinegar','醋','酢','🫗'],['s_sesame_oil','麻油','ごま油','🫗'],['s_oil','沙拉油','サラダ油','🫗'],['s_olive','橄欖油','オリーブオイル','🫒'],
+  ['s_pepper','胡椒','こしょう','⚫'],['s_black_pepper','黑胡椒','黒こしょう','⚫'],['s_white_pepper','白胡椒','白こしょう','⚪'],
+  ['s_oyster','蠔油','オイスターソース','🦪'],['s_doubanjiang','豆瓣醬','豆板醤','🌶️'],['s_tianmian','甜麵醬','甜麺醤','🟤'],
+  ['s_ketchup','番茄醬','ケチャップ','🍅'],['s_mayo','美乃滋','マヨネーズ','🥚'],['s_honey','蜂蜜','はちみつ','🍯'],
+  ['s_dashi','日式高湯粉','だしの素','🍵'],['s_chicken_stock','雞粉','鶏がらスープの素','🐔'],['s_curry_roux','咖哩塊','カレールー','🍛'],
+  ['s_katakuriko','太白粉','片栗粉','🥄'],['s_panko','麵包粉','パン粉','🍞'],['s_butter','奶油','バター','🧈'],
+  ['s_five_spice','五香粉','五香粉','🌰'],['s_rice_wine','米酒','米酒','🍶'],['s_sesame','白芝麻','白ごま','⚪'],['s_rayu','辣油','ラー油','🌶️'],
+  ['s_soy_paste','醬油膏','台湾とろみ醤油','🫗'],['s_katsuobushi','柴魚片','かつお節','🐟'],['s_chuno','中濃醬','中濃ソース','🟤'],
+  ['s_shacha','沙茶醬','沙茶醤','🥫'],['s_black_vinegar','烏醋','黒酢','🫗'],['s_parmesan','起司粉','粉チーズ','🧀'],
+  ['s_rock_sugar','冰糖','氷砂糖','🍬'],['s_shichimi','七味粉','七味唐辛子','🌶️'],['s_ponzu','柚子醋','ポン酢','🍋'],
+];
+// [id, 名稱, 日文, 菜系, emoji, 食材[[id,用量]...], 調味料[id...]]
+const SEED_RECIPES = [
+  // 日式
+  ['r_shogayaki','薑燒豬肉','豚の生姜焼き','jp','🐷',[['i_pork_slice','200g'],['i_onion','1/2個'],['i_ginger','1片'],['i_cabbage','2片（切絲配菜）']],['s_soy','s_mirin','s_sake','s_sugar','s_oil']],
+  ['r_nikujaga','馬鈴薯燉肉','肉じゃが','jp','🥔',[['i_pork_slice','150g'],['i_potato','3個'],['i_carrot','1根'],['i_onion','1個']],['s_soy','s_mirin','s_sugar','s_sake','s_dashi']],
+  ['r_misoshiru','豆腐海帶芽味噌湯','豆腐とわかめの味噌汁','jp','🥣',[['i_tofu','1/2塊'],['i_wakame','1小把'],['i_negi','少許']],['s_miso','s_dashi']],
+  ['r_oyakodon','親子丼','親子丼','jp','🍚',[['i_chicken_thigh','1片'],['i_onion','1/2個'],['i_egg','3顆'],['i_rice','2碗'],['i_negi','少許']],['s_soy','s_mirin','s_sugar','s_dashi']],
+  ['r_curry','日式咖哩飯','カレーライス','jp','🍛',[['i_pork_slice','200g'],['i_potato','2個'],['i_carrot','1根'],['i_onion','1個'],['i_rice','2碗']],['s_curry_roux','s_oil']],
+  ['r_hamburg','日式漢堡排','ハンバーグ','jp','🍔',[['i_mixed_mince','300g'],['i_onion','1/2個'],['i_egg','1顆'],['i_milk','2大匙']],['s_panko','s_salt','s_pepper','s_ketchup','s_chuno']],
+  ['r_saba_shio','鹽烤鯖魚','さばの塩焼き','jp','🐟',[['i_saba','1片'],['i_daikon','3cm（磨泥）'],['i_lemon','1/4顆']],['s_salt']],
+  ['r_teriyaki','照燒雞腿','鶏の照り焼き','jp','🍗',[['i_chicken_thigh','1片']],['s_soy','s_mirin','s_sugar','s_sake']],
+  ['r_tamagoyaki','玉子燒','卵焼き','jp','🍳',[['i_egg','3顆'],['i_negi','少許']],['s_sugar','s_soy','s_dashi','s_oil']],
+  ['r_karaage','日式炸雞','唐揚げ','jp','🍗',[['i_chicken_thigh','300g'],['i_garlic','1瓣'],['i_ginger','1片']],['s_soy','s_sake','s_katakuriko','s_oil']],
+  ['r_ohitashi','涼拌菠菜','ほうれん草のおひたし','jp','🥬',[['i_spinach','1把']],['s_soy','s_dashi','s_katsuobushi']],
+  ['r_yakiudon','日式炒烏龍','焼きうどん','jp','🍜',[['i_udon','2球'],['i_pork_slice','100g'],['i_cabbage','2片'],['i_carrot','1/4根'],['i_onion','1/4個']],['s_soy','s_oyster','s_katsuobushi','s_oil']],
+  ['r_tonjiru','豬肉味噌湯','豚汁','jp','🍲',[['i_pork_slice','100g'],['i_daikon','5cm'],['i_carrot','1/3根'],['i_tofu','1/2塊'],['i_konnyaku','1/2片'],['i_negi','少許']],['s_miso','s_dashi','s_sesame_oil']],
+  ['r_omurice','蛋包飯','オムライス','jp','🍳',[['i_egg','2顆'],['i_rice','1碗'],['i_chicken_thigh','80g'],['i_onion','1/4個']],['s_ketchup','s_butter','s_salt','s_pepper']],
+  ['r_salmon_butter','鮭魚奶油醬燒','鮭のバター醤油焼き','jp','🐟',[['i_salmon','2片'],['i_shimeji','1包'],['i_onion','1/2個']],['s_butter','s_soy','s_pepper']],
+  ['r_saba_miso','味噌煮鯖魚','さばの味噌煮','jp','🐟',[['i_saba','2片'],['i_ginger','1片'],['i_negi','1根']],['s_miso','s_sugar','s_mirin','s_sake','s_soy']],
+  ['r_potato_salad','馬鈴薯沙拉','ポテトサラダ','jp','🥔',[['i_potato','3個'],['i_cucumber','1/2根'],['i_ham','2片'],['i_egg','1顆'],['i_carrot','1/4根']],['s_mayo','s_salt','s_pepper','s_vinegar']],
+  ['r_nikudofu','肉豆腐','肉豆腐','jp','🍲',[['i_beef_slice','150g'],['i_tofu','1塊'],['i_onion','1/2個'],['i_negi','1根']],['s_soy','s_mirin','s_sugar','s_sake','s_dashi']],
+  ['r_kimchi_nabe','泡菜豬肉鍋','キムチ鍋','jp','🍲',[['i_pork_belly','200g'],['i_kimchi','200g'],['i_tofu','1塊'],['i_hakusai','1/4個'],['i_enoki','1包'],['i_nira','1/2把']],['s_miso','s_soy','s_chicken_stock','s_sesame_oil']],
+  ['r_buta_kimchi','泡菜炒豬肉','豚キムチ','jp','🐷',[['i_pork_belly','200g'],['i_kimchi','150g'],['i_onion','1/2個'],['i_nira','1/2把']],['s_soy','s_sesame_oil','s_sake']],
+  ['r_chikuwa_cucumber','小黃瓜竹輪','きゅうりのちくわ詰め','jp','🥒',[['i_chikuwa','4條'],['i_cucumber','1根']],['s_mayo','s_soy']],
+  // 中華
+  ['r_mabo','麻婆豆腐','麻婆豆腐','cn','🌶️',[['i_tofu','1塊'],['i_pork_mince','150g'],['i_negi','1根'],['i_garlic','1瓣'],['i_ginger','1片']],['s_doubanjiang','s_tianmian','s_soy','s_chicken_stock','s_katakuriko','s_sesame_oil']],
+  ['r_gyoza','煎餃','餃子','cn','🥟',[['i_gyoza_skin','25張'],['i_pork_mince','200g'],['i_cabbage','1/4個'],['i_nira','1/2把'],['i_garlic','1瓣'],['i_ginger','1片']],['s_soy','s_sesame_oil','s_salt','s_pepper','s_oil']],
+  ['r_chahan','蛋炒飯','チャーハン','cn','🍚',[['i_rice','2碗'],['i_egg','2顆'],['i_negi','1根'],['i_ham','2片']],['s_soy','s_salt','s_pepper','s_oil','s_chicken_stock']],
+  ['r_moyashi_stirfry','清炒豆芽','もやし炒め','cn','🌱',[['i_moyashi','1包'],['i_garlic','1瓣'],['i_negi','1根']],['s_salt','s_chicken_stock','s_sesame_oil','s_oil']],
+  // 台式
+  ['r_tomato_egg','番茄炒蛋','トマトと卵の炒め物','tw','🍅',[['i_tomato','2顆'],['i_egg','3顆'],['i_negi','1根']],['s_salt','s_sugar','s_ketchup','s_oil']],
+  ['r_luroufan','滷肉飯','魯肉飯','tw','🍚',[['i_pork_belly','300g'],['i_onion','1/2個（代替紅蔥頭）'],['i_garlic','3瓣'],['i_egg','2顆（滷蛋）'],['i_rice','2碗']],['s_soy','s_rice_wine','s_rock_sugar','s_five_spice','s_white_pepper']],
+  ['r_sanbeiji','三杯雞','三杯鶏','tw','🍗',[['i_chicken_thigh','400g'],['i_ginger','1大塊'],['i_garlic','6瓣'],['i_basil','1把'],['i_chili','1根']],['s_sesame_oil','s_soy','s_rice_wine','s_sugar']],
+  ['r_garlic_cabbage','蒜炒高麗菜','キャベツのにんにく炒め','tw','🥬',[['i_cabbage','1/2個'],['i_garlic','3瓣'],['i_chili','1根']],['s_salt','s_oil']],
+  ['r_scallion_beef','蔥爆牛肉','牛肉とねぎの炒め物','tw','🥩',[['i_beef_slice','200g'],['i_negi','3根'],['i_garlic','2瓣'],['i_ginger','2片']],['s_soy','s_rice_wine','s_oyster','s_katakuriko','s_sugar']],
+  ['r_mayou_ji','麻油雞','麻油鶏','tw','🍗',[['i_chicken_thigh','400g'],['i_ginger','1大塊']],['s_sesame_oil','s_rice_wine','s_salt']],
+  ['r_jiachang_tofu','家常豆腐','家常豆腐','tw','🧈',[['i_tofu','1塊'],['i_pork_slice','100g'],['i_shiitake','3朵'],['i_carrot','1/4根'],['i_negi','1根'],['i_garlic','2瓣']],['s_soy','s_oyster','s_sugar','s_katakuriko','s_oil']],
+  ['r_bihun','炒米粉','台湾焼きビーフン','tw','🍜',[['i_bihun','200g'],['i_pork_slice','100g'],['i_cabbage','1/4個'],['i_carrot','1/3根'],['i_shiitake','3朵'],['i_negi','1根']],['s_soy','s_white_pepper','s_oil','s_salt','s_shacha']],
+  ['r_clam_soup','薑絲蛤蜊湯','あさりの生姜スープ','tw','🐚',[['i_asari','300g'],['i_ginger','3片'],['i_negi','1根']],['s_rice_wine','s_salt']],
+  ['r_danbing','台式蛋餅','台湾式卵クレープ','tw','🫓',[['i_egg','2顆'],['i_flour','100g'],['i_negi','2根']],['s_salt','s_soy_paste','s_oil']],
+  ['r_shiitake_chicken','香菇雞湯','しいたけと鶏のスープ','tw','🍲',[['i_chicken_thigh','300g'],['i_shiitake','6朵'],['i_ginger','3片']],['s_salt','s_rice_wine']],
+  ['r_cucumber','涼拌小黃瓜','きゅうりの和え物','tw','🥒',[['i_cucumber','3根'],['i_garlic','3瓣'],['i_chili','1根']],['s_salt','s_sugar','s_vinegar','s_sesame_oil']],
+  ['r_shacha_moyashi','沙茶肉絲炒豆芽','沙茶醤の豚もやし炒め','tw','🌱',[['i_moyashi','1包'],['i_pork_slice','100g'],['i_nira','1/2把'],['i_garlic','2瓣']],['s_shacha','s_soy','s_oil']],
+  ['r_tomato_egg_soup','番茄蛋花湯','トマトと卵のスープ','tw','🍲',[['i_tomato','1顆'],['i_egg','2顆'],['i_negi','1根']],['s_salt','s_chicken_stock','s_sesame_oil','s_katakuriko']],
+  ['r_pepper_pork','青椒炒肉絲','ピーマンと豚肉の細切り炒め','tw','🫑',[['i_pepper','3個'],['i_pork_slice','150g'],['i_garlic','2瓣']],['s_soy','s_rice_wine','s_katakuriko','s_salt','s_oil']],
+  // 西式
+  ['r_carbonara','培根蛋黃義大利麵','カルボナーラ','west','🍝',[['i_pasta','200g'],['i_bacon','80g'],['i_egg','2顆'],['i_garlic','1瓣']],['s_parmesan','s_black_pepper','s_salt','s_olive']],
+  ['r_bolognese','番茄肉醬義大利麵','ミートソースパスタ','west','🍝',[['i_pasta','200g'],['i_mixed_mince','200g'],['i_onion','1/2個'],['i_tomato_can','1罐'],['i_garlic','2瓣']],['s_olive','s_salt','s_black_pepper','s_sugar','s_ketchup']],
+  ['r_cream_chicken','奶油蘑菇雞','鶏肉ときのこのクリーム煮','west','🍗',[['i_chicken_thigh','300g'],['i_shimeji','1包'],['i_onion','1/2個'],['i_cream','100ml'],['i_garlic','1瓣'],['i_flour','1大匙']],['s_butter','s_salt','s_black_pepper']],
+  ['r_corn_soup','玉米濃湯','コーンスープ','west','🌽',[['i_corn_can','1罐'],['i_onion','1/2個'],['i_milk','300ml'],['i_bacon','30g']],['s_butter','s_salt','s_pepper']],
+  ['r_french_toast','法式吐司','フレンチトースト','west','🍞',[['i_bread','2片'],['i_egg','1顆'],['i_milk','100ml']],['s_sugar','s_butter','s_honey']],
+  ['r_garlic_shrimp','蒜香奶油蝦','ガーリックシュリンプ','west','🦐',[['i_shrimp','200g'],['i_garlic','4瓣'],['i_lemon','1/4顆']],['s_butter','s_salt','s_black_pepper','s_olive']],
+  ['r_tuna_toast','鮪魚起司吐司','ツナマヨチーズトースト','west','🍞',[['i_bread','2片'],['i_tuna_can','1罐'],['i_onion','1/4個'],['i_cheese','2片']],['s_mayo','s_black_pepper']],
+  ['r_broccoli_shrimp','蒜炒青花菜蝦仁','ブロッコリーとえびのにんにく炒め','west','🥦',[['i_broccoli','1顆'],['i_shrimp','150g'],['i_garlic','2瓣']],['s_olive','s_salt','s_black_pepper']],
+  ['r_omelet','起司歐姆蛋','チーズオムレツ','west','🍳',[['i_egg','3顆'],['i_cheese','1片'],['i_milk','1大匙']],['s_butter','s_salt','s_pepper']],
+];
+
+function buildSeed(){
+  const items = [
+    ...SEED_ITEMS.map(([id,name,ja,cat,emoji])=>({id,kind:'ingredient',name,ja,cat,emoji})),
+    ...SEED_SEASONINGS.map(([id,name,ja,emoji])=>({id,kind:'seasoning',name,ja,cat:'',emoji})),
+  ];
+  const recipes = SEED_RECIPES.map(([id,name,ja,cuisine,emoji,ings,seas])=>({
+    id,name,ja,cuisine,emoji,image:'',note:'',
+    ings: ings.map(([iid,amt])=>({id:iid,amt})),
+    seas: seas.slice(),
+  }));
+  return { schema:1, seedVersion:1, items, recipes, fridge:[], settings:{threshold:70} };
+}
+
+/* ── 狀態 ── */
+let DB = Store.load() || buildSeed();
+if(!DB.settings) DB.settings = {threshold:70};
+if(!DB.fridge) DB.fridge = [];
+const ui = { rSearch:'', fSearch:'', fCat:'all', showOthers:false, adminTab:'ingredient', aSearch:'', openRecipe:null };
+let fridgeSet = new Set(DB.fridge);
+
+function persist(){ DB.fridge = [...fridgeSet]; Store.save(DB); }
+const itemById = id => DB.items.find(i=>i.id===id);
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = s => document.querySelector(s);
+
+let toastTimer;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),1800); }
+
+/* =====================================================================
+   料理配對
+   ===================================================================== */
+function matchRecipe(r){
+  const ingHave = r.ings.filter(x=>fridgeSet.has(x.id)).length, ingTotal = r.ings.length;
+  const seaHave = r.seas.filter(id=>fridgeSet.has(id)).length, seaTotal = r.seas.length;
+  return {
+    ingHave, ingTotal, seaHave, seaTotal,
+    ingPct: ingTotal ? Math.round(ingHave/ingTotal*100) : 100,
+    seaPct: seaTotal ? Math.round(seaHave/seaTotal*100) : 100,
+  };
+}
+function recipeMatchesSearch(r, q){
+  if(!q) return true;
+  q = q.toLowerCase();
+  if((r.name+r.ja).toLowerCase().includes(q)) return true;
+  return [...r.ings.map(x=>x.id), ...r.seas].some(id=>{ const it=itemById(id); return it && (it.name+it.ja).toLowerCase().includes(q); });
+}
+
+function bar(cls, label, pct, have, total){
+  const full = pct===100;
+  return `<div class="bar ${cls}"><span class="bl">${label}</span><div class="track"><div class="fill ${full?'full':''}" style="width:${pct}%"></div></div><span class="bv"><b>${pct}%</b> <span style="color:var(--muted)">${have}/${total}</span></span></div>`;
+}
+function recipeImg(r, cls){
+  return r.image ? `<div class="${cls}"><img src="${esc(r.image)}" alt=""></div>` : `<div class="${cls}">${r.emoji||'🍽️'}</div>`;
+}
+function cuisineTag(c){ return `<span class="tag ${c}">${CUISINES[c]||CUISINES.other}</span>`; }
+
+function renderRecipes(){
+  const th = DB.settings.threshold;
+  const q = ui.rSearch.trim();
+  const fridgeEmpty = fridgeSet.size===0;
+  const nIng = [...fridgeSet].filter(id=>itemById(id)?.kind==='ingredient').length;
+  const nSea = fridgeSet.size - nIng;
+  $('#recipe-hint').textContent = fridgeEmpty
+    ? `冰箱是空的，先到右邊加入手邊的食材吧 →`
+    : `冰箱裡有 ${nIng} 樣食材、${nSea} 樣調味料 ・ 顯示食材 ≥ ${th}% 的料理`;
+
+  const rows = DB.recipes.filter(r=>recipeMatchesSearch(r,q)).map(r=>({r, m:matchRecipe(r)}));
+  if(!fridgeEmpty) rows.sort((a,b)=> b.m.ingPct-a.m.ingPct || b.m.seaPct-a.m.seaPct || (a.m.ingTotal-a.m.ingHave)-(b.m.ingTotal-b.m.ingHave) || a.r.name.localeCompare(b.r.name,'zh-Hant'));
+
+  const card = ({r,m}, dim) => {
+    const missIng = r.ings.filter(x=>!fridgeSet.has(x.id)).map(x=>itemById(x.id)?.name).filter(Boolean);
+    const missSea = r.seas.filter(id=>!fridgeSet.has(id)).map(id=>itemById(id)?.name).filter(Boolean);
+    let miss = '';
+    if(!fridgeEmpty){
+      if(!missIng.length && !missSea.length) miss = `<div class="rmiss" style="color:var(--leaf)">✓ 全部都有，今天就能做！</div>`;
+      else miss = `<div class="rmiss">${missIng.length?`缺食材：<i>${esc(missIng.join('、'))}</i>`:''}${missIng.length&&missSea.length?'　':''}${missSea.length?`缺調味：<i>${esc(missSea.join('、'))}</i>`:''}</div>`;
+    }
+    return `<div class="rcard ${dim?'dim':''}" data-open="${r.id}">
+      ${recipeImg(r,'rimg')}
+      <div class="rmain">
+        <div class="rname">${esc(r.name)} <span class="rja">${esc(r.ja)}</span> ${cuisineTag(r.cuisine)}</div>
+        <div class="bars">${bar('ing','食材',m.ingPct,m.ingHave,m.ingTotal)}${bar('sea','調味',m.seaPct,m.seaHave,m.seaTotal)}</div>
+        ${miss}
+      </div>
+    </div>`;
+  };
+
+  let html = '';
+  if(!rows.length){
+    html = `<div class="empty"><div class="big">🔍</div>找不到符合「${esc(q)}」的料理</div>`;
+  } else if(fridgeEmpty){
+    html = `<div class="group-h">所有料理 <span class="n">${rows.length}</span></div>` + rows.map(x=>card(x,false)).join('');
+  } else {
+    const ready = rows.filter(x=>x.m.ingPct===100);
+    const near  = rows.filter(x=>x.m.ingPct<100 && x.m.ingPct>=th);
+    const rest  = rows.filter(x=>x.m.ingPct<th);
+    if(ready.length) html += `<div class="group-h">✅ 食材齊全 <span class="n">${ready.length}</span></div>` + ready.map(x=>card(x,false)).join('');
+    if(near.length)  html += `<div class="group-h">👍 差一點就能做（≥${th}%） <span class="n">${near.length}</span></div>` + near.map(x=>card(x,false)).join('');
+    if(!ready.length && !near.length) html += `<div class="empty"><div class="big">🥕</div>還沒有食材 ≥ ${th}% 的料理<br>再多加幾樣食材，或把門檻調低看看</div>`;
+    if(rest.length){
+      html += `<div class="group-h toggle" data-toggle-others>${ui.showOthers?'▾':'▸'} 其他料理 <span class="n">${rest.length}</span></div>`;
+      if(ui.showOthers) html += rest.map(x=>card(x,true)).join('');
+    }
+  }
+  $('#recipe-list').innerHTML = html;
+}
+
+/* =====================================================================
+   冰箱
+   ===================================================================== */
+function chip(it, cls){
+  return `<button class="chip ${cls} ${it.kind==='seasoning'?'sea':''}" data-toggle="${it.id}"><span class="e">${it.emoji||''}</span>${esc(it.name)}<span class="j">${esc(it.ja)}</span>${cls==='in'?'<span class="x">✕</span>':''}</button>`;
+}
+function renderFridge(){
+  const inItems = DB.items.filter(i=>fridgeSet.has(i.id));
+  const ings = inItems.filter(i=>i.kind==='ingredient'), seas = inItems.filter(i=>i.kind==='seasoning');
+  $('#fridge-hint').textContent = fridgeSet.size ? `${ings.length} 樣食材・${seas.length} 樣調味料 ・ 點一下可移出冰箱` : '把手邊有的東西加進來，左邊就會推薦能做的料理';
+  let html = '';
+  if(!inItems.length){
+    html = `<div class="fridge-empty"><div class="big">🧊</div>冰箱空空的<br>從下方的食材庫點選加入</div>`;
+  } else {
+    if(ings.length) html += `<div class="fsec"><h3>🥕 食材 <span class="n">${ings.length}</span></h3><div class="chips">${ings.map(i=>chip(i,'in')).join('')}</div></div>`;
+    if(seas.length) html += `<div class="fsec"><h3>🧂 調味料 <span class="n">${seas.length}</span></h3><div class="chips">${seas.map(i=>chip(i,'in')).join('')}</div></div>`;
+  }
+  $('#fridge-now').innerHTML = html;
+
+  // category tabs
+  const tabs = [['all','全部'],...Object.entries(CATS),['seasoning','🧂 調味料']];
+  $('#cat-tabs').innerHTML = tabs.map(([k,l])=>`<button class="cat-tab ${ui.fCat===k?'on':''}" data-cat="${k}">${l}</button>`).join('');
+
+  // library
+  const q = ui.fSearch.trim().toLowerCase();
+  let list = DB.items.filter(i=>{
+    if(ui.fCat==='seasoning') { if(i.kind!=='seasoning') return false; }
+    else if(ui.fCat!=='all') { if(i.kind!=='ingredient' || i.cat!==ui.fCat) return false; }
+    return !q || (i.name+i.ja).toLowerCase().includes(q);
+  });
+  let lib = '';
+  if(!list.length){
+    lib = `<div class="lib-none">食材庫裡沒有「${esc(ui.fSearch.trim())}」<br><button data-quick-add="${esc(ui.fSearch.trim())}">＋ 新增「${esc(ui.fSearch.trim())}」到食材庫並放進冰箱</button></div>`;
+  } else if(ui.fCat==='all' && !q){
+    const groups = [...Object.entries(CATS).map(([k,l])=>[l, list.filter(i=>i.kind==='ingredient'&&i.cat===k)]), ['🧂 調味料', list.filter(i=>i.kind==='seasoning')]];
+    lib = groups.filter(([,arr])=>arr.length).map(([l,arr])=>`<div class="lib-group"><h4>${l}</h4><div class="chips">${arr.map(i=>chip(i, fridgeSet.has(i.id)?'on':'')).join('')}</div></div>`).join('');
+  } else {
+    lib = `<div class="chips">${list.map(i=>chip(i, fridgeSet.has(i.id)?'on':'')).join('')}</div>`;
+  }
+  $('#lib-list').innerHTML = lib;
+  $('#f-search-box').classList.toggle('has', !!ui.fSearch);
+  $('#r-search-box').classList.toggle('has', !!ui.rSearch);
+}
+
+function toggleFridge(id){
+  if(fridgeSet.has(id)) fridgeSet.delete(id); else fridgeSet.add(id);
+  persist(); renderAll();
+}
+function addStaples(){
+  let n=0; STAPLE_SEASONINGS.forEach(id=>{ if(itemById(id) && !fridgeSet.has(id)){ fridgeSet.add(id); n++; } });
+  persist(); renderAll(); toast(n?`加入 ${n} 樣常備調味料（鹽・糖・醬油・油・胡椒）`:'常備調味料都已經在冰箱裡了');
+}
+function clearFridge(){
+  if(!fridgeSet.size) return;
+  if(!confirm('要清空冰箱嗎？（食材庫不會被刪除）')) return;
+  fridgeSet.clear(); persist(); renderAll(); toast('冰箱已清空');
+}
+function quickAddItem(name){
+  name = name.trim(); if(!name) return;
+  const it = {id:uid('i_'), kind:'ingredient', name, ja:'', cat:'other', emoji:'🍽️'};
+  DB.items.push(it); fridgeSet.add(it.id); ui.fSearch=''; $('#f-search').value='';
+  persist(); renderAll(); toast(`已新增「${name}」（分類：其他），可到後台補日文名`);
+}
+
+function renderAll(){ renderRecipes(); renderFridge(); if(ui.openRecipe) renderRecipeModal(); }
+
+/* =====================================================================
+   料理詳情
+   ===================================================================== */
+function openRecipe(id){ ui.openRecipe=id; renderRecipeModal(); $('#recipe-modal').classList.add('open'); }
+function closeRecipe(){ ui.openRecipe=null; $('#recipe-modal').classList.remove('open'); }
+function renderRecipeModal(){
+  const r = DB.recipes.find(x=>x.id===ui.openRecipe); if(!r){ closeRecipe(); return; }
+  const m = matchRecipe(r);
+  $('#rm-title').innerHTML = `${esc(r.name)}`;
+  const row = (it, amt) => {
+    const have = fridgeSet.has(it.id);
+    return `<div class="irow ${have?'have':'miss'}" data-toggle="${it.id}"><span class="ck">${have?'✓':'✕'}</span><span class="nm">${it.emoji||''} ${esc(it.name)}<span class="j">${esc(it.ja)}</span></span>${amt?`<span class="amt">${esc(amt)}</span>`:''}</div>`;
+  };
+  $('#rm-body').innerHTML = `
+    <div class="d-hero">${recipeImg(r,'d-img')}
+      <div class="d-meta"><div class="d-ja">${esc(r.ja)}</div>${cuisineTag(r.cuisine)}</div>
+    </div>
+    <div class="d-pcts">
+      <div class="d-pct ing"><div class="l">🥕 食材</div><div class="v ${m.ingPct===100?'full':''}">${m.ingPct}%<small>${m.ingHave}/${m.ingTotal}</small></div></div>
+      <div class="d-pct sea"><div class="l">🧂 調味料</div><div class="v ${m.seaPct===100?'full':''}">${m.seaPct}%<small>${m.seaHave}/${m.seaTotal}</small></div></div>
+    </div>
+    <div class="d-sec"><h3>食材 <small>（含用量）</small></h3>${r.ings.map(x=>{const it=itemById(x.id); return it?row(it,x.amt):'';}).join('')||'<div class="b-none">（無）</div>'}</div>
+    <div class="d-sec"><h3>調味料</h3>${r.seas.map(id=>{const it=itemById(id); return it?row(it,''):'';}).join('')||'<div class="b-none">（無）</div>'}</div>
+    ${r.note?`<div class="d-note">📝 ${esc(r.note)}</div>`:''}
+    <div class="d-tip">點任一項目可直接加入／移出冰箱</div>`;
+}
+function editCurrentRecipe(){ const id=ui.openRecipe; closeRecipe(); openAdmin('recipe'); openRecipeForm(id); }
+
+/* changelog */
+function openChangelog(){ $('#changelog-modal').classList.add('open'); }
+function closeChangelog(){ $('#changelog-modal').classList.remove('open'); }
+
+/* =====================================================================
+   後台
+   ===================================================================== */
+function openAdmin(tab){ if(tab) ui.adminTab=tab; $('#admin').classList.add('open'); renderAdmin(); }
+function closeAdmin(){ $('#admin').classList.remove('open'); renderAll(); }
+function setAdminTab(t){ ui.adminTab=t; ui.aSearch=''; renderAdmin(); }
+
+function renderAdmin(){
+  document.querySelectorAll('.a-tab').forEach(b=>b.classList.toggle('on', b.dataset.atab===ui.adminTab));
+  const body = $('#a-body');
+  const q = ui.aSearch.trim().toLowerCase();
+  const searchBox = ph => `<div class="search"><span>🔍</span><input id="a-search" placeholder="${ph}" value="${esc(ui.aSearch)}"></div>`;
+  const usedIn = id => DB.recipes.filter(r=>r.ings.some(x=>x.id===id)||r.seas.includes(id)).length;
+
+  if(ui.adminTab==='ingredient' || ui.adminTab==='seasoning'){
+    const kind = ui.adminTab;
+    const list = DB.items.filter(i=>i.kind===kind && (!q || (i.name+i.ja).toLowerCase().includes(q)));
+    const rowHtml = i => `<div class="a-row"><span class="e">${i.emoji||''}</span><span class="nm">${esc(i.name)}<span class="j">${esc(i.ja)}</span><span class="s">用於 ${usedIn(i.id)} 道料理</span></span><button class="ic" data-edit-item="${i.id}" title="編輯">✎</button><button class="ic del" data-del-item="${i.id}" title="刪除">🗑</button></div>`;
+    let listHtml;
+    if(kind==='ingredient' && !q){
+      listHtml = Object.entries(CATS).map(([k,l])=>{ const arr=list.filter(i=>i.cat===k); return arr.length?`<div class="a-group-h">${l}（${arr.length}）</div><div class="a-list">${arr.map(rowHtml).join('')}</div>`:''; }).join('');
+    } else listHtml = `<div class="a-list">${list.map(rowHtml).join('')}</div>`;
+    body.innerHTML = `<div class="a-toolbar">${searchBox('搜尋…')}<button class="small-btn primary" data-new-item="${kind}">＋ 新增${kind==='ingredient'?'食材':'調味料'}</button></div>${listHtml||'<div class="empty">沒有資料</div>'}`;
+  }
+  else if(ui.adminTab==='recipe'){
+    const list = DB.recipes.filter(r=>!q || (r.name+r.ja).toLowerCase().includes(q));
+    body.innerHTML = `<div class="a-toolbar">${searchBox('搜尋料理…')}<button class="small-btn primary" data-new-recipe>＋ 新增料理</button></div>
+      <div class="a-list">${list.map(r=>`<div class="a-row"><span class="e">${r.image?`<img src="${esc(r.image)}">`:(r.emoji||'🍽️')}</span><span class="nm">${esc(r.name)}<span class="j">${esc(r.ja)}</span><span class="s">${CUISINES[r.cuisine]||''}・${r.ings.length} 食材・${r.seas.length} 調味料</span></span><button class="ic" data-edit-recipe="${r.id}" title="編輯">✎</button><button class="ic del" data-del-recipe="${r.id}" title="刪除">🗑</button></div>`).join('')||'<div class="empty">沒有資料</div>'}</div>`;
+  }
+  else {
+    const nI = DB.items.filter(i=>i.kind==='ingredient').length, nS = DB.items.length-nI;
+    const bytes = new Blob([JSON.stringify(DB)]).size;
+    body.innerHTML = `
+      <div class="stat"><div><div class="v">${nI}</div><div class="l">食材</div></div><div><div class="v">${nS}</div><div class="l">調味料</div></div><div><div class="v">${DB.recipes.length}</div><div class="l">料理</div></div><div><div class="v">${(bytes/1024).toFixed(0)}<small style="font-size:11px">KB</small></div><div class="l">資料大小</div></div></div>
+      <div class="a-card"><h3>💾 備份與搬家</h3><p>資料目前存在這支裝置的瀏覽器裡。換裝置、分享給別人、或未來接雲端資料庫之前，先匯出一份 JSON 備份。</p>
+        <div class="acts"><button class="small-btn primary" onclick="exportData()">⬇ 匯出 JSON</button><button class="small-btn file-btn">⬆ 匯入 JSON<input type="file" accept="application/json,.json" onchange="importData(this)"></button></div></div>
+      <div class="a-card"><h3>🔄 重設</h3><p>把食材庫與料理庫還原成內建的預設資料，並清空冰箱。你自己新增的內容會被刪除，請先匯出備份。</p>
+        <div class="acts"><button class="small-btn danger" onclick="resetData()">重設為預設資料</button></div></div>
+      <div class="a-card"><h3>☁️ 關於雲端同步</h3><p>程式碼裡的資料層（<code>Store.load / Store.save</code>）已經獨立出來，之後要接 Supabase 或 Firebase 只需改那兩個函式，資料結構完全相同，現在建的內容都能直接搬過去。</p></div>
+      <p class="f-help" style="text-align:center;margin-top:8px">ver.${APP_VERSION}</p>`;
+  }
+}
+
+/* ── 表單：食材／調味料 ── */
+function openForm(title, bodyHtml, footHtml){ $('#fm-title').textContent=title; $('#fm-body').innerHTML=bodyHtml; $('#fm-foot').innerHTML=footHtml; $('#form-modal').classList.add('open'); }
+function closeForm(){ $('#form-modal').classList.remove('open'); rDraft=null; }
+
+function openItemForm(kind, id){
+  const it = id ? itemById(id) : {kind, name:'', ja:'', cat:'veg', emoji:''};
+  const isIng = kind==='ingredient';
+  openForm((id?'編輯':'新增')+(isIng?'食材':'調味料'), `
+    <div class="f">
+      <div class="grid31"><label>名稱（中文）<input type="text" id="if-name" value="${esc(it.name)}" placeholder="例：紅蘿蔔"></label><label>Emoji<input type="text" id="if-emoji" value="${esc(it.emoji)}" placeholder="🥕"></label></div>
+      <label>日文名稱（在日本超市找東西用）<input type="text" id="if-ja" value="${esc(it.ja)}" placeholder="例：にんじん"></label>
+      ${isIng?`<label>分類<select id="if-cat">${Object.entries(CATS).map(([k,l])=>`<option value="${k}" ${it.cat===k?'selected':''}>${l}</option>`).join('')}</select></label>`:''}
+    </div>`,
+    `<button class="btn" onclick="closeForm()">取消</button><button class="btn primary" onclick="saveItem('${kind}','${id||''}')">儲存</button>`);
+  setTimeout(()=>$('#if-name').focus(),50);
+}
+function saveItem(kind, id){
+  const name = $('#if-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
+  const data = { name, ja:$('#if-ja').value.trim(), emoji:$('#if-emoji').value.trim(), cat: kind==='ingredient' ? $('#if-cat').value : '' };
+  if(id){ Object.assign(itemById(id), data); }
+  else DB.items.push({ id:uid(kind==='ingredient'?'i_':'s_'), kind, ...data });
+  persist(); closeForm(); renderAdmin(); toast('已儲存');
+}
+function deleteItem(id){
+  const it = itemById(id); if(!it) return;
+  const n = DB.recipes.filter(r=>r.ings.some(x=>x.id===id)||r.seas.includes(id)).length;
+  if(!confirm(`確定刪除「${it.name}」？${n?`\n有 ${n} 道料理用到它，刪除後會從那些料理中移除。`:''}`)) return;
+  DB.items = DB.items.filter(i=>i.id!==id);
+  DB.recipes.forEach(r=>{ r.ings=r.ings.filter(x=>x.id!==id); r.seas=r.seas.filter(x=>x!==id); });
+  fridgeSet.delete(id); persist(); renderAdmin(); toast('已刪除');
+}
+
+/* ── 表單：料理 ── */
+let rDraft = null;
+function openRecipeForm(id){
+  const r = id ? DB.recipes.find(x=>x.id===id) : null;
+  rDraft = r ? JSON.parse(JSON.stringify(r)) : {id:'', name:'', ja:'', cuisine:'jp', emoji:'', image:'', note:'', ings:[], seas:[]};
+  openForm(id?'編輯料理':'新增料理', `
+    <div class="f">
+      <div class="grid31"><label>料理名稱（中文）<input type="text" id="rf-name" value="${esc(rDraft.name)}" placeholder="例：薑燒豬肉"></label><label>Emoji<input type="text" id="rf-emoji" value="${esc(rDraft.emoji)}" placeholder="🐷"></label></div>
+      <div class="grid2"><label>日文名稱<input type="text" id="rf-ja" value="${esc(rDraft.ja)}" placeholder="例：豚の生姜焼き"></label>
+      <label>菜系<select id="rf-cuisine">${Object.entries(CUISINES).map(([k,l])=>`<option value="${k}" ${rDraft.cuisine===k?'selected':''}>${l}</option>`).join('')}</select></label></div>
+      <label>料理圖片（可留白，之後再加）
+        <div class="img-box"><div class="img-prev" id="rf-img-prev"></div>
+          <div class="img-acts"><div class="row"><button class="small-btn file-btn">📷 上傳圖片<input type="file" accept="image/*" onchange="pickImage(this)"></button><button class="small-btn" onclick="setImageUrl()">🔗 貼網址</button><button class="small-btn danger" onclick="rDraft.image='';renderImgPrev()">移除</button></div>
+          <div class="f-help">上傳的圖片會自動縮小並存在裝置裡；圖片多會佔空間，建議少量使用。</div></div></div>
+      </label>
+      <label>食材（含用量）
+        <div class="builder"><div class="b-rows" id="rf-ings"></div>
+          <div class="b-search"><input type="text" id="rf-ing-q" placeholder="輸入食材名稱搜尋，點選加入…" autocomplete="off"><div class="b-sug" id="rf-ing-sug"></div></div></div>
+      </label>
+      <label>調味料（不需用量）
+        <div class="builder"><div class="b-rows" id="rf-seas"></div>
+          <div class="b-search"><input type="text" id="rf-sea-q" placeholder="輸入調味料名稱搜尋，點選加入…" autocomplete="off"><div class="b-sug" id="rf-sea-sug"></div></div></div>
+      </label>
+      <label>備註（選填）<textarea id="rf-note" placeholder="小訣竅、替代食材…">${esc(rDraft.note||'')}</textarea></label>
+    </div>`,
+    `<button class="btn" onclick="closeForm()">取消</button>${id?`<button class="btn danger" onclick="deleteRecipe('${id}',true)">刪除</button>`:''}<button class="btn primary" onclick="saveRecipe()">儲存</button>`);
+  renderImgPrev(); renderBuilder('ingredient'); renderBuilder('seasoning');
+  bindSuggest('ingredient'); bindSuggest('seasoning');
+  setTimeout(()=>$('#rf-name').focus(),50);
+}
+function renderImgPrev(){ const p=$('#rf-img-prev'); if(!p) return; p.innerHTML = rDraft.image ? `<img src="${esc(rDraft.image)}">` : (rDraft.emoji||'🍽️'); }
+function setImageUrl(){ const u = prompt('貼上圖片網址（https://…）', rDraft.image && !rDraft.image.startsWith('data:') ? rDraft.image : ''); if(u===null) return; rDraft.image=u.trim(); renderImgPrev(); }
+function pickImage(input){
+  const file = input.files[0]; if(!file) return;
+  const img = new Image(), url = URL.createObjectURL(file);
+  img.onload = ()=>{ const max=800, s=Math.min(1, max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s); c.getContext('2d').drawImage(img,0,0,c.width,c.height); rDraft.image=c.toDataURL('image/jpeg',0.8); URL.revokeObjectURL(url); renderImgPrev(); input.value=''; };
+  img.onerror = ()=>{ toast('讀取圖片失敗'); URL.revokeObjectURL(url); };
+  img.src = url;
+}
+function renderBuilder(kind){
+  const isIng = kind==='ingredient';
+  const box = $(isIng?'#rf-ings':'#rf-seas'); if(!box) return;
+  const list = isIng ? rDraft.ings : rDraft.seas;
+  if(!list.length){ box.innerHTML=`<div class="b-none">尚未加入${isIng?'食材':'調味料'}</div>`; return; }
+  box.innerHTML = list.map((x,i)=>{
+    const it = itemById(isIng?x.id:x); if(!it) return '';
+    return `<div class="b-row"><span class="nm">${it.emoji||''} ${esc(it.name)}<span class="j">${esc(it.ja)}</span></span>${isIng?`<input type="text" placeholder="用量" value="${esc(x.amt)}" data-amt="${i}">`:''}<button class="rm" data-rm="${kind}:${i}">✕</button></div>`;
+  }).join('');
+}
+function bindSuggest(kind){
+  const isIng = kind==='ingredient';
+  const inp = $(isIng?'#rf-ing-q':'#rf-sea-q'), sug = $(isIng?'#rf-ing-sug':'#rf-sea-sug');
+  const show = ()=>{
+    const q = inp.value.trim().toLowerCase();
+    if(!q){ sug.classList.remove('open'); return; }
+    const have = new Set(isIng ? rDraft.ings.map(x=>x.id) : rDraft.seas);
+    const hits = DB.items.filter(i=>i.kind===kind && !have.has(i.id) && (i.name+i.ja).toLowerCase().includes(q)).slice(0,8);
+    sug.innerHTML = hits.map(i=>`<div data-pick="${i.id}">${i.emoji||''} ${esc(i.name)} <span class="j">${esc(i.ja)}</span></div>`).join('') + `<div class="new" data-pick-new="${esc(inp.value.trim())}">＋ 新增「${esc(inp.value.trim())}」為新${isIng?'食材':'調味料'}</div>`;
+    sug.classList.add('open');
+  };
+  inp.addEventListener('input', show);
+  inp.addEventListener('focus', show);
+  inp.addEventListener('blur', ()=>setTimeout(()=>sug.classList.remove('open'),150));
+  sug.addEventListener('mousedown', e=>{
+    const d = e.target.closest('[data-pick],[data-pick-new]'); if(!d) return;
+    e.preventDefault();
+    let id = d.dataset.pick;
+    if(!id){ const name=d.dataset.pickNew; if(!name) return; const it={id:uid(isIng?'i_':'s_'),kind,name,ja:'',cat:isIng?'other':'',emoji:''}; DB.items.push(it); id=it.id; toast(`已新增「${name}」到${isIng?'食材':'調味料'}庫`); }
+    if(isIng) rDraft.ings.push({id, amt:''}); else rDraft.seas.push(id);
+    inp.value=''; sug.classList.remove('open'); renderBuilder(kind);
+    if(isIng){ const last=$('#rf-ings').querySelector(`[data-amt="${rDraft.ings.length-1}"]`); last && last.focus(); }
+  });
+}
+function saveRecipe(){
+  const name = $('#rf-name').value.trim(); if(!name){ toast('請輸入料理名稱'); return; }
+  if(!rDraft.ings.length){ toast('至少加入一樣食材'); return; }
+  Object.assign(rDraft, { name, ja:$('#rf-ja').value.trim(), cuisine:$('#rf-cuisine').value, emoji:$('#rf-emoji').value.trim(), note:$('#rf-note').value.trim() });
+  if(rDraft.id){ const i=DB.recipes.findIndex(r=>r.id===rDraft.id); DB.recipes[i]=rDraft; }
+  else { rDraft.id=uid('r_'); DB.recipes.push(rDraft); }
+  const ok = persist(); closeForm(); renderAdmin(); if(ok!==false) toast('料理已儲存');
+}
+function deleteRecipe(id, fromForm){
+  const r = DB.recipes.find(x=>x.id===id); if(!r) return;
+  if(!confirm(`確定刪除「${r.name}」？`)) return;
+  DB.recipes = DB.recipes.filter(x=>x.id!==id); persist(); if(fromForm) closeForm(); renderAdmin(); toast('已刪除');
+}
+
+/* ── 資料匯出／匯入／重設 ── */
+function exportData(){
+  const blob = new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  const d = new Date(); a.download = `fridge_recipes_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); toast('已匯出');
+}
+function importData(input){
+  const file = input.files[0]; if(!file) return;
+  const fr = new FileReader();
+  fr.onload = ()=>{
+    try{
+      const d = JSON.parse(fr.result);
+      if(!Array.isArray(d.items) || !Array.isArray(d.recipes)) throw new Error('bad');
+      if(!confirm(`匯入 ${d.items.length} 樣食材／調味料、${d.recipes.length} 道料理？\n目前的資料會被取代。`)) return;
+      DB = { schema:1, seedVersion:d.seedVersion||1, items:d.items, recipes:d.recipes, fridge:Array.isArray(d.fridge)?d.fridge:[], settings:d.settings||{threshold:70} };
+      fridgeSet = new Set(DB.fridge); persist(); renderAdmin(); syncThresholdPills(); toast('匯入完成');
+    }catch(e){ toast('⚠️ 檔案格式不對，無法匯入'); }
+    input.value='';
+  };
+  fr.readAsText(file);
+}
+function resetData(){
+  if(!confirm('確定要重設為預設資料？你自己新增的食材與料理會被刪除，冰箱也會清空。')) return;
+  DB = buildSeed(); fridgeSet = new Set(); persist(); renderAdmin(); syncThresholdPills(); toast('已重設為預設資料');
+}
+function syncThresholdPills(){ const r=$('#th-range'); r.value=DB.settings.threshold; r.style.setProperty('--p', DB.settings.threshold+'%'); $('#th-val').textContent=DB.settings.threshold+'%'; }
+
+/* =====================================================================
+   事件
+   ===================================================================== */
+document.addEventListener('click', e=>{
+  const t = e.target;
+  const el = s => t.closest(s);
+  let x;
+  if(x=el('[data-toggle]')){ toggleFridge(x.dataset.toggle); return; }
+  if(x=el('[data-open]')){ openRecipe(x.dataset.open); return; }
+  if(x=el('[data-toggle-others]')){ ui.showOthers=!ui.showOthers; renderRecipes(); return; }
+  if(x=el('[data-cat]')){ ui.fCat=x.dataset.cat; renderFridge(); return; }
+  if(x=el('[data-quick-add]')){ quickAddItem(x.dataset.quickAdd); return; }
+  if(x=el('[data-clear]')){ const id=x.dataset.clear; $('#'+id).value=''; if(id==='r-search') ui.rSearch=''; else ui.fSearch=''; renderAll(); return; }
+  // admin
+  if(x=el('[data-atab]')){ setAdminTab(x.dataset.atab); return; }
+  if(x=el('[data-new-item]')){ openItemForm(x.dataset.newItem,''); return; }
+  if(x=el('[data-edit-item]')){ const it=itemById(x.dataset.editItem); openItemForm(it.kind, it.id); return; }
+  if(x=el('[data-del-item]')){ deleteItem(x.dataset.delItem); return; }
+  if(x=el('[data-new-recipe]')){ openRecipeForm(''); return; }
+  if(x=el('[data-edit-recipe]')){ openRecipeForm(x.dataset.editRecipe); return; }
+  if(x=el('[data-del-recipe]')){ deleteRecipe(x.dataset.delRecipe,false); return; }
+  if(x=el('[data-rm]')){ const [kind,i]=x.dataset.rm.split(':'); (kind==='ingredient'?rDraft.ings:rDraft.seas).splice(+i,1); renderBuilder(kind); return; }
+});
+document.addEventListener('input', e=>{
+  const t = e.target;
+  if(t.id==='th-range'){ DB.settings.threshold=+t.value; syncThresholdPills(); renderRecipes(); }
+  else if(t.id==='r-search'){ ui.rSearch=t.value; $('#r-search-box').classList.toggle('has',!!t.value); renderRecipes(); }
+  else if(t.id==='f-search'){ ui.fSearch=t.value; $('#f-search-box').classList.toggle('has',!!t.value); renderFridge(); }
+  else if(t.id==='a-search'){ ui.aSearch=t.value; const pos=t.selectionStart; renderAdmin(); const n=$('#a-search'); n.focus(); n.setSelectionRange(pos,pos); }
+  else if(t.dataset.amt!==undefined){ rDraft.ings[+t.dataset.amt].amt=t.value; }
+  else if(t.id==='rf-emoji'){ if(rDraft){ rDraft.emoji=t.value.trim(); renderImgPrev(); } }
+});
+document.addEventListener('change', e=>{ if(e.target.id==='th-range') persist(); });
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ if($('#form-modal').classList.contains('open')) closeForm(); else if(ui.openRecipe) closeRecipe(); else closeChangelog(); }
+});
+
+/* ── 啟動 ── */
+syncThresholdPills();
+renderAll();
+</script>
+</body>
+</html>
