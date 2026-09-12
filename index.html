@@ -84,7 +84,7 @@ h1,h2,h3{font-family:var(--font-title);font-weight:700}
 .rname{font-family:var(--font-title);font-size:15px;font-weight:700;line-height:1.3;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
 .rja{font-size:11px;color:var(--muted);font-weight:400;font-family:var(--font)}
 .tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:50px;background:var(--paper-deep);color:var(--muted);vertical-align:middle;font-family:var(--font);font-weight:500}
-.tag.jp{background:#fde8e4;color:#c0392b}.tag.tw{background:#e6f2e8;color:#2e7d4f}.tag.cn{background:#fbf0d6;color:#a16a05}.tag.west{background:#e5ecf7;color:#3b5fa5}
+.tag.jp{background:#fde8e4;color:#c0392b}.tag.tw{background:#e6f2e8;color:#2e7d4f}.tag.cn{background:#fbf0d6;color:#a16a05}.tag.kr{background:#f3e5f5;color:#7b3fa0}.tag.west{background:#e5ecf7;color:#3b5fa5}
 .bars{margin-top:7px;display:flex;flex-direction:column;gap:4px}
 .bar{display:flex;align-items:center;gap:7px;font-size:11px}
 .bar .bl{width:30px;color:var(--muted);flex-shrink:0}
@@ -265,7 +265,7 @@ h1,h2,h3{font-family:var(--font-title);font-weight:700}
   <div class="logo">今天<span>煮</span>什麼？</div>
   <div class="sub">冰箱食譜提案</div>
   <div class="grow"></div>
-  <div class="version-badge" onclick="openChangelog()">ver.1.1.0</div>
+  <div class="version-badge" onclick="openChangelog()">ver.1.2.0</div>
   <button class="admin-btn" onclick="openAdmin()">⚙ 後台</button>
 </header>
 
@@ -329,6 +329,15 @@ h1,h2,h3{font-family:var(--font-title);font-weight:700}
     <div class="sheet-head"><h2>📋 更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
       <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.2.0 - 2026年9月12日</div>
+        <div class="changelog-content">
+          🍳 新料理：乾煎雞蛋豆腐、鹽昆布生菜沙拉、沙茶牛肉炒青江菜、沙茶乾拌麵、韓式辣炒豬肉、韓式拌飯<br>
+          🥢 麻婆豆腐加入花椒粉；豆腐改名白豆腐；新增雞蛋豆腐、青江菜、鹽昆布、韓式辣醬、米粉（粉類）<br>
+          🥒 移除含小黃瓜的料理<br>
+          🔄 內建資料自動升級：舊裝置打開會自動補上新料理，你自己改過的不會被覆蓋
+        </div>
+      </div>
+      <div class="changelog-entry">
         <div class="changelog-ver">ver.1.1.0 - 2026年9月12日</div>
         <div class="changelog-content">
           🎚 食材門檻改成可拖移的滑桿（0–100%，每 5% 一格）<br>
@@ -387,7 +396,7 @@ h1,h2,h3{font-family:var(--font-title);font-weight:700}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -396,7 +405,7 @@ const Store = {
 
 /* ── 常數 ── */
 const CATS = { veg:'蔬菜', meat:'肉類', seafood:'海鮮', egg:'蛋豆奶', staple:'主食', other:'其他' };
-const CUISINES = { jp:'日式', tw:'台式', cn:'中華', west:'西式', other:'其他' };
+const CUISINES = { jp:'日式', tw:'台式', cn:'中華', kr:'韓式', west:'西式', other:'其他' };
 const STAPLE_SEASONINGS = ['s_salt','s_sugar','s_soy','s_oil','s_pepper'];
 
 /* ── 預設資料 ── */
@@ -410,7 +419,7 @@ const SEED_ITEMS = [
   ['i_moyashi','豆芽菜','もやし','veg','🌱'],['i_shiitake','香菇','しいたけ','veg','🍄'],['i_enoki','金針菇','えのき','veg','🍄'],
   ['i_shimeji','鴻喜菇','しめじ','veg','🍄'],['i_nira','韭菜','ニラ','veg','🌿'],['i_pumpkin','南瓜','かぼちゃ','veg','🎃'],
   ['i_broccoli','青花菜','ブロッコリー','veg','🥦'],['i_basil','九層塔','台湾バジル','veg','🌿'],['i_chili','辣椒','唐辛子','veg','🌶️'],
-  ['i_lemon','檸檬','レモン','veg','🍋'],['i_lettuce','生菜','レタス','veg','🥬'],
+  ['i_lemon','檸檬','レモン','veg','🍋'],['i_lettuce','生菜','レタス','veg','🥬'],['i_chingensai','青江菜','チンゲン菜','veg','🥬'],
   // 肉類
   ['i_pork_slice','豬肉片','豚こま切れ肉','meat','🥩'],['i_pork_belly','豬五花','豚バラ肉','meat','🥓'],['i_pork_mince','豬絞肉','豚ひき肉','meat','🥩'],
   ['i_mixed_mince','牛豬混合絞肉','合いびき肉','meat','🥩'],['i_chicken_thigh','雞腿肉','鶏もも肉','meat','🍗'],['i_chicken_breast','雞胸肉','鶏むね肉','meat','🍗'],
@@ -419,15 +428,15 @@ const SEED_ITEMS = [
   ['i_salmon','鮭魚','鮭','seafood','🐟'],['i_saba','鯖魚','さば','seafood','🐟'],['i_shrimp','蝦','えび','seafood','🦐'],
   ['i_asari','蛤蜊','あさり','seafood','🐚'],['i_squid','花枝','いか','seafood','🦑'],['i_tuna_can','鮪魚罐頭','ツナ缶','seafood','🥫'],['i_shirasu','吻仔魚','しらす','seafood','🐟'],
   // 蛋豆奶
-  ['i_egg','雞蛋','卵','egg','🥚'],['i_tofu','豆腐','豆腐','egg','🧈'],['i_atsuage','油豆腐','厚揚げ','egg','🧈'],['i_aburaage','豆皮','油揚げ','egg','🟫'],
+  ['i_egg','雞蛋','卵','egg','🥚'],['i_tofu','白豆腐','豆腐','egg','🧈'],['i_egg_tofu','雞蛋豆腐','玉子豆腐','egg','🍮'],['i_atsuage','油豆腐','厚揚げ','egg','🧈'],['i_aburaage','豆皮','油揚げ','egg','🟫'],
   ['i_natto','納豆','納豆','egg','🫘'],['i_milk','牛奶','牛乳','egg','🥛'],['i_cheese','起司','チーズ','egg','🧀'],['i_cream','鮮奶油','生クリーム','egg','🥛'],
   // 主食
   ['i_rice','白飯','ご飯','staple','🍚'],['i_udon','烏龍麵','うどん','staple','🍜'],['i_pasta','義大利麵','パスタ','staple','🍝'],['i_ramen','中華麵','中華麺','staple','🍜'],
-  ['i_bread','吐司','食パン','staple','🍞'],['i_bihun','米粉','ビーフン','staple','🍜'],['i_gyoza_skin','水餃皮','餃子の皮','staple','🥟'],['i_flour','麵粉','小麦粉','staple','🌾'],
+  ['i_bread','吐司','食パン','staple','🍞'],['i_bihun','米粉（ビーフン）','ビーフン','staple','🍜'],['i_gyoza_skin','水餃皮','餃子の皮','staple','🥟'],['i_flour','麵粉','小麦粉','staple','🌾'],
   // 其他
   ['i_wakame','海帶芽','わかめ','other','🌊'],['i_nori','海苔','のり','other','⬛'],['i_kamaboko','魚板','かまぼこ','other','🍥'],['i_chikuwa','竹輪','ちくわ','other','🍥'],
   ['i_konnyaku','蒟蒻','こんにゃく','other','⬜'],['i_edamame','毛豆','枝豆','other','🫛'],['i_kimchi','泡菜','キムチ','other','🥬'],
-  ['i_corn_can','玉米罐頭','コーン缶','other','🌽'],['i_tomato_can','番茄罐頭','トマト缶','other','🥫'],
+  ['i_corn_can','玉米罐頭','コーン缶','other','🌽'],['i_tomato_can','番茄罐頭','トマト缶','other','🥫'],['i_shio_kombu','鹽昆布','塩昆布','other','🌊'],
 ];
 const SEED_SEASONINGS = [
   ['s_salt','鹽','塩','🧂'],['s_sugar','糖','砂糖','🍬'],['s_soy','醬油','醤油','🫗'],['s_mirin','味醂','みりん','🍶'],['s_sake','料理酒','料理酒','🍶'],
@@ -441,6 +450,7 @@ const SEED_SEASONINGS = [
   ['s_soy_paste','醬油膏','台湾とろみ醤油','🫗'],['s_katsuobushi','柴魚片','かつお節','🐟'],['s_chuno','中濃醬','中濃ソース','🟤'],
   ['s_shacha','沙茶醬','沙茶醤','🥫'],['s_black_vinegar','烏醋','黒酢','🫗'],['s_parmesan','起司粉','粉チーズ','🧀'],
   ['s_rock_sugar','冰糖','氷砂糖','🍬'],['s_shichimi','七味粉','七味唐辛子','🌶️'],['s_ponzu','柚子醋','ポン酢','🍋'],
+  ['s_sansho','花椒粉','花椒粉（ホアジャオ）','🌶️'],['s_komeko','米粉（粉類）','米粉（こめこ）','🌾'],['s_gochujang','韓式辣醬','コチュジャン','🌶️'],
 ];
 // [id, 名稱, 日文, 菜系, emoji, 食材[[id,用量]...], 調味料[id...]]
 const SEED_RECIPES = [
@@ -461,13 +471,12 @@ const SEED_RECIPES = [
   ['r_omurice','蛋包飯','オムライス','jp','🍳',[['i_egg','2顆'],['i_rice','1碗'],['i_chicken_thigh','80g'],['i_onion','1/4個']],['s_ketchup','s_butter','s_salt','s_pepper']],
   ['r_salmon_butter','鮭魚奶油醬燒','鮭のバター醤油焼き','jp','🐟',[['i_salmon','2片'],['i_shimeji','1包'],['i_onion','1/2個']],['s_butter','s_soy','s_pepper']],
   ['r_saba_miso','味噌煮鯖魚','さばの味噌煮','jp','🐟',[['i_saba','2片'],['i_ginger','1片'],['i_negi','1根']],['s_miso','s_sugar','s_mirin','s_sake','s_soy']],
-  ['r_potato_salad','馬鈴薯沙拉','ポテトサラダ','jp','🥔',[['i_potato','3個'],['i_cucumber','1/2根'],['i_ham','2片'],['i_egg','1顆'],['i_carrot','1/4根']],['s_mayo','s_salt','s_pepper','s_vinegar']],
   ['r_nikudofu','肉豆腐','肉豆腐','jp','🍲',[['i_beef_slice','150g'],['i_tofu','1塊'],['i_onion','1/2個'],['i_negi','1根']],['s_soy','s_mirin','s_sugar','s_sake','s_dashi']],
   ['r_kimchi_nabe','泡菜豬肉鍋','キムチ鍋','jp','🍲',[['i_pork_belly','200g'],['i_kimchi','200g'],['i_tofu','1塊'],['i_hakusai','1/4個'],['i_enoki','1包'],['i_nira','1/2把']],['s_miso','s_soy','s_chicken_stock','s_sesame_oil']],
   ['r_buta_kimchi','泡菜炒豬肉','豚キムチ','jp','🐷',[['i_pork_belly','200g'],['i_kimchi','150g'],['i_onion','1/2個'],['i_nira','1/2把']],['s_soy','s_sesame_oil','s_sake']],
-  ['r_chikuwa_cucumber','小黃瓜竹輪','きゅうりのちくわ詰め','jp','🥒',[['i_chikuwa','4條'],['i_cucumber','1根']],['s_mayo','s_soy']],
+  ['r_shio_kombu_cabbage','鹽昆布生菜沙拉','塩昆布キャベツ','jp','🥗',[['i_cabbage','1/4個'],['i_shio_kombu','1大匙']],['s_sesame_oil','s_sesame']],
   // 中華
-  ['r_mabo','麻婆豆腐','麻婆豆腐','cn','🌶️',[['i_tofu','1塊'],['i_pork_mince','150g'],['i_negi','1根'],['i_garlic','1瓣'],['i_ginger','1片']],['s_doubanjiang','s_tianmian','s_soy','s_chicken_stock','s_katakuriko','s_sesame_oil']],
+  ['r_mabo','麻婆豆腐','麻婆豆腐','cn','🌶️',[['i_tofu','1塊'],['i_pork_mince','150g'],['i_negi','1根'],['i_garlic','1瓣'],['i_ginger','1片']],['s_doubanjiang','s_tianmian','s_soy','s_chicken_stock','s_katakuriko','s_sesame_oil','s_sansho']],
   ['r_gyoza','煎餃','餃子','cn','🥟',[['i_gyoza_skin','25張'],['i_pork_mince','200g'],['i_cabbage','1/4個'],['i_nira','1/2把'],['i_garlic','1瓣'],['i_ginger','1片']],['s_soy','s_sesame_oil','s_salt','s_pepper','s_oil']],
   ['r_chahan','蛋炒飯','チャーハン','cn','🍚',[['i_rice','2碗'],['i_egg','2顆'],['i_negi','1根'],['i_ham','2片']],['s_soy','s_salt','s_pepper','s_oil','s_chicken_stock']],
   ['r_moyashi_stirfry','清炒豆芽','もやし炒め','cn','🌱',[['i_moyashi','1包'],['i_garlic','1瓣'],['i_negi','1根']],['s_salt','s_chicken_stock','s_sesame_oil','s_oil']],
@@ -483,7 +492,12 @@ const SEED_RECIPES = [
   ['r_clam_soup','薑絲蛤蜊湯','あさりの生姜スープ','tw','🐚',[['i_asari','300g'],['i_ginger','3片'],['i_negi','1根']],['s_rice_wine','s_salt']],
   ['r_danbing','台式蛋餅','台湾式卵クレープ','tw','🫓',[['i_egg','2顆'],['i_flour','100g'],['i_negi','2根']],['s_salt','s_soy_paste','s_oil']],
   ['r_shiitake_chicken','香菇雞湯','しいたけと鶏のスープ','tw','🍲',[['i_chicken_thigh','300g'],['i_shiitake','6朵'],['i_ginger','3片']],['s_salt','s_rice_wine']],
-  ['r_cucumber','涼拌小黃瓜','きゅうりの和え物','tw','🥒',[['i_cucumber','3根'],['i_garlic','3瓣'],['i_chili','1根']],['s_salt','s_sugar','s_vinegar','s_sesame_oil']],
+  ['r_egg_tofu_fry','乾煎雞蛋豆腐','玉子豆腐の米粉焼き','tw','🍮',[['i_egg_tofu','1盒'],['i_negi','少許']],['s_komeko','s_oil','s_soy_paste']],
+  ['r_shacha_beef','沙茶牛肉炒青江菜','牛肉とチンゲン菜の沙茶醤炒め','tw','🥩',[['i_beef_slice','200g'],['i_chingensai','2株'],['i_garlic','2瓣'],['i_chili','1根']],['s_shacha','s_soy','s_rice_wine','s_sugar','s_katakuriko']],
+  ['r_shacha_noodle','沙茶乾拌麵','沙茶醤の混ぜ麺','tw','🍜',[['i_ramen','2球'],['i_moyashi','1/2包'],['i_negi','1根'],['i_egg','1顆（水煮或荷包蛋）']],['s_shacha','s_soy','s_sesame_oil','s_black_vinegar']],
+  // 韓式
+  ['r_gochujang_pork','韓式辣炒豬肉','豚肉のコチュジャン炒め','kr','🌶️',[['i_pork_slice','200g'],['i_onion','1/2個'],['i_negi','1根'],['i_garlic','2瓣']],['s_gochujang','s_soy','s_sugar','s_sesame_oil','s_sake']],
+  ['r_bibimbap','韓式拌飯','ビビンバ','kr','🍚',[['i_rice','2碗'],['i_pork_mince','150g'],['i_egg','2顆'],['i_spinach','1/2把'],['i_moyashi','1/2包'],['i_carrot','1/3根']],['s_gochujang','s_sesame_oil','s_soy','s_sesame','s_salt','s_sugar']],
   ['r_shacha_moyashi','沙茶肉絲炒豆芽','沙茶醤の豚もやし炒め','tw','🌱',[['i_moyashi','1包'],['i_pork_slice','100g'],['i_nira','1/2把'],['i_garlic','2瓣']],['s_shacha','s_soy','s_oil']],
   ['r_tomato_egg_soup','番茄蛋花湯','トマトと卵のスープ','tw','🍲',[['i_tomato','1顆'],['i_egg','2顆'],['i_negi','1根']],['s_salt','s_chicken_stock','s_sesame_oil','s_katakuriko']],
   ['r_pepper_pork','青椒炒肉絲','ピーマンと豚肉の細切り炒め','tw','🫑',[['i_pepper','3個'],['i_pork_slice','150g'],['i_garlic','2瓣']],['s_soy','s_rice_wine','s_katakuriko','s_salt','s_oil']],
@@ -509,11 +523,29 @@ function buildSeed(){
     ings: ings.map(([iid,amt])=>({id:iid,amt})),
     seas: seas.slice(),
   }));
-  return { schema:1, seedVersion:1, items, recipes, fridge:[], settings:{threshold:70} };
+  return { schema:1, seedVersion:SEED_VERSION, items, recipes, fridge:[], settings:{threshold:70} };
+}
+
+/* ── 內建資料升級 ──
+   每次內建資料有變動就把 SEED_VERSION +1。舊裝置打開時：
+   新增的內建項目會補進來；沒被使用者在後台改過的內建項目會更新成新版本；
+   使用者改過的（edited:true）保留不動；REMOVED_SEED_IDS 裡未改過的會被移除。 */
+const SEED_VERSION = 2;
+const REMOVED_SEED_IDS = ['r_potato_salad','r_chikuwa_cucumber','r_cucumber'];
+function migrate(db){
+  if((db.seedVersion||1) >= SEED_VERSION) return db;
+  const seed = buildSeed();
+  const cur = arr => Object.fromEntries(arr.map(x=>[x.id,x]));
+  const ci = cur(db.items), cr = cur(db.recipes);
+  seed.items.forEach(s=>{ const c=ci[s.id]; if(!c) db.items.push(s); else if(!c.edited) Object.assign(c, s); });
+  seed.recipes.forEach(s=>{ const c=cr[s.id]; if(!c) db.recipes.push(s); else if(!c.edited) Object.assign(c, s); });
+  db.recipes = db.recipes.filter(r=>!(REMOVED_SEED_IDS.includes(r.id) && !r.edited));
+  db.seedVersion = SEED_VERSION;
+  return db;
 }
 
 /* ── 狀態 ── */
-let DB = Store.load() || buildSeed();
+let DB = migrate(Store.load() || buildSeed());
 if(!DB.settings) DB.settings = {threshold:70};
 if(!DB.fridge) DB.fridge = [];
 const ui = { rSearch:'', fSearch:'', fCat:'all', showOthers:false, adminTab:'ingredient', aSearch:'', openRecipe:null };
@@ -767,7 +799,7 @@ function openItemForm(kind, id){
 function saveItem(kind, id){
   const name = $('#if-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
   const data = { name, ja:$('#if-ja').value.trim(), emoji:$('#if-emoji').value.trim(), cat: kind==='ingredient' ? $('#if-cat').value : '' };
-  if(id){ Object.assign(itemById(id), data); }
+  if(id){ Object.assign(itemById(id), data, {edited:true}); }
   else DB.items.push({ id:uid(kind==='ingredient'?'i_':'s_'), kind, ...data });
   persist(); closeForm(); renderAdmin(); toast('已儲存');
 }
@@ -856,7 +888,7 @@ function bindSuggest(kind){
 function saveRecipe(){
   const name = $('#rf-name').value.trim(); if(!name){ toast('請輸入料理名稱'); return; }
   if(!rDraft.ings.length){ toast('至少加入一樣食材'); return; }
-  Object.assign(rDraft, { name, ja:$('#rf-ja').value.trim(), cuisine:$('#rf-cuisine').value, emoji:$('#rf-emoji').value.trim(), note:$('#rf-note').value.trim() });
+  Object.assign(rDraft, { name, ja:$('#rf-ja').value.trim(), cuisine:$('#rf-cuisine').value, emoji:$('#rf-emoji').value.trim(), note:$('#rf-note').value.trim(), edited:true });
   if(rDraft.id){ const i=DB.recipes.findIndex(r=>r.id===rDraft.id); DB.recipes[i]=rDraft; }
   else { rDraft.id=uid('r_'); DB.recipes.push(rDraft); }
   const ok = persist(); closeForm(); renderAdmin(); if(ok!==false) toast('料理已儲存');
@@ -882,7 +914,7 @@ function importData(input){
       const d = JSON.parse(fr.result);
       if(!Array.isArray(d.items) || !Array.isArray(d.recipes)) throw new Error('bad');
       if(!confirm(`匯入 ${d.items.length} 樣食材／調味料、${d.recipes.length} 道料理？\n目前的資料會被取代。`)) return;
-      DB = { schema:1, seedVersion:d.seedVersion||1, items:d.items, recipes:d.recipes, fridge:Array.isArray(d.fridge)?d.fridge:[], settings:d.settings||{threshold:70} };
+      DB = migrate({ schema:1, seedVersion:d.seedVersion||1, items:d.items, recipes:d.recipes, fridge:Array.isArray(d.fridge)?d.fridge:[], settings:d.settings||{threshold:70} });
       fridgeSet = new Set(DB.fridge); persist(); renderAdmin(); syncThresholdPills(); toast('匯入完成');
     }catch(e){ toast('⚠️ 檔案格式不對，無法匯入'); }
     input.value='';
