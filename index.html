@@ -180,6 +180,19 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .irow .nm .ja{margin-left:5px}
 .irow .amt{font-family:var(--hand);font-size:14px;color:var(--muted);white-space:nowrap}
 .irow.miss .nm{color:var(--red)}
+.irow.slot .nm{cursor:pointer}
+.irow.slot .cands{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}
+.irow .cand{cursor:pointer;padding:2px 8px;border:1.5px dashed var(--line);border-radius:255px 15px 225px 15px / 15px 225px 15px 255px;font-size:14px;line-height:1.4}
+.irow .cand.on{background:var(--green);border-style:solid;border-color:var(--ink);color:#fff}
+.irow .cand.on .ja{color:rgba(255,255,255,0.7)}
+.irow .cand:hover{background:var(--yellow2)}
+.irow .cand.on:hover{background:var(--green)}
+.irow .or{font-family:var(--hand);font-size:13px;color:var(--muted)}
+.irow.optm{opacity:0.62}
+.irow.optm .ck{color:var(--muted);border-style:dashed}
+.irow.optm .nm{color:var(--ink)}
+.optag{font-family:var(--hand);font-size:12px;color:var(--muted);border:1.5px dashed var(--muted);padding:1px 7px;border-radius:12px;white-space:nowrap}
+.miss .opt-note{color:var(--muted);font-size:12px}
 .d-note{font-size:14px;line-height:1.7;background:var(--n1);padding:10px 14px;margin-top:14px;box-shadow:var(--shadow)}
 .d-tip{font-family:var(--hand);font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
 
@@ -236,8 +249,23 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .b-row{display:flex;align-items:center;gap:8px}
 .b-row .nm{flex:1;min-width:0;font-size:13px;font-family:var(--body);color:var(--ink)}
 .b-row .nm .ja{margin-left:4px}
-.b-row input{width:96px;background:var(--paper);border:1.5px solid var(--ink);border-radius:8px;padding:6px 8px;font-size:13px}
+.f .b-row input[type=text]{width:88px;flex:0 0 88px;background:var(--paper);border:1.5px solid var(--ink);border-radius:8px;padding:6px 8px;font-size:13px}
+.f .b-search input[type=text]{border:1.5px dashed var(--ink);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--paper)}
+.b-row.slot{align-items:flex-start}
+.b-row .b-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.b-row .nm-line{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}
+.b-row .alt{display:inline-flex;align-items:center;gap:3px;font-size:13px;background:var(--n4);padding:1px 4px 1px 6px;border-radius:8px 3px 8px 3px}
+.b-row .alt .or{font-family:var(--hand);font-size:12px;color:var(--muted);margin-right:2px}
+.b-row .alt-rm{font-size:11px;color:var(--muted);padding:0 3px;line-height:1}
+.b-row .alt-rm:hover{color:var(--red)}
+.b-row .alt-add{font-family:var(--hand);font-size:13px;color:var(--blue);border:1.5px dashed var(--blue);border-radius:10px;padding:0 8px;line-height:1.6}
+.b-row .alt-add.on,.b-row .alt-add:hover{background:var(--blue);color:#fff;border-style:solid}
+.b-row .opt-l{display:flex;align-items:center;gap:5px;font-family:var(--hand);font-size:12px;color:var(--muted);flex-direction:row;cursor:pointer}
+.b-row .opt-l input{accent-color:var(--ink)}
+.b-row.opt .nm{opacity:0.6}
 .b-row .rm{color:var(--muted);font-size:16px;padding:4px 6px}
+.alt-banner{font-family:var(--hand);font-size:14px;background:var(--n4);padding:6px 10px;margin-bottom:8px;border-radius:8px 3px 8px 3px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.alt-banner button{font-family:var(--hand);font-size:13px;color:var(--red);text-decoration:underline}
 .b-row .rm:hover{color:var(--red)}
 .b-none{font-size:12px;color:var(--muted);padding:4px 0 8px}
 .b-search{position:relative}
@@ -297,7 +325,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.3.0</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.4.0</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -361,6 +389,15 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.4.0 - 2026年9月20日</div>
+        <div class="changelog-content">
+          🔀 替代食材：一格可以放好幾種候選（例如咖哩的肉：豬肉片／雞腿肉／牛肉片），冰箱有其中任一種就算有<br>
+          ➖ 可省略食材：勾起來的食材不算進百分比，只在料理詳情裡淡淡列出<br>
+          ✏ 後台編輯料理時，每一列食材多了「＋或」和「可省略」<br>
+          🍛 內建食譜已全部套用：肉類可互換、蔥花／辣椒／配菜等改為可省略
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.3.0 - 2026年9月14日</div>
         <div class="changelog-content">
@@ -438,7 +475,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.4.0';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -494,65 +531,69 @@ const SEED_SEASONINGS = [
   ['s_rock_sugar','冰糖','氷砂糖','🍬'],['s_shichimi','七味粉','七味唐辛子','🌶️'],['s_ponzu','柚子醋','ポン酢','🍋'],
   ['s_sansho','花椒粉','花椒粉（ホアジャオ）','🌶️'],['s_komeko','米粉（粉類）','米粉（こめこ）','🌾'],['s_gochujang','韓式辣醬','コチュジャン','🌶️'],
 ];
-// [id, 名稱, 日文, 菜系, emoji, 食材[[id,用量]...], 調味料[id...]]
+// [id, 名稱, 日文, 菜系, emoji, 食材[[id,用量,選項]...], 調味料[id...]]
+//   選項：OR('替代id',...) = 冰箱有其中任一種就算有；OPT = 可省略（不算進％）；OROPT(...) = 兩者都是
+const OR = (...alts) => ({alts});
+const OPT = {opt:true};
+const OROPT = (...alts) => ({alts, opt:true});
 const SEED_RECIPES = [
   // 日式
-  ['r_shogayaki','薑燒豬肉','豚の生姜焼き','jp','🐷',[['i_pork_slice','200g'],['i_onion','1/2個'],['i_ginger','1片'],['i_cabbage','2片（切絲配菜）']],['s_soy','s_mirin','s_sake','s_sugar','s_oil']],
-  ['r_nikujaga','馬鈴薯燉肉','肉じゃが','jp','🥔',[['i_pork_slice','150g'],['i_potato','3個'],['i_carrot','1根'],['i_onion','1個']],['s_soy','s_mirin','s_sugar','s_sake','s_dashi']],
-  ['r_misoshiru','豆腐海帶芽味噌湯','豆腐とわかめの味噌汁','jp','🥣',[['i_tofu','1/2塊'],['i_wakame','1小把'],['i_negi','少許']],['s_miso','s_dashi']],
-  ['r_oyakodon','親子丼','親子丼','jp','🍚',[['i_chicken_thigh','1片'],['i_onion','1/2個'],['i_egg','3顆'],['i_rice','2碗'],['i_negi','少許']],['s_soy','s_mirin','s_sugar','s_dashi']],
-  ['r_curry','日式咖哩飯','カレーライス','jp','🍛',[['i_pork_slice','200g'],['i_potato','2個'],['i_carrot','1根'],['i_onion','1個'],['i_rice','2碗']],['s_curry_roux','s_oil']],
-  ['r_hamburg','日式漢堡排','ハンバーグ','jp','🍔',[['i_mixed_mince','300g'],['i_onion','1/2個'],['i_egg','1顆'],['i_milk','2大匙']],['s_panko','s_salt','s_pepper','s_ketchup','s_chuno']],
-  ['r_saba_shio','鹽烤鯖魚','さばの塩焼き','jp','🐟',[['i_saba','1片'],['i_daikon','3cm（磨泥）'],['i_lemon','1/4顆']],['s_salt']],
-  ['r_teriyaki','照燒雞腿','鶏の照り焼き','jp','🍗',[['i_chicken_thigh','1片']],['s_soy','s_mirin','s_sugar','s_sake']],
-  ['r_tamagoyaki','玉子燒','卵焼き','jp','🍳',[['i_egg','3顆'],['i_negi','少許']],['s_sugar','s_soy','s_dashi','s_oil']],
-  ['r_karaage','日式炸雞','唐揚げ','jp','🍗',[['i_chicken_thigh','300g'],['i_garlic','1瓣'],['i_ginger','1片']],['s_soy','s_sake','s_katakuriko','s_oil']],
-  ['r_ohitashi','涼拌菠菜','ほうれん草のおひたし','jp','🥬',[['i_spinach','1把']],['s_soy','s_dashi','s_katsuobushi']],
-  ['r_yakiudon','日式炒烏龍','焼きうどん','jp','🍜',[['i_udon','2球'],['i_pork_slice','100g'],['i_cabbage','2片'],['i_carrot','1/4根'],['i_onion','1/4個']],['s_soy','s_oyster','s_katsuobushi','s_oil']],
-  ['r_tonjiru','豬肉味噌湯','豚汁','jp','🍲',[['i_pork_slice','100g'],['i_daikon','5cm'],['i_carrot','1/3根'],['i_tofu','1/2塊'],['i_konnyaku','1/2片'],['i_negi','少許']],['s_miso','s_dashi','s_sesame_oil']],
-  ['r_omurice','蛋包飯','オムライス','jp','🍳',[['i_egg','2顆'],['i_rice','1碗'],['i_chicken_thigh','80g'],['i_onion','1/4個']],['s_ketchup','s_butter','s_salt','s_pepper']],
-  ['r_salmon_butter','鮭魚奶油醬燒','鮭のバター醤油焼き','jp','🐟',[['i_salmon','2片'],['i_shimeji','1包'],['i_onion','1/2個']],['s_butter','s_soy','s_pepper']],
-  ['r_saba_miso','味噌煮鯖魚','さばの味噌煮','jp','🐟',[['i_saba','2片'],['i_ginger','1片'],['i_negi','1根']],['s_miso','s_sugar','s_mirin','s_sake','s_soy']],
-  ['r_nikudofu','肉豆腐','肉豆腐','jp','🍲',[['i_beef_slice','150g'],['i_tofu','1塊'],['i_onion','1/2個'],['i_negi','1根']],['s_soy','s_mirin','s_sugar','s_sake','s_dashi']],
-  ['r_kimchi_nabe','泡菜豬肉鍋','キムチ鍋','jp','🍲',[['i_pork_belly','200g'],['i_kimchi','200g'],['i_tofu','1塊'],['i_hakusai','1/4個'],['i_enoki','1包'],['i_nira','1/2把']],['s_miso','s_soy','s_chicken_stock','s_sesame_oil']],
-  ['r_buta_kimchi','泡菜炒豬肉','豚キムチ','jp','🐷',[['i_pork_belly','200g'],['i_kimchi','150g'],['i_onion','1/2個'],['i_nira','1/2把']],['s_soy','s_sesame_oil','s_sake']],
+  ['r_shogayaki','薑燒豬肉','豚の生姜焼き','jp','🐷',[['i_pork_slice','200g'],['i_onion','1/2個'],['i_ginger','1片'],['i_cabbage','2片（切絲配菜）',OPT]],['s_soy','s_mirin','s_sake','s_sugar','s_oil']],
+  ['r_nikujaga','馬鈴薯燉肉','肉じゃが','jp','🥔',[['i_pork_slice','150g',OR('i_beef_slice')],['i_potato','3個'],['i_carrot','1根'],['i_onion','1個']],['s_soy','s_mirin','s_sugar','s_sake','s_dashi']],
+  ['r_misoshiru','豆腐海帶芽味噌湯','豆腐とわかめの味噌汁','jp','🥣',[['i_tofu','1/2塊'],['i_wakame','1小把'],['i_negi','少許',OPT]],['s_miso','s_dashi']],
+  ['r_oyakodon','親子丼','親子丼','jp','🍚',[['i_chicken_thigh','1片',OR('i_chicken_breast')],['i_onion','1/2個'],['i_egg','3顆'],['i_rice','2碗'],['i_negi','少許',OPT]],['s_soy','s_mirin','s_sugar','s_dashi']],
+  ['r_curry','日式咖哩飯','カレーライス','jp','🍛',[['i_pork_slice','200g',OR('i_chicken_thigh','i_beef_slice')],['i_potato','2個'],['i_carrot','1根'],['i_onion','1個'],['i_rice','2碗']],['s_curry_roux','s_oil']],
+  ['r_hamburg','日式漢堡排','ハンバーグ','jp','🍔',[['i_mixed_mince','300g',OR('i_pork_mince')],['i_onion','1/2個'],['i_egg','1顆'],['i_milk','2大匙',OPT]],['s_panko','s_salt','s_pepper','s_ketchup','s_chuno']],
+  ['r_saba_shio','鹽烤鯖魚','さばの塩焼き','jp','🐟',[['i_saba','1片'],['i_daikon','3cm（磨泥）',OPT],['i_lemon','1/4顆',OPT]],['s_salt']],
+  ['r_teriyaki','照燒雞腿','鶏の照り焼き','jp','🍗',[['i_chicken_thigh','1片',OR('i_chicken_breast')]],['s_soy','s_mirin','s_sugar','s_sake']],
+  ['r_tamagoyaki','玉子燒','卵焼き','jp','🍳',[['i_egg','3顆'],['i_negi','少許',OPT]],['s_sugar','s_soy','s_dashi','s_oil']],
+  ['r_karaage','日式炸雞','唐揚げ','jp','🍗',[['i_chicken_thigh','300g',OR('i_chicken_breast')],['i_garlic','1瓣'],['i_ginger','1片']],['s_soy','s_sake','s_katakuriko','s_oil']],
+  ['r_ohitashi','涼拌菠菜','ほうれん草のおひたし','jp','🥬',[['i_spinach','1把',OR('i_komatsuna')]],['s_soy','s_dashi','s_katsuobushi']],
+  ['r_yakiudon','日式炒烏龍','焼きうどん','jp','🍜',[['i_udon','2球'],['i_pork_slice','100g',OR('i_pork_belly')],['i_cabbage','2片'],['i_carrot','1/4根',OPT],['i_onion','1/4個',OPT]],['s_soy','s_oyster','s_katsuobushi','s_oil']],
+  ['r_tonjiru','豬肉味噌湯','豚汁','jp','🍲',[['i_pork_slice','100g',OR('i_pork_belly')],['i_daikon','5cm'],['i_carrot','1/3根'],['i_tofu','1/2塊'],['i_konnyaku','1/2片',OPT],['i_negi','少許',OPT]],['s_miso','s_dashi','s_sesame_oil']],
+  ['r_omurice','蛋包飯','オムライス','jp','🍳',[['i_egg','2顆'],['i_rice','1碗'],['i_chicken_thigh','80g',OR('i_ham','i_bacon')],['i_onion','1/4個']],['s_ketchup','s_butter','s_salt','s_pepper']],
+  ['r_salmon_butter','鮭魚奶油醬燒','鮭のバター醤油焼き','jp','🐟',[['i_salmon','2片'],['i_shimeji','1包',OR('i_enoki','i_shiitake')],['i_onion','1/2個',OPT]],['s_butter','s_soy','s_pepper']],
+  ['r_saba_miso','味噌煮鯖魚','さばの味噌煮','jp','🐟',[['i_saba','2片'],['i_ginger','1片'],['i_negi','1根',OPT]],['s_miso','s_sugar','s_mirin','s_sake','s_soy']],
+  ['r_nikudofu','肉豆腐','肉豆腐','jp','🍲',[['i_beef_slice','150g',OR('i_pork_slice')],['i_tofu','1塊'],['i_onion','1/2個'],['i_negi','1根',OPT]],['s_soy','s_mirin','s_sugar','s_sake','s_dashi']],
+  ['r_kimchi_nabe','泡菜豬肉鍋','キムチ鍋','jp','🍲',[['i_pork_belly','200g',OR('i_pork_slice')],['i_kimchi','200g'],['i_tofu','1塊'],['i_hakusai','1/4個',OPT],['i_enoki','1包',OROPT('i_shimeji')],['i_nira','1/2把',OPT]],['s_miso','s_soy','s_chicken_stock','s_sesame_oil']],
+  ['r_buta_kimchi','泡菜炒豬肉','豚キムチ','jp','🐷',[['i_pork_belly','200g',OR('i_pork_slice')],['i_kimchi','150g'],['i_onion','1/2個'],['i_nira','1/2把',OPT]],['s_soy','s_sesame_oil','s_sake']],
   ['r_shio_kombu_cabbage','鹽昆布生菜沙拉','塩昆布キャベツ','jp','🥗',[['i_cabbage','1/4個'],['i_shio_kombu','1大匙']],['s_sesame_oil','s_sesame']],
   // 中華
-  ['r_mabo','麻婆豆腐','麻婆豆腐','cn','🌶️',[['i_tofu','1塊'],['i_pork_mince','150g'],['i_negi','1根'],['i_garlic','1瓣'],['i_ginger','1片']],['s_doubanjiang','s_tianmian','s_soy','s_chicken_stock','s_katakuriko','s_sesame_oil','s_sansho']],
-  ['r_gyoza','煎餃','餃子','cn','🥟',[['i_gyoza_skin','25張'],['i_pork_mince','200g'],['i_cabbage','1/4個'],['i_nira','1/2把'],['i_garlic','1瓣'],['i_ginger','1片']],['s_soy','s_sesame_oil','s_salt','s_pepper','s_oil']],
-  ['r_chahan','蛋炒飯','チャーハン','cn','🍚',[['i_rice','2碗'],['i_egg','2顆'],['i_negi','1根'],['i_ham','2片']],['s_soy','s_salt','s_pepper','s_oil','s_chicken_stock']],
-  ['r_moyashi_stirfry','清炒豆芽','もやし炒め','cn','🌱',[['i_moyashi','1包'],['i_garlic','1瓣'],['i_negi','1根']],['s_salt','s_chicken_stock','s_sesame_oil','s_oil']],
+  ['r_mabo','麻婆豆腐','麻婆豆腐','cn','🌶️',[['i_tofu','1塊'],['i_pork_mince','150g',OR('i_mixed_mince')],['i_negi','1根'],['i_garlic','1瓣'],['i_ginger','1片']],['s_doubanjiang','s_tianmian','s_soy','s_chicken_stock','s_katakuriko','s_sesame_oil','s_sansho']],
+  ['r_gyoza','煎餃','餃子','cn','🥟',[['i_gyoza_skin','25張'],['i_pork_mince','200g',OR('i_mixed_mince')],['i_cabbage','1/4個',OR('i_hakusai')],['i_nira','1/2把',OPT],['i_garlic','1瓣'],['i_ginger','1片']],['s_soy','s_sesame_oil','s_salt','s_pepper','s_oil']],
+  ['r_chahan','蛋炒飯','チャーハン','cn','🍚',[['i_rice','2碗'],['i_egg','2顆'],['i_negi','1根'],['i_ham','2片',OR('i_bacon','i_sausage','i_pork_slice','i_shrimp')]],['s_soy','s_salt','s_pepper','s_oil','s_chicken_stock']],
+  ['r_moyashi_stirfry','清炒豆芽','もやし炒め','cn','🌱',[['i_moyashi','1包'],['i_garlic','1瓣'],['i_negi','1根',OPT]],['s_salt','s_chicken_stock','s_sesame_oil','s_oil']],
   // 台式
-  ['r_tomato_egg','番茄炒蛋','トマトと卵の炒め物','tw','🍅',[['i_tomato','2顆'],['i_egg','3顆'],['i_negi','1根']],['s_salt','s_sugar','s_ketchup','s_oil']],
-  ['r_luroufan','滷肉飯','魯肉飯','tw','🍚',[['i_pork_belly','300g'],['i_onion','1/2個（代替紅蔥頭）'],['i_garlic','3瓣'],['i_egg','2顆（滷蛋）'],['i_rice','2碗']],['s_soy','s_rice_wine','s_rock_sugar','s_five_spice','s_white_pepper']],
-  ['r_sanbeiji','三杯雞','三杯鶏','tw','🍗',[['i_chicken_thigh','400g'],['i_ginger','1大塊'],['i_garlic','6瓣'],['i_basil','1把'],['i_chili','1根']],['s_sesame_oil','s_soy','s_rice_wine','s_sugar']],
-  ['r_garlic_cabbage','蒜炒高麗菜','キャベツのにんにく炒め','tw','🥬',[['i_cabbage','1/2個'],['i_garlic','3瓣'],['i_chili','1根']],['s_salt','s_oil']],
-  ['r_scallion_beef','蔥爆牛肉','牛肉とねぎの炒め物','tw','🥩',[['i_beef_slice','200g'],['i_negi','3根'],['i_garlic','2瓣'],['i_ginger','2片']],['s_soy','s_rice_wine','s_oyster','s_katakuriko','s_sugar']],
+  ['r_tomato_egg','番茄炒蛋','トマトと卵の炒め物','tw','🍅',[['i_tomato','2顆'],['i_egg','3顆'],['i_negi','1根',OPT]],['s_salt','s_sugar','s_ketchup','s_oil']],
+  ['r_luroufan','滷肉飯','魯肉飯','tw','🍚',[['i_pork_belly','300g',OR('i_pork_mince')],['i_onion','1/2個（代替紅蔥頭）'],['i_garlic','3瓣'],['i_egg','2顆（滷蛋）',OPT],['i_rice','2碗']],['s_soy','s_rice_wine','s_rock_sugar','s_five_spice','s_white_pepper']],
+  ['r_sanbeiji','三杯雞','三杯鶏','tw','🍗',[['i_chicken_thigh','400g'],['i_ginger','1大塊'],['i_garlic','6瓣'],['i_basil','1把'],['i_chili','1根',OPT]],['s_sesame_oil','s_soy','s_rice_wine','s_sugar']],
+  ['r_garlic_cabbage','蒜炒高麗菜','キャベツのにんにく炒め','tw','🥬',[['i_cabbage','1/2個'],['i_garlic','3瓣'],['i_chili','1根',OPT]],['s_salt','s_oil']],
+  ['r_scallion_beef','蔥爆牛肉','牛肉とねぎの炒め物','tw','🥩',[['i_beef_slice','200g',OR('i_pork_slice')],['i_negi','3根'],['i_garlic','2瓣'],['i_ginger','2片']],['s_soy','s_rice_wine','s_oyster','s_katakuriko','s_sugar']],
   ['r_mayou_ji','麻油雞','麻油鶏','tw','🍗',[['i_chicken_thigh','400g'],['i_ginger','1大塊']],['s_sesame_oil','s_rice_wine','s_salt']],
-  ['r_jiachang_tofu','家常豆腐','家常豆腐','tw','🧈',[['i_tofu','1塊'],['i_pork_slice','100g'],['i_shiitake','3朵'],['i_carrot','1/4根'],['i_negi','1根'],['i_garlic','2瓣']],['s_soy','s_oyster','s_sugar','s_katakuriko','s_oil']],
-  ['r_bihun','炒米粉','台湾焼きビーフン','tw','🍜',[['i_bihun','200g'],['i_pork_slice','100g'],['i_cabbage','1/4個'],['i_carrot','1/3根'],['i_shiitake','3朵'],['i_negi','1根']],['s_soy','s_white_pepper','s_oil','s_salt','s_shacha']],
-  ['r_clam_soup','薑絲蛤蜊湯','あさりの生姜スープ','tw','🐚',[['i_asari','300g'],['i_ginger','3片'],['i_negi','1根']],['s_rice_wine','s_salt']],
+  ['r_jiachang_tofu','家常豆腐','家常豆腐','tw','🧈',[['i_tofu','1塊',OR('i_atsuage')],['i_pork_slice','100g',OR('i_pork_belly')],['i_shiitake','3朵',OPT],['i_carrot','1/4根',OPT],['i_negi','1根'],['i_garlic','2瓣']],['s_soy','s_oyster','s_sugar','s_katakuriko','s_oil']],
+  ['r_bihun','炒米粉','台湾焼きビーフン','tw','🍜',[['i_bihun','200g'],['i_pork_slice','100g',OR('i_pork_belly')],['i_cabbage','1/4個'],['i_carrot','1/3根',OPT],['i_shiitake','3朵',OPT],['i_negi','1根']],['s_soy','s_white_pepper','s_oil','s_salt','s_shacha']],
+  ['r_clam_soup','薑絲蛤蜊湯','あさりの生姜スープ','tw','🐚',[['i_asari','300g'],['i_ginger','3片'],['i_negi','1根',OPT]],['s_rice_wine','s_salt']],
   ['r_danbing','台式蛋餅','台湾式卵クレープ','tw','🫓',[['i_egg','2顆'],['i_flour','100g'],['i_negi','2根']],['s_salt','s_soy_paste','s_oil']],
   ['r_shiitake_chicken','香菇雞湯','しいたけと鶏のスープ','tw','🍲',[['i_chicken_thigh','300g'],['i_shiitake','6朵'],['i_ginger','3片']],['s_salt','s_rice_wine']],
-  ['r_egg_tofu_fry','乾煎雞蛋豆腐','玉子豆腐の米粉焼き','tw','🍮',[['i_egg_tofu','1盒'],['i_negi','少許']],['s_komeko','s_oil','s_soy_paste']],
-  ['r_shacha_beef','沙茶牛肉炒青江菜','牛肉とチンゲン菜の沙茶醤炒め','tw','🥩',[['i_beef_slice','200g'],['i_chingensai','2株'],['i_garlic','2瓣'],['i_chili','1根']],['s_shacha','s_soy','s_rice_wine','s_sugar','s_katakuriko']],
-  ['r_shacha_noodle','沙茶乾拌麵','沙茶醤の混ぜ麺','tw','🍜',[['i_ramen','2球'],['i_moyashi','1/2包'],['i_negi','1根'],['i_egg','1顆（水煮或荷包蛋）']],['s_shacha','s_soy','s_sesame_oil','s_black_vinegar']],
+  ['r_egg_tofu_fry','乾煎雞蛋豆腐','玉子豆腐の米粉焼き','tw','🍮',[['i_egg_tofu','1盒'],['i_negi','少許',OPT]],['s_komeko','s_oil','s_soy_paste']],
+  ['r_shacha_beef','沙茶牛肉炒青江菜','牛肉とチンゲン菜の沙茶醤炒め','tw','🥩',[['i_beef_slice','200g',OR('i_pork_slice')],['i_chingensai','2株',OR('i_komatsuna','i_cabbage')],['i_garlic','2瓣'],['i_chili','1根',OPT]],['s_shacha','s_soy','s_rice_wine','s_sugar','s_katakuriko']],
+  ['r_shacha_noodle','沙茶乾拌麵','沙茶醤の混ぜ麺','tw','🍜',[['i_ramen','2球',OR('i_udon')],['i_moyashi','1/2包',OPT],['i_negi','1根'],['i_egg','1顆（水煮或荷包蛋）',OPT]],['s_shacha','s_soy','s_sesame_oil','s_black_vinegar']],
   // 韓式
-  ['r_gochujang_pork','韓式辣炒豬肉','豚肉のコチュジャン炒め','kr','🌶️',[['i_pork_slice','200g'],['i_onion','1/2個'],['i_negi','1根'],['i_garlic','2瓣']],['s_gochujang','s_soy','s_sugar','s_sesame_oil','s_sake']],
-  ['r_bibimbap','韓式拌飯','ビビンバ','kr','🍚',[['i_rice','2碗'],['i_pork_mince','150g'],['i_egg','2顆'],['i_spinach','1/2把'],['i_moyashi','1/2包'],['i_carrot','1/3根']],['s_gochujang','s_sesame_oil','s_soy','s_sesame','s_salt','s_sugar']],
-  ['r_shacha_moyashi','沙茶肉絲炒豆芽','沙茶醤の豚もやし炒め','tw','🌱',[['i_moyashi','1包'],['i_pork_slice','100g'],['i_nira','1/2把'],['i_garlic','2瓣']],['s_shacha','s_soy','s_oil']],
-  ['r_tomato_egg_soup','番茄蛋花湯','トマトと卵のスープ','tw','🍲',[['i_tomato','1顆'],['i_egg','2顆'],['i_negi','1根']],['s_salt','s_chicken_stock','s_sesame_oil','s_katakuriko']],
-  ['r_pepper_pork','青椒炒肉絲','ピーマンと豚肉の細切り炒め','tw','🫑',[['i_pepper','3個'],['i_pork_slice','150g'],['i_garlic','2瓣']],['s_soy','s_rice_wine','s_katakuriko','s_salt','s_oil']],
+  ['r_gochujang_pork','韓式辣炒豬肉','豚肉のコチュジャン炒め','kr','🌶️',[['i_pork_slice','200g',OR('i_pork_belly')],['i_onion','1/2個'],['i_negi','1根',OPT],['i_garlic','2瓣']],['s_gochujang','s_soy','s_sugar','s_sesame_oil','s_sake']],
+  ['r_bibimbap','韓式拌飯','ビビンバ','kr','🍚',[['i_rice','2碗'],['i_pork_mince','150g',OR('i_beef_slice','i_mixed_mince')],['i_egg','2顆'],['i_spinach','1/2把',OR('i_komatsuna')],['i_moyashi','1/2包'],['i_carrot','1/3根',OPT]],['s_gochujang','s_sesame_oil','s_soy','s_sesame','s_salt','s_sugar']],
+  ['r_shacha_moyashi','沙茶肉絲炒豆芽','沙茶醤の豚もやし炒め','tw','🌱',[['i_moyashi','1包'],['i_pork_slice','100g'],['i_nira','1/2把',OPT],['i_garlic','2瓣']],['s_shacha','s_soy','s_oil']],
+  ['r_tomato_egg_soup','番茄蛋花湯','トマトと卵のスープ','tw','🍲',[['i_tomato','1顆'],['i_egg','2顆'],['i_negi','1根',OPT]],['s_salt','s_chicken_stock','s_sesame_oil','s_katakuriko']],
+  ['r_pepper_pork','青椒炒肉絲','ピーマンと豚肉の細切り炒め','tw','🫑',[['i_pepper','3個'],['i_pork_slice','150g',OR('i_beef_slice')],['i_garlic','2瓣']],['s_soy','s_rice_wine','s_katakuriko','s_salt','s_oil']],
   // 西式
-  ['r_carbonara','培根蛋黃義大利麵','カルボナーラ','west','🍝',[['i_pasta','200g'],['i_bacon','80g'],['i_egg','2顆'],['i_garlic','1瓣']],['s_parmesan','s_black_pepper','s_salt','s_olive']],
-  ['r_bolognese','番茄肉醬義大利麵','ミートソースパスタ','west','🍝',[['i_pasta','200g'],['i_mixed_mince','200g'],['i_onion','1/2個'],['i_tomato_can','1罐'],['i_garlic','2瓣']],['s_olive','s_salt','s_black_pepper','s_sugar','s_ketchup']],
-  ['r_cream_chicken','奶油蘑菇雞','鶏肉ときのこのクリーム煮','west','🍗',[['i_chicken_thigh','300g'],['i_shimeji','1包'],['i_onion','1/2個'],['i_cream','100ml'],['i_garlic','1瓣'],['i_flour','1大匙']],['s_butter','s_salt','s_black_pepper']],
-  ['r_corn_soup','玉米濃湯','コーンスープ','west','🌽',[['i_corn_can','1罐'],['i_onion','1/2個'],['i_milk','300ml'],['i_bacon','30g']],['s_butter','s_salt','s_pepper']],
+  ['r_carbonara','培根蛋黃義大利麵','カルボナーラ','west','🍝',[['i_pasta','200g'],['i_bacon','80g',OR('i_ham')],['i_egg','2顆'],['i_garlic','1瓣',OPT]],['s_parmesan','s_black_pepper','s_salt','s_olive']],
+  ['r_bolognese','番茄肉醬義大利麵','ミートソースパスタ','west','🍝',[['i_pasta','200g'],['i_mixed_mince','200g',OR('i_pork_mince')],['i_onion','1/2個'],['i_tomato_can','1罐'],['i_garlic','2瓣']],['s_olive','s_salt','s_black_pepper','s_sugar','s_ketchup']],
+  ['r_cream_chicken','奶油蘑菇雞','鶏肉ときのこのクリーム煮','west','🍗',[['i_chicken_thigh','300g',OR('i_chicken_breast')],['i_shimeji','1包',OR('i_shiitake','i_enoki')],['i_onion','1/2個'],['i_cream','100ml',OR('i_milk')],['i_garlic','1瓣',OPT],['i_flour','1大匙']],['s_butter','s_salt','s_black_pepper']],
+  ['r_corn_soup','玉米濃湯','コーンスープ','west','🌽',[['i_corn_can','1罐'],['i_onion','1/2個'],['i_milk','300ml'],['i_bacon','30g',OPT]],['s_butter','s_salt','s_pepper']],
   ['r_french_toast','法式吐司','フレンチトースト','west','🍞',[['i_bread','2片'],['i_egg','1顆'],['i_milk','100ml']],['s_sugar','s_butter','s_honey']],
-  ['r_garlic_shrimp','蒜香奶油蝦','ガーリックシュリンプ','west','🦐',[['i_shrimp','200g'],['i_garlic','4瓣'],['i_lemon','1/4顆']],['s_butter','s_salt','s_black_pepper','s_olive']],
-  ['r_tuna_toast','鮪魚起司吐司','ツナマヨチーズトースト','west','🍞',[['i_bread','2片'],['i_tuna_can','1罐'],['i_onion','1/4個'],['i_cheese','2片']],['s_mayo','s_black_pepper']],
+  ['r_garlic_shrimp','蒜香奶油蝦','ガーリックシュリンプ','west','🦐',[['i_shrimp','200g'],['i_garlic','4瓣'],['i_lemon','1/4顆',OPT]],['s_butter','s_salt','s_black_pepper','s_olive']],
+  ['r_tuna_toast','鮪魚起司吐司','ツナマヨチーズトースト','west','🍞',[['i_bread','2片'],['i_tuna_can','1罐'],['i_onion','1/4個',OPT],['i_cheese','2片']],['s_mayo','s_black_pepper']],
   ['r_broccoli_shrimp','蒜炒青花菜蝦仁','ブロッコリーとえびのにんにく炒め','west','🥦',[['i_broccoli','1顆'],['i_shrimp','150g'],['i_garlic','2瓣']],['s_olive','s_salt','s_black_pepper']],
-  ['r_omelet','起司歐姆蛋','チーズオムレツ','west','🍳',[['i_egg','3顆'],['i_cheese','1片'],['i_milk','1大匙']],['s_butter','s_salt','s_pepper']],
+  ['r_omelet','起司歐姆蛋','チーズオムレツ','west','🍳',[['i_egg','3顆'],['i_cheese','1片'],['i_milk','1大匙',OPT]],['s_butter','s_salt','s_pepper']],
 ];
 
 function buildSeed(){
@@ -562,7 +603,7 @@ function buildSeed(){
   ];
   const recipes = SEED_RECIPES.map(([id,name,ja,cuisine,emoji,ings,seas])=>({
     id,name,ja,cuisine,emoji,image:'',note:'',
-    ings: ings.map(([iid,amt])=>({id:iid,amt})),
+    ings: ings.map(([iid,amt,o])=>({id:iid,amt,...(o||{})})),
     seas: seas.slice(),
   }));
   return { schema:1, seedVersion:SEED_VERSION, items, recipes, fridge:[], settings:{threshold:70} };
@@ -572,7 +613,7 @@ function buildSeed(){
    每次內建資料有變動就把 SEED_VERSION +1。舊裝置打開時：
    新增的內建項目會補進來；沒被使用者在後台改過的內建項目會更新成新版本；
    使用者改過的（edited:true）保留不動；REMOVED_SEED_IDS 裡未改過的會被移除。 */
-const SEED_VERSION = 2;
+const SEED_VERSION = 3;
 const REMOVED_SEED_IDS = ['r_potato_salad','r_chikuwa_cucumber','r_cucumber'];
 function migrate(db){
   if((db.seedVersion||1) >= SEED_VERSION) return db;
@@ -612,8 +653,15 @@ function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('sh
 /* =====================================================================
    料理配對
    ===================================================================== */
+/* 食材「位置」：每一格是 {id, amt, alts:[替代id...], opt:true(可省略)}
+   冰箱裡有 id 或任一 alts 就算這格滿足；opt 的格子不算進百分比。 */
+const slotIds  = x => [x.id, ...(x.alts||[])];
+const slotHave = x => slotIds(x).some(id=>fridgeSet.has(id));
+const slotName = x => slotIds(x).map(id=>itemById(id)?.name).filter(Boolean).join('／');
+const reqSlots = r => r.ings.filter(x=>!x.opt);
 function matchRecipe(r){
-  const ingHave = r.ings.filter(x=>fridgeSet.has(x.id)).length, ingTotal = r.ings.length;
+  const req = reqSlots(r);
+  const ingHave = req.filter(slotHave).length, ingTotal = req.length;
   const seaHave = r.seas.filter(id=>fridgeSet.has(id)).length, seaTotal = r.seas.length;
   return {
     ingHave, ingTotal, seaHave, seaTotal,
@@ -625,7 +673,7 @@ function recipeMatchesSearch(r, q){
   if(!q) return true;
   q = q.toLowerCase();
   if((r.name+r.ja).toLowerCase().includes(q)) return true;
-  return [...r.ings.map(x=>x.id), ...r.seas].some(id=>{ const it=itemById(id); return it && (it.name+it.ja).toLowerCase().includes(q); });
+  return [...r.ings.flatMap(slotIds), ...r.seas].some(id=>{ const it=itemById(id); return it && (it.name+it.ja).toLowerCase().includes(q); });
 }
 function recipeImg(r, cls){
   return r.image ? `<span class="${cls}"><img src="${esc(r.image)}" alt=""></span>` : `<span class="${cls}">${r.emoji||'🍽️'}</span>`;
@@ -656,7 +704,7 @@ function renderRecipes(){
   rows.forEach(x=>{ x.g = fridgeEmpty ? 'all' : x.m.ingPct===100 ? 'ready' : x.m.ingPct>=th ? 'near' : 'rest'; });
 
   const card = ({r,m,g}, i) => {
-    const missIng = r.ings.filter(x=>!fridgeSet.has(x.id)).map(x=>itemById(x.id)?.name).filter(Boolean);
+    const missIng = reqSlots(r).filter(x=>!slotHave(x)).map(slotName).filter(Boolean);
     const missSea = r.seas.filter(id=>!fridgeSet.has(id)).map(id=>itemById(id)?.name).filter(Boolean);
     let miss = '';
     if(!fridgeEmpty){
@@ -786,6 +834,17 @@ function renderRecipeModal(){
     const have = fridgeSet.has(it.id);
     return `<div class="irow ${have?'have':'miss'} ${i%2?'wob2':'wob'}" data-toggle="${it.id}"><span class="ck">${have?'✓':'✕'}</span><span class="nm">${it.emoji||''} ${esc(it.name)}<span class="ja">${esc(it.ja)}</span></span>${amt?`<span class="amt">${esc(amt)}</span>`:''}</div>`;
   };
+  // 食材格：單一食材 → 整列可點；有替代 → 每個候選各自可點；可省略 → 淡化並標示
+  const slotRow = (x, i) => {
+    const ids = slotIds(x).filter(id=>itemById(id)); if(!ids.length) return '';
+    const have = slotHave(x), opt = !!x.opt;
+    const state = have ? 'have' : (opt ? 'optm' : 'miss');
+    const label = it => `${it.emoji||''} ${esc(it.name)}<span class="ja">${esc(it.ja)}</span>`;
+    const body = ids.length>1
+      ? `<span class="nm cands">${ids.map(id=>`<span class="cand ${fridgeSet.has(id)?'on':''}" data-toggle="${id}">${label(itemById(id))}</span>`).join('<span class="or">或</span>')}</span>`
+      : `<span class="nm" data-toggle="${ids[0]}">${label(itemById(ids[0]))}</span>`;
+    return `<div class="irow slot ${state} ${i%2?'wob2':'wob'}"><span class="ck">${have?'✓':(opt?'－':'✕')}</span>${body}${opt?'<span class="optag">可省略</span>':''}${x.amt?`<span class="amt">${esc(x.amt)}</span>`:''}</div>`;
+  };
   $('#rm-body').innerHTML = `
     <div class="d-hero">${r.image?`<div class="d-img"><img src="${esc(r.image)}" alt=""></div>`:`<div class="d-img">${r.emoji||'🍽️'}</div>`}
       <div class="d-meta"><div class="d-ja">${esc(r.ja)}</div><span class="ctag hand" style="margin:0;font-size:15px">${CUISINES[r.cuisine]||CUISINES.other}</span></div>
@@ -794,7 +853,7 @@ function renderRecipeModal(){
       <div class="d-pct ing wob"><div class="l">食材</div><div class="v ${m.ingPct===100?'full':''}">${m.ingPct}%<small>${m.ingHave}／${m.ingTotal}</small></div></div>
       <div class="d-pct sea wob2"><div class="l">調味料</div><div class="v ${m.seaPct===100?'full':''}">${m.seaPct}%<small>${m.seaHave}／${m.seaTotal}</small></div></div>
     </div>
-    <div class="d-sec"><h3>食材 <small>（含用量）</small></h3>${r.ings.map((x,i)=>{const it=itemById(x.id); return it?row(it,x.amt,i):'';}).join('')||'<div class="b-none">（無）</div>'}</div>
+    <div class="d-sec"><h3>食材 <small>（含用量${r.ings.some(x=>x.alts?.length)?'・「或」表示任一種都可以':''}）</small></h3>${r.ings.map(slotRow).join('')||'<div class="b-none">（無）</div>'}</div>
     <div class="d-sec"><h3>調味料</h3>${r.seas.map((id,i)=>{const it=itemById(id); return it?row(it,'',i):'';}).join('')||'<div class="b-none">（無）</div>'}</div>
     ${r.note?`<div class="d-note">📝 ${esc(r.note)}</div>`:''}
     <div class="d-tip">點任一項目可直接加入／移出冰箱</div>`;
@@ -817,7 +876,7 @@ function renderAdmin(){
   const body = $('#a-body');
   const q = ui.aSearch.trim().toLowerCase();
   const searchBox = ph => `<div class="search wob"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2c2a28" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 L20 20"></path></svg><input id="a-search" placeholder="${ph}" value="${esc(ui.aSearch)}"></div>`;
-  const usedIn = id => DB.recipes.filter(r=>r.ings.some(x=>x.id===id)||r.seas.includes(id)).length;
+  const usedIn = id => DB.recipes.filter(r=>r.ings.some(x=>slotIds(x).includes(id))||r.seas.includes(id)).length;
 
   if(ui.adminTab==='ingredient' || ui.adminTab==='seasoning'){
     const kind = ui.adminTab;
@@ -873,10 +932,14 @@ function saveItem(kind, id){
 }
 function deleteItem(id){
   const it = itemById(id); if(!it) return;
-  const n = DB.recipes.filter(r=>r.ings.some(x=>x.id===id)||r.seas.includes(id)).length;
+  const n = DB.recipes.filter(r=>r.ings.some(x=>slotIds(x).includes(id))||r.seas.includes(id)).length;
   if(!confirm(`確定刪除「${it.name}」？${n?`\n有 ${n} 道料理用到它，刪除後會從那些料理中移除。`:''}`)) return;
   DB.items = DB.items.filter(i=>i.id!==id);
-  DB.recipes.forEach(r=>{ r.ings=r.ings.filter(x=>x.id!==id); r.seas=r.seas.filter(x=>x!==id); });
+  DB.recipes.forEach(r=>{
+    // 從替代清單移除；若是主食材且還有替代，就把第一個替代升為主食材；否則整格移除
+    r.ings = r.ings.map(x=>{ const alts=(x.alts||[]).filter(a=>a!==id); if(x.id!==id) return {...x, alts}; if(!alts.length) return null; return {...x, id:alts[0], alts:alts.slice(1)}; }).filter(Boolean);
+    r.seas = r.seas.filter(x=>x!==id);
+  });
   fridgeSet.delete(id); persist(); renderAdmin(); toast('已刪除');
 }
 
@@ -885,6 +948,7 @@ let rDraft = null;
 function openRecipeForm(id){
   const r = id ? DB.recipes.find(x=>x.id===id) : null;
   rDraft = r ? JSON.parse(JSON.stringify(r)) : {id:'', name:'', ja:'', cuisine:'jp', emoji:'', image:'', note:'', ings:[], seas:[]};
+  altTarget = null;
   openForm(id?'編輯料理':'新增料理', `
     <div class="f">
       <div class="grid31"><label>料理名稱（中文）<input type="text" id="rf-name" value="${esc(rDraft.name)}" placeholder="例：薑燒豬肉"></label><label>Emoji<input type="text" id="rf-emoji" value="${esc(rDraft.emoji)}" placeholder="🐷"></label></div>
@@ -895,8 +959,9 @@ function openRecipeForm(id){
           <div class="img-acts"><div class="row"><button class="hbtn wob file-btn">上傳圖片<input type="file" accept="image/*" onchange="pickImage(this)"></button><button class="hbtn wob2" onclick="setImageUrl()">貼網址</button><button class="hbtn wob red" onclick="rDraft.image='';renderImgPrev()">移除</button></div>
           <div class="f-help">上傳的圖片會自動縮小並存在裝置裡；圖片多會佔空間，建議少量使用。</div></div></div>
       </label>
-      <label>食材（含用量）
+      <label>食材（含用量）<span class="f-help">「＋或」可加替代食材：冰箱有其中任一種就算有。勾「可省略」的食材不算進百分比。</span>
         <div class="builder"><div class="b-rows" id="rf-ings"></div>
+          <div class="alt-banner" id="rf-alt-banner" hidden></div>
           <div class="b-search"><input type="text" id="rf-ing-q" placeholder="輸入食材名稱搜尋，點選加入…" autocomplete="off"><div class="b-sug" id="rf-ing-sug"></div></div></div>
       </label>
       <label>調味料（不需用量）
@@ -926,8 +991,24 @@ function renderBuilder(kind){
   if(!list.length){ box.innerHTML=`<div class="b-none">尚未加入${isIng?'食材':'調味料'}</div>`; return; }
   box.innerHTML = list.map((x,i)=>{
     const it = itemById(isIng?x.id:x); if(!it) return '';
-    return `<div class="b-row"><span class="nm">${it.emoji||''} ${esc(it.name)}<span class="ja">${esc(it.ja)}</span></span>${isIng?`<input type="text" placeholder="用量" value="${esc(x.amt)}" data-amt="${i}">`:''}<button class="rm" data-rm="${kind}:${i}">✕</button></div>`;
+    if(!isIng) return `<div class="b-row"><span class="nm">${it.emoji||''} ${esc(it.name)}<span class="ja">${esc(it.ja)}</span></span><button class="rm" data-rm="${kind}:${i}">✕</button></div>`;
+    const alts = (x.alts||[]).map((a,k)=>{ const ai=itemById(a); return ai?`<span class="alt"><span class="or">或</span>${ai.emoji||''} ${esc(ai.name)}<button class="alt-rm" data-alt-rm="${i}:${k}" title="移除這個替代">✕</button></span>`:''; }).join('');
+    return `<div class="b-row slot ${x.opt?'opt':''}">
+      <div class="b-main">
+        <div class="nm-line"><span class="nm">${it.emoji||''} ${esc(it.name)}<span class="ja">${esc(it.ja)}</span></span>${alts}<button class="alt-add ${altTarget===i?'on':''}" data-alt-add="${i}" title="加入替代食材">＋或</button></div>
+        <span class="opt-l"><input type="checkbox" id="opt-${i}" data-opt="${i}" ${x.opt?'checked':''}><span data-opt-for="${i}">可省略（不算進％）</span></span>
+      </div>
+      <input type="text" placeholder="用量" value="${esc(x.amt)}" data-amt="${i}"><button class="rm" data-rm="${kind}:${i}">✕</button></div>`;
   }).join('');
+  if(isIng) renderAltBanner();
+}
+let altTarget = null;   // 正在為第幾格加替代食材（null = 加新的一格）
+function renderAltBanner(){
+  const b = $('#rf-alt-banner'), inp = $('#rf-ing-q'); if(!b) return;
+  if(altTarget===null || !rDraft.ings[altTarget]){ altTarget=null; b.hidden=true; inp.placeholder='輸入食材名稱搜尋，點選加入…'; return; }
+  const it = itemById(rDraft.ings[altTarget].id);
+  b.hidden=false; b.innerHTML = `正在為「${esc(it?.name||'')}」加替代食材，在下面搜尋並點選 <button data-alt-cancel>取消</button>`;
+  inp.placeholder = `搜尋可以代替「${it?.name||''}」的食材…`;
 }
 function bindSuggest(kind){
   const isIng = kind==='ingredient';
@@ -935,7 +1016,7 @@ function bindSuggest(kind){
   const show = ()=>{
     const q = inp.value.trim().toLowerCase();
     if(!q){ sug.classList.remove('open'); return; }
-    const have = new Set(isIng ? rDraft.ings.map(x=>x.id) : rDraft.seas);
+    const have = new Set(isIng ? rDraft.ings.flatMap(slotIds) : rDraft.seas);
     const hits = DB.items.filter(i=>i.kind===kind && !have.has(i.id) && (i.name+i.ja).toLowerCase().includes(q)).slice(0,8);
     sug.innerHTML = hits.map(i=>`<div data-pick="${i.id}">${i.emoji||''} ${esc(i.name)} <span class="ja">${esc(i.ja)}</span></div>`).join('') + `<div class="new" data-pick-new="${esc(inp.value.trim())}">＋ 新增「${esc(inp.value.trim())}」為新${isIng?'食材':'調味料'}</div>`;
     sug.classList.add('open');
@@ -948,6 +1029,10 @@ function bindSuggest(kind){
     e.preventDefault();
     let id = d.dataset.pick;
     if(!id){ const name=d.dataset.pickNew; if(!name) return; const it={id:uid(isIng?'i_':'s_'),kind,name,ja:'',cat:isIng?'other':'',emoji:''}; DB.items.push(it); id=it.id; toast(`已新增「${name}」到${isIng?'食材':'調味料'}庫`); }
+    if(isIng && altTarget!==null && rDraft.ings[altTarget]){
+      const s = rDraft.ings[altTarget]; s.alts = [...(s.alts||[]), id]; altTarget=null;
+      inp.value=''; sug.classList.remove('open'); renderBuilder(kind); return;
+    }
     if(isIng) rDraft.ings.push({id, amt:''}); else rDraft.seas.push(id);
     inp.value=''; sug.classList.remove('open'); renderBuilder(kind);
     if(isIng){ const last=$('#rf-ings').querySelector(`[data-amt="${rDraft.ings.length-1}"]`); last && last.focus(); }
@@ -1016,7 +1101,15 @@ document.addEventListener('click', e=>{
   if(x=el('[data-new-recipe]')){ openRecipeForm(''); return; }
   if(x=el('[data-edit-recipe]')){ openRecipeForm(x.dataset.editRecipe); return; }
   if(x=el('[data-del-recipe]')){ deleteRecipe(x.dataset.delRecipe,false); return; }
-  if(x=el('[data-rm]')){ const [kind,i]=x.dataset.rm.split(':'); (kind==='ingredient'?rDraft.ings:rDraft.seas).splice(+i,1); renderBuilder(kind); return; }
+  if(x=el('[data-rm]')){ const [kind,i]=x.dataset.rm.split(':'); (kind==='ingredient'?rDraft.ings:rDraft.seas).splice(+i,1); if(kind==='ingredient') altTarget=null; renderBuilder(kind); return; }
+  if(x=el('[data-alt-add]')){ const i=+x.dataset.altAdd; altTarget = altTarget===i ? null : i; renderBuilder('ingredient'); if(altTarget!==null) $('#rf-ing-q').focus(); return; }
+  if(x=el('[data-alt-rm]')){ const [i,k]=x.dataset.altRm.split(':').map(Number); rDraft.ings[i].alts.splice(k,1); renderBuilder('ingredient'); return; }
+  if(x=el('[data-alt-cancel]')){ altTarget=null; renderBuilder('ingredient'); return; }
+  if(x=el('[data-opt-for]')){ const cb=$('#opt-'+x.dataset.optFor); cb.checked=!cb.checked; cb.dispatchEvent(new Event('change',{bubbles:true})); return; }
+});
+document.addEventListener('change', e=>{
+  const t=e.target;
+  if(t.dataset.opt!==undefined){ const s=rDraft.ings[+t.dataset.opt]; if(t.checked) s.opt=true; else delete s.opt; t.closest('.b-row').classList.toggle('opt', t.checked); }
 });
 document.addEventListener('input', e=>{
   const t = e.target;
