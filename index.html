@@ -325,7 +325,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.4.0</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.4.1</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -389,6 +389,14 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.4.1 - 2026年9月21日</div>
+        <div class="changelog-content">
+          🍽 新增 47 道料理，總共 99 道：油淋雞、椒麻雞、豆腐乳雞、剝皮辣椒雞湯、可樂雞翅、宮保雞丁、地三鮮、茄子肉醬煲、乾燒蝦仁、水煮肉片、金沙豆腐、皮蛋豆腐、豆乳麵、糖醋排骨、肉燥飯、東坡肉、紅燒魚、清蒸魚、酸菜白肉鍋、客家小炒、白菜滷、筑前煮、紅酒燉牛肉、南瓜燉飯、韓式雜菜冬粉、香蕉鬆餅……<br>
+          🥬 新增 30 樣食材、3 種調味料（羊肉片、排骨、皮蛋、鹹蛋黃、豆漿、木耳、絲瓜、竹筍、冬粉、剝皮辣椒、紅酒、豆腐乳……）<br>
+          🍜 炒米粉改名新竹炒米粉並加入蝦米；花枝改名魷魚／花枝；新增「甜點」分類
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.4.0 - 2026年9月20日</div>
         <div class="changelog-content">
@@ -475,7 +483,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.4.1';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -484,7 +492,7 @@ const Store = {
 
 /* ── 常數 ── */
 const CATS = { veg:'蔬菜', meat:'肉類', seafood:'海鮮', egg:'蛋豆奶', staple:'主食', other:'其他' };
-const CUISINES = { jp:'日式', tw:'台式', cn:'中華', kr:'韓式', west:'西式', other:'其他' };
+const CUISINES = { jp:'日式', tw:'台式', cn:'中華', kr:'韓式', west:'西式', sweet:'甜點', other:'其他' };
 const STAPLE_SEASONINGS = ['s_salt','s_sugar','s_soy','s_oil','s_pepper'];
 
 /* ── 預設資料 ── */
@@ -499,23 +507,32 @@ const SEED_ITEMS = [
   ['i_shimeji','鴻喜菇','しめじ','veg','🍄'],['i_nira','韭菜','ニラ','veg','🌿'],['i_pumpkin','南瓜','かぼちゃ','veg','🎃'],
   ['i_broccoli','青花菜','ブロッコリー','veg','🥦'],['i_basil','九層塔','台湾バジル','veg','🌿'],['i_chili','辣椒','唐辛子','veg','🌶️'],
   ['i_lemon','檸檬','レモン','veg','🍋'],['i_lettuce','生菜','レタス','veg','🥬'],['i_chingensai','青江菜','チンゲン菜','veg','🥬'],
+  ['i_mushroom','蘑菇','マッシュルーム','veg','🍄'],['i_kikurage','木耳','きくらげ','veg','🍄'],['i_hechima','絲瓜','ヘチマ','veg','🥒'],['i_takenoko','竹筍','たけのこ','veg','🎋'],
+  ['i_corn','玉米','とうもろこし','veg','🌽'],['i_renkon','蓮藕','れんこん','veg','🪷'],['i_gobo','牛蒡','ごぼう','veg','🌿'],['i_cilantro','香菜','パクチー','veg','🌿'],
+  ['i_green_bean','四季豆','いんげん','veg','🫛'],['i_celery','芹菜','セロリ','veg','🌿'],['i_banana','香蕉','バナナ','veg','🍌'],
   // 肉類
   ['i_pork_slice','豬肉片','豚こま切れ肉','meat','🥩'],['i_pork_belly','豬五花','豚バラ肉','meat','🥓'],['i_pork_mince','豬絞肉','豚ひき肉','meat','🥩'],
   ['i_mixed_mince','牛豬混合絞肉','合いびき肉','meat','🥩'],['i_chicken_thigh','雞腿肉','鶏もも肉','meat','🍗'],['i_chicken_breast','雞胸肉','鶏むね肉','meat','🍗'],
   ['i_beef_slice','牛肉片','牛薄切り肉','meat','🥩'],['i_bacon','培根','ベーコン','meat','🥓'],['i_ham','火腿','ハム','meat','🍖'],['i_sausage','香腸','ソーセージ','meat','🌭'],
+  ['i_lamb_slice','羊肉片','ラム薄切り肉','meat','🐑'],['i_pork_ribs','排骨','スペアリブ','meat','🍖'],['i_chicken_wing','雞翅','手羽先','meat','🍗'],['i_chicken_mince','雞絞肉','鶏ひき肉','meat','🍗'],['i_beef_chunk','牛肉塊','牛角切り肉','meat','🥩'],
   // 海鮮
   ['i_salmon','鮭魚','鮭','seafood','🐟'],['i_saba','鯖魚','さば','seafood','🐟'],['i_shrimp','蝦','えび','seafood','🦐'],
-  ['i_asari','蛤蜊','あさり','seafood','🐚'],['i_squid','花枝','いか','seafood','🦑'],['i_tuna_can','鮪魚罐頭','ツナ缶','seafood','🥫'],['i_shirasu','吻仔魚','しらす','seafood','🐟'],
+  ['i_asari','蛤蜊','あさり','seafood','🐚'],['i_squid','魷魚／花枝','いか','seafood','🦑'],['i_tuna_can','鮪魚罐頭','ツナ缶','seafood','🥫'],['i_shirasu','吻仔魚','しらす','seafood','🐟'],
+  ['i_white_fish','白肉魚（整尾）','白身魚（鯛・スズキなど）','seafood','🐟'],['i_dried_shrimp','蝦米','干しエビ','seafood','🦐'],
   // 蛋豆奶
   ['i_egg','雞蛋','卵','egg','🥚'],['i_tofu','白豆腐','豆腐','egg','🧈'],['i_egg_tofu','雞蛋豆腐','玉子豆腐','egg','🍮'],['i_atsuage','油豆腐','厚揚げ','egg','🧈'],['i_aburaage','豆皮','油揚げ','egg','🟫'],
   ['i_natto','納豆','納豆','egg','🫘'],['i_milk','牛奶','牛乳','egg','🥛'],['i_cheese','起司','チーズ','egg','🧀'],['i_cream','鮮奶油','生クリーム','egg','🥛'],
+  ['i_pidan','皮蛋','ピータン','egg','🥚'],['i_salted_egg','鹹蛋黃','塩漬け卵黄','egg','🥚'],['i_soymilk','無糖豆漿','無調整豆乳','egg','🥛'],['i_dougan','豆干','押し豆腐','egg','🟫'],
   // 主食
   ['i_rice','白飯','ご飯','staple','🍚'],['i_udon','烏龍麵','うどん','staple','🍜'],['i_pasta','義大利麵','パスタ','staple','🍝'],['i_ramen','中華麵','中華麺','staple','🍜'],
   ['i_bread','吐司','食パン','staple','🍞'],['i_bihun','米粉（ビーフン）','ビーフン','staple','🍜'],['i_gyoza_skin','水餃皮','餃子の皮','staple','🥟'],['i_flour','麵粉','小麦粉','staple','🌾'],
+  ['i_thin_noodle','細麵','そうめん','staple','🍜'],['i_harusame','冬粉','春雨','staple','🍜'],['i_raw_rice','生米','米（炊く前）','staple','🌾'],
   // 其他
   ['i_wakame','海帶芽','わかめ','other','🌊'],['i_nori','海苔','のり','other','⬛'],['i_kamaboko','魚板','かまぼこ','other','🍥'],['i_chikuwa','竹輪','ちくわ','other','🍥'],
   ['i_konnyaku','蒟蒻','こんにゃく','other','⬜'],['i_edamame','毛豆','枝豆','other','🫛'],['i_kimchi','泡菜','キムチ','other','🥬'],
   ['i_corn_can','玉米罐頭','コーン缶','other','🌽'],['i_tomato_can','番茄罐頭','トマト缶','other','🥫'],['i_shio_kombu','鹽昆布','塩昆布','other','🌊'],
+  ['i_cola','可樂','コーラ','other','🥤'],['i_sauerkraut','酸白菜','酸菜（白菜の漬物）','other','🥬'],['i_radish_pickle','菜脯','菜脯（大根の塩漬け）','other','🟫'],
+  ['i_peeled_chili','剝皮辣椒','剥皮辣椒（瓶詰め）','other','🌶️'],['i_peanut','花生','ピーナッツ','other','🥜'],
 ];
 const SEED_SEASONINGS = [
   ['s_salt','鹽','塩','🧂'],['s_sugar','糖','砂糖','🍬'],['s_soy','醬油','醤油','🫗'],['s_mirin','味醂','みりん','🍶'],['s_sake','料理酒','料理酒','🍶'],
@@ -530,6 +547,7 @@ const SEED_SEASONINGS = [
   ['s_shacha','沙茶醬','沙茶醤','🥫'],['s_black_vinegar','烏醋','黒酢','🫗'],['s_parmesan','起司粉','粉チーズ','🧀'],
   ['s_rock_sugar','冰糖','氷砂糖','🍬'],['s_shichimi','七味粉','七味唐辛子','🌶️'],['s_ponzu','柚子醋','ポン酢','🍋'],
   ['s_sansho','花椒粉','花椒粉（ホアジャオ）','🌶️'],['s_komeko','米粉（粉類）','米粉（こめこ）','🌾'],['s_gochujang','韓式辣醬','コチュジャン','🌶️'],
+  ['s_red_wine','紅酒','赤ワイン','🍷'],['s_fermented_tofu','豆腐乳','腐乳','🟥'],['s_bakkutteh','肉骨茶包','肉骨茶パック','🍵'],
 ];
 // [id, 名稱, 日文, 菜系, emoji, 食材[[id,用量,選項]...], 調味料[id...]]
 //   選項：OR('替代id',...) = 冰箱有其中任一種就算有；OPT = 可省略（不算進％）；OROPT(...) = 兩者都是
@@ -571,7 +589,7 @@ const SEED_RECIPES = [
   ['r_scallion_beef','蔥爆牛肉','牛肉とねぎの炒め物','tw','🥩',[['i_beef_slice','200g',OR('i_pork_slice')],['i_negi','3根'],['i_garlic','2瓣'],['i_ginger','2片']],['s_soy','s_rice_wine','s_oyster','s_katakuriko','s_sugar']],
   ['r_mayou_ji','麻油雞','麻油鶏','tw','🍗',[['i_chicken_thigh','400g'],['i_ginger','1大塊']],['s_sesame_oil','s_rice_wine','s_salt']],
   ['r_jiachang_tofu','家常豆腐','家常豆腐','tw','🧈',[['i_tofu','1塊',OR('i_atsuage')],['i_pork_slice','100g',OR('i_pork_belly')],['i_shiitake','3朵',OPT],['i_carrot','1/4根',OPT],['i_negi','1根'],['i_garlic','2瓣']],['s_soy','s_oyster','s_sugar','s_katakuriko','s_oil']],
-  ['r_bihun','炒米粉','台湾焼きビーフン','tw','🍜',[['i_bihun','200g'],['i_pork_slice','100g',OR('i_pork_belly')],['i_cabbage','1/4個'],['i_carrot','1/3根',OPT],['i_shiitake','3朵',OPT],['i_negi','1根']],['s_soy','s_white_pepper','s_oil','s_salt','s_shacha']],
+  ['r_bihun','新竹炒米粉','新竹風焼きビーフン','tw','🍜',[['i_bihun','200g'],['i_pork_slice','100g',OR('i_pork_belly')],['i_cabbage','1/4個'],['i_dried_shrimp','1大匙',OPT],['i_carrot','1/3根',OPT],['i_shiitake','3朵',OPT],['i_negi','1根']],['s_soy','s_white_pepper','s_oil','s_salt','s_shacha']],
   ['r_clam_soup','薑絲蛤蜊湯','あさりの生姜スープ','tw','🐚',[['i_asari','300g'],['i_ginger','3片'],['i_negi','1根',OPT]],['s_rice_wine','s_salt']],
   ['r_danbing','台式蛋餅','台湾式卵クレープ','tw','🫓',[['i_egg','2顆'],['i_flour','100g'],['i_negi','2根']],['s_salt','s_soy_paste','s_oil']],
   ['r_shiitake_chicken','香菇雞湯','しいたけと鶏のスープ','tw','🍲',[['i_chicken_thigh','300g'],['i_shiitake','6朵'],['i_ginger','3片']],['s_salt','s_rice_wine']],
@@ -594,6 +612,61 @@ const SEED_RECIPES = [
   ['r_tuna_toast','鮪魚起司吐司','ツナマヨチーズトースト','west','🍞',[['i_bread','2片'],['i_tuna_can','1罐'],['i_onion','1/4個',OPT],['i_cheese','2片']],['s_mayo','s_black_pepper']],
   ['r_broccoli_shrimp','蒜炒青花菜蝦仁','ブロッコリーとえびのにんにく炒め','west','🥦',[['i_broccoli','1顆'],['i_shrimp','150g'],['i_garlic','2瓣']],['s_olive','s_salt','s_black_pepper']],
   ['r_omelet','起司歐姆蛋','チーズオムレツ','west','🍳',[['i_egg','3顆'],['i_cheese','1片'],['i_milk','1大匙',OPT]],['s_butter','s_salt','s_pepper']],
+  // ── 1.4.1 新增 ──
+  // 雞（不可替代）
+  ['r_yulinji','油淋雞','油淋鶏','cn','🍗',[['i_chicken_thigh','1片'],['i_negi','1根'],['i_ginger','1片'],['i_garlic','1瓣']],['s_katakuriko','s_oil','s_soy','s_vinegar','s_sugar','s_sesame_oil']],
+  ['r_jiaomaji','椒麻雞','花椒風味の唐揚げチキン','tw','🍗',[['i_chicken_thigh','1片'],['i_negi','1根'],['i_garlic','2瓣'],['i_chili','1根',OPT],['i_cilantro','少許',OPT],['i_lettuce','2片（鋪底）',OPT]],['s_katakuriko','s_oil','s_soy','s_vinegar','s_sugar','s_sansho','s_sesame_oil','s_rayu']],
+  ['r_furu_chicken','豆腐乳雞','腐乳チキン','tw','🍗',[['i_chicken_thigh','400g'],['i_garlic','3瓣'],['i_ginger','2片']],['s_fermented_tofu','s_sugar','s_rice_wine','s_soy','s_katakuriko','s_oil']],
+  ['r_peeled_chili_soup','剝皮辣椒雞湯','剥皮辣椒のチキンスープ','tw','🍲',[['i_chicken_thigh','400g'],['i_peeled_chili','6根＋湯汁'],['i_ginger','3片'],['i_shiitake','3朵',OPT]],['s_rice_wine','s_salt']],
+  ['r_cola_wings','可樂雞翅','コーラ手羽先','cn','🍗',[['i_chicken_wing','8隻',OR('i_chicken_thigh')],['i_cola','200ml'],['i_ginger','2片'],['i_garlic','2瓣'],['i_negi','1根',OPT]],['s_soy','s_rice_wine','s_oil']],
+  ['r_pepper_chicken_soup','胡椒蒜頭雞湯（肉骨茶風）','胡椒とにんにくのチキンスープ','tw','🍲',[['i_chicken_thigh','400g'],['i_garlic','1整顆'],['i_ginger','2片',OPT],['i_shiitake','3朵',OPT]],['s_white_pepper','s_bakkutteh','s_soy','s_salt','s_rice_wine']],
+  ['r_gongbao','宮保雞丁','宮保鶏丁','cn','🌶️',[['i_chicken_thigh','300g',OR('i_chicken_breast')],['i_peanut','1把'],['i_negi','1根'],['i_garlic','2瓣'],['i_ginger','1片'],['i_chili','3根']],['s_soy','s_vinegar','s_sugar','s_rice_wine','s_katakuriko','s_sansho','s_oil']],
+  // 香蕉
+  ['r_banana_pancake','香蕉鬆餅','バナナパンケーキ','sweet','🥞',[['i_banana','1根'],['i_egg','1顆'],['i_flour','100g'],['i_milk','80ml']],['s_sugar','s_butter','s_honey']],
+  ['r_banana_toast','焦糖香蕉吐司','キャラメルバナナトースト','sweet','🍞',[['i_banana','1根'],['i_bread','1片'],['i_cheese','1片',OPT]],['s_butter','s_sugar','s_honey']],
+  ['r_banana_milk','香蕉牛奶','バナナミルク','sweet','🥤',[['i_banana','1根'],['i_milk','200ml']],['s_honey']],
+  // 中華・辣
+  ['r_disanxian','地三鮮','地三鮮（なす・じゃがいも・ピーマンの炒め）','cn','🍆',[['i_eggplant','2條'],['i_potato','1個'],['i_pepper','1個',OPT],['i_garlic','2瓣']],['s_soy','s_oyster','s_sugar','s_katakuriko','s_oil']],
+  ['r_eggplant_mince_pot','茄子肉醬煲','なすとひき肉の土鍋煮','cn','🍆',[['i_eggplant','2條'],['i_pork_mince','150g',OR('i_mixed_mince','i_chicken_mince')],['i_garlic','2瓣'],['i_negi','1根',OPT],['i_chili','1根',OPT]],['s_doubanjiang','s_soy','s_oyster','s_sugar','s_sake','s_katakuriko','s_oil']],
+  ['r_chili_shrimp','乾燒蝦仁','エビチリ','cn','🦐',[['i_shrimp','200g'],['i_negi','1根'],['i_garlic','1瓣'],['i_ginger','1片'],['i_egg','1顆（蛋白）',OPT]],['s_doubanjiang','s_ketchup','s_sake','s_sugar','s_chicken_stock','s_katakuriko','s_oil']],
+  ['r_shuizhu','水煮肉片','水煮肉片（四川風ピリ辛煮）','cn','🌶️',[['i_pork_slice','200g',OR('i_beef_slice')],['i_moyashi','1包（鋪底）',OR('i_hakusai','i_lettuce')],['i_garlic','3瓣'],['i_chili','3根',OPT],['i_negi','1根',OPT]],['s_doubanjiang','s_soy','s_sake','s_katakuriko','s_sansho','s_rayu','s_chicken_stock']],
+  ['r_green_beans','乾煸四季豆','いんげんの乾煸炒め','cn','🫛',[['i_green_bean','200g'],['i_pork_mince','50g',OPT],['i_garlic','2瓣'],['i_chili','1根',OPT]],['s_soy','s_sugar','s_salt','s_oil']],
+  ['r_yuxiang_eggplant','魚香茄子','魚香茄子','cn','🍆',[['i_eggplant','2條'],['i_pork_mince','80g',OPT],['i_garlic','2瓣'],['i_ginger','1片'],['i_negi','1根']],['s_doubanjiang','s_soy','s_sugar','s_vinegar','s_katakuriko','s_oil']],
+  ['r_mayishangshu','螞蟻上樹','春雨とひき肉のピリ辛炒め','cn','🍜',[['i_harusame','80g'],['i_pork_mince','100g',OR('i_mixed_mince')],['i_garlic','1瓣'],['i_ginger','1片'],['i_negi','1根',OPT],['i_chili','1根',OPT]],['s_doubanjiang','s_soy','s_sake','s_sugar','s_chicken_stock','s_sesame_oil']],
+  ['r_huiguorou','回鍋肉','回鍋肉','cn','🐷',[['i_pork_belly','200g',OR('i_pork_slice')],['i_cabbage','1/4個'],['i_pepper','1個',OPT],['i_garlic','1瓣'],['i_negi','1根',OPT]],['s_doubanjiang','s_tianmian','s_soy','s_sake','s_sugar','s_oil']],
+  ['r_potato_strips','醋溜土豆絲','じゃがいもの千切り酢炒め','cn','🥔',[['i_potato','2個'],['i_garlic','2瓣'],['i_chili','1根',OPT],['i_negi','1根',OPT]],['s_vinegar','s_salt','s_sugar','s_oil']],
+  ['r_sweet_sour_ribs','糖醋排骨','スペアリブの甘酢煮','cn','🍖',[['i_pork_ribs','400g'],['i_garlic','2瓣'],['i_ginger','2片'],['i_negi','1根',OPT]],['s_vinegar','s_sugar','s_soy','s_rice_wine','s_katakuriko','s_oil']],
+  ['r_stuffed_pepper','青椒鑲肉','ピーマンの肉詰め','cn','🫑',[['i_pepper','4個'],['i_pork_mince','200g',OR('i_mixed_mince')],['i_negi','1根',OPT],['i_egg','1顆',OPT]],['s_soy','s_sake','s_katakuriko','s_sugar','s_oyster','s_oil']],
+  ['r_braised_daikon','紅燒蘿蔔','大根の醤油煮','cn','🌿',[['i_daikon','1/2根'],['i_ginger','2片'],['i_garlic','1瓣',OPT],['i_negi','1根',OPT]],['s_soy','s_rock_sugar','s_rice_wine','s_oil']],
+  ['r_braised_fish','紅燒魚','魚の醤油煮','cn','🐟',[['i_white_fish','1尾',OR('i_saba')],['i_ginger','3片'],['i_garlic','2瓣'],['i_negi','2根'],['i_chili','1根',OPT]],['s_soy','s_sugar','s_rice_wine','s_oil']],
+  ['r_steamed_fish','清蒸魚','魚の姿蒸し','cn','🐟',[['i_white_fish','1尾'],['i_ginger','1塊（切絲）'],['i_negi','2根']],['s_soy','s_rice_wine','s_oil','s_sugar']],
+  ['r_dongpo','東坡肉','トンポーロー（豚の角煮）','cn','🐷',[['i_pork_belly','500g（整塊）'],['i_ginger','3片'],['i_negi','2根'],['i_garlic','2瓣',OPT]],['s_soy','s_rock_sugar','s_rice_wine']],
+  ['r_lamb_ginger','薑絲炒羊肉','ラム肉と生姜の炒め物','tw','🐑',[['i_lamb_slice','200g'],['i_ginger','1大塊（切絲）'],['i_negi','1根',OPT]],['s_sesame_oil','s_soy','s_rice_wine','s_sugar']],
+  // 台式
+  ['r_golden_tofu','金沙豆腐','塩卵黄の豆腐炒め','tw','🧈',[['i_egg_tofu','1盒',OR('i_tofu')],['i_salted_egg','2顆'],['i_garlic','1瓣'],['i_negi','1根',OPT],['i_chili','1根',OPT]],['s_katakuriko','s_oil','s_sugar','s_salt']],
+  ['r_pidan_tofu','皮蛋豆腐','ピータン豆腐','tw','🥚',[['i_tofu','1塊'],['i_pidan','1顆'],['i_negi','1根',OPT],['i_garlic','1瓣',OPT]],['s_soy_paste','s_sesame_oil','s_katsuobushi']],
+  ['r_leijiao_pidan','擂椒皮蛋','焼き唐辛子とピータンの和え物','tw','🌶️',[['i_pidan','2顆'],['i_pepper','3個',OR('i_chili')],['i_garlic','3瓣']],['s_soy','s_vinegar','s_sesame_oil','s_salt']],
+  ['r_soymilk_noodle','豆乳麵','豆乳担々そうめん','tw','🍜',[['i_thin_noodle','1把'],['i_tofu','1/2塊'],['i_soymilk','200ml'],['i_negi','1根',OPT],['i_egg','1顆（半熟）',OPT]],['s_rayu','s_soy','s_sesame_oil','s_chicken_stock']],
+  ['r_rouzao','肉燥飯','肉燥飯（豚ひき肉のそぼろ煮かけご飯）','tw','🍚',[['i_pork_mince','300g'],['i_onion','1/2個（代替紅蔥頭）'],['i_garlic','2瓣'],['i_rice','2碗'],['i_egg','2顆（滷蛋）',OPT]],['s_soy','s_rice_wine','s_sugar','s_five_spice','s_white_pepper','s_oil']],
+  ['r_sauerkraut_hotpot','酸菜白肉鍋','酸菜白肉鍋（発酵白菜と豚バラの鍋）','tw','🍲',[['i_sauerkraut','300g'],['i_pork_belly','250g（薄切）'],['i_tofu','1塊',OPT],['i_enoki','1包',OROPT('i_shimeji')],['i_ginger','3片'],['i_negi','1根',OPT]],['s_chicken_stock','s_white_pepper','s_salt','s_rice_wine']],
+  ['r_hechima_clam','絲瓜蛤蜊','ヘチマとあさりの蒸し煮','tw','🐚',[['i_hechima','1條'],['i_asari','300g'],['i_ginger','3片'],['i_garlic','1瓣',OPT]],['s_rice_wine','s_salt','s_oil']],
+  ['r_rib_soup','筍子／玉米排骨湯','たけのこ（or とうもろこし）とスペアリブのスープ','tw','🍲',[['i_pork_ribs','400g'],['i_takenoko','1支',OR('i_corn')],['i_ginger','2片'],['i_carrot','1/2根',OPT]],['s_salt','s_rice_wine']],
+  ['r_caipu_egg','菜脯蛋','菜脯入り卵焼き','tw','🍳',[['i_radish_pickle','50g'],['i_egg','3顆'],['i_negi','1根',OPT]],['s_oil','s_white_pepper','s_sugar']],
+  ['r_onion_egg','洋蔥／紅蘿蔔炒蛋','玉ねぎ（or にんじん）と卵の炒め物','tw','🍳',[['i_egg','3顆'],['i_onion','1/2個',OR('i_carrot')],['i_negi','1根',OPT]],['s_salt','s_oil']],
+  ['r_hakka_stirfry','客家小炒','客家小炒（いか・豆干・豚バラの炒め）','tw','🦑',[['i_squid','1尾'],['i_dougan','3片'],['i_pork_belly','150g'],['i_celery','2根',OR('i_negi')],['i_garlic','2瓣'],['i_chili','1根',OPT]],['s_soy','s_rice_wine','s_sugar','s_white_pepper','s_oil']],
+  ['r_shacha_squid','沙茶炒魷魚','いかの沙茶醤炒め','tw','🦑',[['i_squid','1尾'],['i_onion','1/2個'],['i_negi','2根'],['i_garlic','2瓣'],['i_chili','1根',OPT]],['s_shacha','s_soy','s_rice_wine','s_sugar']],
+  ['r_baicai_lu','白菜滷','白菜と干しエビの煮込み','tw','🥬',[['i_hakusai','1/2個'],['i_dried_shrimp','2大匙'],['i_shiitake','4朵'],['i_garlic','2瓣'],['i_carrot','1/3根',OPT],['i_pork_slice','80g',OPT],['i_egg','1顆（炸蛋酥）',OPT]],['s_soy','s_white_pepper','s_rice_wine','s_salt','s_oil']],
+  ['r_kikurage_salad','涼拌木耳','きくらげの冷菜','tw','🍄',[['i_kikurage','1把（泡發）'],['i_garlic','2瓣'],['i_chili','1根',OPT],['i_cilantro','少許',OPT],['i_ginger','1片',OPT]],['s_black_vinegar','s_soy','s_sesame_oil','s_sugar']],
+  ['r_kikurage_enoki','酸辣木耳金針菇','きくらげとえのきの酸辣和え','tw','🍄',[['i_kikurage','1把（泡發）'],['i_enoki','1包'],['i_garlic','2瓣'],['i_chili','1根',OPT]],['s_black_vinegar','s_soy','s_rayu','s_sugar','s_sesame_oil']],
+  // 日式
+  ['r_chikuzenni','筑前煮','筑前煮','jp','🍲',[['i_chicken_thigh','1片'],['i_renkon','1節'],['i_carrot','1根'],['i_shiitake','4朵'],['i_gobo','1/2根',OPT],['i_konnyaku','1/2片',OPT],['i_takenoko','1/2支',OPT]],['s_soy','s_mirin','s_sugar','s_sake','s_dashi','s_sesame_oil']],
+  // 西式
+  ['r_beef_bourguignon','紅酒燉牛肉','牛肉の赤ワイン煮込み','west','🥩',[['i_beef_chunk','500g'],['i_onion','1個'],['i_carrot','1根'],['i_garlic','2瓣'],['i_mushroom','1包',OPT],['i_potato','2個',OPT],['i_tomato_can','1/2罐',OPT],['i_flour','1大匙',OPT]],['s_red_wine','s_butter','s_salt','s_black_pepper']],
+  ['r_mushroom_saute','清炒蘑菇','マッシュルームのガーリックソテー','west','🍄',[['i_mushroom','1包',OR('i_shimeji','i_shiitake')],['i_garlic','2瓣']],['s_butter','s_salt','s_black_pepper','s_olive']],
+  ['r_pumpkin_risotto','南瓜燉飯','かぼちゃのリゾット','west','🎃',[['i_pumpkin','1/4個'],['i_raw_rice','1杯'],['i_onion','1/2個'],['i_bacon','2片',OPT],['i_garlic','1瓣',OPT]],['s_butter','s_parmesan','s_chicken_stock','s_salt','s_black_pepper']],
+  ['r_creamed_hakusai','奶油白菜','白菜のクリーム煮','west','🥬',[['i_hakusai','1/4個'],['i_milk','200ml'],['i_flour','1大匙'],['i_ham','2片',OROPT('i_bacon')],['i_garlic','1瓣',OPT]],['s_butter','s_salt','s_white_pepper','s_chicken_stock']],
+  // 韓式
+  ['r_japchae','韓式雜菜冬粉','チャプチェ','kr','🍜',[['i_harusame','100g'],['i_beef_slice','100g',OR('i_pork_slice')],['i_spinach','1/2把',OR('i_komatsuna')],['i_carrot','1/3根'],['i_onion','1/2個'],['i_garlic','1瓣'],['i_shiitake','2朵',OPT],['i_egg','1顆（蛋絲）',OPT]],['s_soy','s_sugar','s_sesame_oil','s_sesame','s_oil']],
 ];
 
 function buildSeed(){
@@ -613,7 +686,7 @@ function buildSeed(){
    每次內建資料有變動就把 SEED_VERSION +1。舊裝置打開時：
    新增的內建項目會補進來；沒被使用者在後台改過的內建項目會更新成新版本；
    使用者改過的（edited:true）保留不動；REMOVED_SEED_IDS 裡未改過的會被移除。 */
-const SEED_VERSION = 3;
+const SEED_VERSION = 4;
 const REMOVED_SEED_IDS = ['r_potato_salad','r_chikuwa_cucumber','r_cucumber'];
 function migrate(db){
   if((db.seedVersion||1) >= SEED_VERSION) return db;
