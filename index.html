@@ -149,6 +149,19 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .chip.sea.on{border-style:solid}
 .lib-none{font-family:var(--hand);font-size:15px;color:var(--muted);padding:12px 4px;line-height:1.9}
 .lib-none button{font-family:var(--hand);font-size:15px;color:var(--blue);text-decoration:underline}
+/* ── 冰箱收起（右側抽屜） ── */
+.fr-rail{display:none}
+body.fridge-closed #page-fridge{flex:0 0 52px;min-width:52px;background:var(--paper2)}
+body.fridge-closed #page-fridge > .page-head,
+body.fridge-closed #page-fridge > .page-body,
+body.fridge-closed #page-fridge > .admin-tab{display:none}
+body.fridge-closed #page-fridge > .fr-rail{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;height:100%;padding:16px 0;font-family:var(--hand-b);font-weight:600;font-size:17px;color:var(--ink);cursor:pointer}
+body.fridge-closed #page-fridge > .fr-rail:hover{background:var(--yellow2)}
+.fr-rail .rail-label{writing-mode:vertical-rl;text-orientation:upright;letter-spacing:2px;white-space:nowrap}
+.fr-rail .rail-n{font-family:var(--hand);font-weight:400;font-size:12px;color:var(--muted);writing-mode:vertical-rl;white-space:nowrap}
+.fr-rail .rail-arrow{font-size:18px;line-height:1;color:var(--muted)}
+body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1100px){body.fridge-closed .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .admin-tab{position:absolute;top:0;right:22px;font-family:var(--hand);font-size:14px;padding:4px 14px 6px;background:var(--yellow);border:2px solid var(--ink);border-top:none;border-radius:0 0 12px 12px / 0 0 10px 10px;z-index:2}
 .admin-tab:hover{box-shadow:var(--shadow)}
 
@@ -325,6 +338,13 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
   .lib-head .search{flex:1 1 100%}
   .admin-tab{right:14px;font-size:13px;padding:3px 12px 5px}
   #page-fridge .page-head{padding-top:36px}
+  /* 手機：收起後變成底部一條 */
+  body.fridge-closed #page-fridge{flex:0 0 auto;min-width:0;height:auto}
+  body.fridge-closed #page-fridge > .fr-rail{flex-direction:row;justify-content:center;gap:10px;height:auto;padding:11px 14px calc(11px + env(safe-area-inset-bottom));font-size:16px}
+  .fr-rail .rail-label,.fr-rail .rail-n{writing-mode:horizontal-tb}
+  .fr-rail .rail-arrow{transform:rotate(90deg)}
+  body.fridge-closed #page-recipes{flex:1}
+  body.fridge-closed .rgrid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -339,7 +359,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.5.0</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.5.1</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -362,6 +382,11 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 
   <!-- RIGHT: fridge -->
   <section class="page" id="page-fridge">
+    <button class="fr-rail" onclick="setFridgeOpen(true)" title="打開我的冰箱">
+      <span class="rail-arrow">‹</span>
+      <span class="rail-label">我的冰箱</span>
+      <span class="rail-n" id="rail-n"></span>
+    </button>
     <button class="admin-tab" onclick="openAdmin()">後台</button>
     <div class="page-head">
       <div class="row">
@@ -372,6 +397,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
         <div style="display:flex;gap:8px;align-items:center">
           <button class="hbtn wob2 yel" onclick="addStaples()">＋常備調味料</button>
           <button class="hbtn wob red" onclick="clearFridge()">清空</button>
+          <button class="hbtn wob" onclick="setFridgeOpen(false)" title="收起冰箱，專心看料理">收起 ›</button>
         </div>
       </div>
     </div>
@@ -405,6 +431,14 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.5.1 - 2026年9月23日</div>
+        <div class="changelog-content">
+          📕 我的冰箱可以收起來了！按「收起 ›」冰箱會縮成右邊窄窄的一條，左頁佔滿整個畫面、變成三欄，方便一次看完所有料理名稱<br>
+          👉 點右邊那條就把冰箱打開；手機上收起後會變成底部一條<br>
+          💾 收起或打開的狀態會記住，下次打開維持一樣
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.5.0 - 2026年9月23日</div>
         <div class="changelog-content">
@@ -509,7 +543,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.5.1';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -753,11 +787,16 @@ const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = s => document.querySelector(s);
 const isMobile = () => window.innerWidth <= 720;
-// 每頁張數：依左頁可視高度估算（卡片約 215px 高），手機至少 3 張、電腦至少 4 張、最多 8 張
+// 每頁張數：依左頁實際欄數與可視高度估算（卡片約 215px 高）
+const gridCols = () => {
+  const g = $('#recipe-list'); if(!g) return 1;
+  const n = getComputedStyle(g).gridTemplateColumns.split(' ').filter(Boolean).length;
+  return Math.max(1, n);
+};
 const PAGE_SIZE = () => {
-  const body = $('#page-recipes .page-body'); const cols = isMobile() ? 1 : 2;
+  const body = $('#page-recipes .page-body'), cols = gridCols();
   const rows = body ? Math.floor((body.clientHeight - 40) / 215) : 2;
-  return Math.min(8, Math.max(isMobile() ? 3 : 4, rows * cols));
+  return Math.min(cols*4, Math.max(cols===1 ? 3 : cols*2, rows*cols));
 };
 
 let toastTimer;
@@ -927,10 +966,17 @@ function renderFridge(){
     lib = `<div class="chips">${list.map(i=>chip(i, fridgeSet.has(i.id))).join('')}</div>`;
   }
   $('#lib-list').innerHTML = lib;
+  $('#rail-n').textContent = fridgeSet.size ? `${ings.length}食材 ${seas.length}調味` : '空的';
   $('#f-search-box').classList.toggle('has', !!ui.fSearch);
   $('#r-search-box').classList.toggle('has', !!ui.rSearch);
 }
 
+// 收起／打開冰箱（收起後左頁佔滿整頁，冰箱變成右側窄抽屜；手機上變成底部一條）
+function setFridgeOpen(open){
+  DB.settings.fridgeOpen = open;
+  document.body.classList.toggle('fridge-closed', !open);
+  persist(); renderAll();
+}
 function toggleFridge(id){
   if(fridgeSet.has(id)){ fridgeSet.delete(id); if(ui.focus===id){ ui.focus=null; ui.page=0; } }
   else fridgeSet.add(id);
@@ -1264,6 +1310,7 @@ document.addEventListener('keydown', e=>{
 let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz=setTimeout(renderRecipes,150); });
 
 /* ── 啟動 ── */
+if(DB.settings.fridgeOpen === false) document.body.classList.add('fridge-closed');
 syncThresholdPills();
 renderAll();
 </script>
