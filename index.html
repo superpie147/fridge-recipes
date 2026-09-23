@@ -16,6 +16,8 @@
   --red:#e35d3c;--blue:#3d8fc2;--green:#5aa86b;--yellow:#ffe082;--yellow2:#fff3b0;
   --n1:#fff3b0;--n2:#d9efe1;--n3:#fce0d6;--n4:#d9e8f5;
   --hand:'Zen Kurenaido','Yomogi','Klee One','Noto Sans TC',cursive;--body:'Klee One','Zen Kurenaido','Noto Sans TC','Hiragino Sans',sans-serif;
+  --hand-b:'Klee One','Zen Kurenaido','Noto Sans TC',sans-serif;
+  --c-veg:#d9efe1;--c-meat:#fbd8d2;--c-seafood:#d9e8f5;--c-egg:#fff3b0;--c-staple:#f1e3c6;--c-other:#e7ddf3;
   --shadow:2px 3px 0 rgba(44,42,40,0.12);
 }
 html,body{height:100%}
@@ -35,9 +37,16 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .spread{flex:1;display:flex;min-height:0}
 .page{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .bind{width:3px;flex-shrink:0;background:rgba(44,42,40,0.16);box-shadow:0 0 22px 6px rgba(44,42,40,0.07)}
-.page-head{padding:22px 26px 10px;flex-shrink:0;display:flex;flex-direction:column;gap:12px}
+.page-head{padding:18px 26px 8px;flex-shrink:0;display:flex;flex-direction:column;gap:9px}
+.cui-tabs{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;font-family:var(--hand);font-size:14px;padding-bottom:2px}
+.cui-tabs::-webkit-scrollbar{display:none}
+.cui-tab{font-family:var(--hand);font-size:14px;color:var(--muted);white-space:nowrap;flex-shrink:0;padding:1px 2px}
+.cui-tab.on{color:var(--ink);background:linear-gradient(transparent 62%,var(--yellow) 62%)}
+.focus-bar{display:flex;align-items:center;gap:8px;background:var(--n2);border:2px solid var(--ink);border-radius:255px 15px 225px 15px / 15px 225px 15px 255px;padding:5px 12px;font-family:var(--hand);font-size:14px;line-height:1.3}
+.focus-bar b{font-family:var(--hand-b);font-weight:600}
+.focus-bar .x{margin-left:auto;font-family:var(--hand);font-size:13px;color:var(--red);white-space:nowrap;border-bottom:1px solid var(--red)}
 .page-head .row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.title{font-family:var(--hand);font-size:34px;line-height:1;white-space:nowrap}
+.title{font-family:var(--hand-b);font-weight:600;font-size:32px;line-height:1.15;white-space:nowrap}
 .title span{padding:0 2px}
 .hint{font-family:var(--hand);font-size:14px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .version-badge{font-family:var(--hand);font-size:13px;color:var(--muted);cursor:pointer;border-bottom:1px dashed var(--muted)}
@@ -45,9 +54,9 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .page-body{flex:1;overflow-y:auto;padding:4px 26px 24px;-webkit-overflow-scrolling:touch}
 .page-body::-webkit-scrollbar{width:6px}.page-body::-webkit-scrollbar-thumb{background:rgba(44,42,40,0.18);border-radius:3px}
 
-.search{display:flex;align-items:center;gap:10px;background:#fff;padding:8px 14px;flex:1;min-width:0;color:var(--muted);font-size:14px}
+.search{display:flex;align-items:center;gap:8px;background:#fff;padding:5px 12px;flex:1;min-width:0;color:var(--muted);font-size:13px}
 .search svg{flex-shrink:0}
-.search input{border:none;background:transparent;flex:1;min-width:0;font-size:14px}
+.search input{border:none;background:transparent;flex:1;min-width:0;font-size:13px}
 .search input::placeholder{color:#9a948d}
 .search .clr{color:var(--muted);font-size:14px;padding:0 2px;display:none}
 .search.has .clr{display:block}
@@ -79,7 +88,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .tape{position:absolute;width:74px;height:22px;background:rgba(255,224,130,0.75);transform:rotate(-4deg);left:18px;top:-11px;box-shadow:0 1px 2px rgba(0,0,0,0.08);pointer-events:none}
 .tape.r{left:auto;right:18px;transform:rotate(5deg);background:rgba(178,222,200,0.8)}
 .rtop{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.rname{font-family:var(--hand);font-size:24px;line-height:1.1}
+.rname{font-family:var(--hand-b);font-weight:600;font-size:22px;line-height:1.2}
 .emo{font-size:20px;line-height:1;align-self:center}
 .emo img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--ink);vertical-align:middle}
 .ctag{font-family:var(--hand);font-size:13px;color:var(--muted);margin-left:auto}
@@ -94,9 +103,9 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .circ.c1{border-radius:50% 40% 55% 45%}.circ.c2{border-radius:45% 55% 40% 50%}.circ.c3{border-radius:50% 45% 55% 40%}.circ.c4{border-radius:40% 50% 45% 55%}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);font-family:var(--hand);font-size:17px;padding:40px 16px;line-height:1.9}
 .empty .big{font-size:40px;margin-bottom:6px}
-.pager{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:10px 26px 16px;font-family:var(--hand);font-size:16px;border-top:1.5px dashed var(--line);margin:0 26px;padding-left:0;padding-right:0}
-.pg{font-family:var(--hand);font-size:16px;display:flex;align-items:center;gap:8px;padding:6px 10px;color:var(--ink)}
-.pg svg{width:44px;height:22px}
+.pager{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px;font-family:var(--hand);font-size:14px;border-top:1.5px dashed var(--line);margin:0 26px}
+.pg{font-family:var(--hand);font-size:14px;display:flex;align-items:center;gap:6px;padding:3px 8px;color:var(--ink)}
+.pg svg{width:34px;height:17px}
 .pg:hover{background:var(--yellow2)}
 .pg:disabled{opacity:0.3;cursor:default;background:none}
 .pg-n{color:var(--muted);font-variant-numeric:tabular-nums}
@@ -107,15 +116,20 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .fr-door.top{border-bottom:2.5px solid var(--ink);border-radius:0 0 40px 10px / 0 0 6px 4px}
 .fr-door .handle{position:absolute;right:12px;top:16px;width:7px;height:44px;background:var(--ink);border-radius:4px 3px 5px 3px}
 .fr-door.bot .handle{top:14px}
-.fr-l{font-family:var(--hand);font-size:16px;display:flex;align-items:center;gap:8px}
+.fr-l{font-family:var(--hand-b);font-weight:600;font-size:17px;display:flex;align-items:center;gap:8px}
 .fr-l .n{font-size:13px;color:var(--muted)}
 .feet{display:flex;justify-content:space-between;padding:0 22px;margin-right:14px;margin-top:-1px}
 .feet i{width:20px;height:9px;background:var(--ink);border-radius:0 0 4px 4px;display:block}
 .notes{display:flex;flex-wrap:wrap;gap:8px}
-.note{font-family:var(--body);padding:7px 12px;font-size:14px;line-height:1.2;box-shadow:var(--shadow);cursor:pointer;display:inline-flex;align-items:baseline;gap:5px;transition:transform 0.12s;border:none;background:var(--n1);color:var(--ink)}
+.note{font-family:var(--body);padding:6px 8px 6px 12px;font-size:14px;line-height:1.2;box-shadow:var(--shadow);cursor:pointer;display:inline-flex;align-items:baseline;gap:5px;transition:transform 0.12s;border:none;background:var(--n1);color:var(--ink)}
 .note .ja{font-size:10px}
 .note:hover{transform:scale(1.04) rotate(0deg)!important}
 .note.sea{background:#fff;border:1.5px dashed var(--ink);box-shadow:none}
+.note.focus{outline:2.5px solid var(--ink);outline-offset:2px}
+.note .nx{font-size:12px;color:var(--muted);padding:0 3px;margin-left:2px;align-self:center;line-height:1;border-radius:50%}
+.note .nx:hover{color:var(--red);background:rgba(255,255,255,0.7)}
+.note.veg{background:var(--c-veg)}.note.meat{background:var(--c-meat)}.note.seafood{background:var(--c-seafood)}
+.note.egg{background:var(--c-egg)}.note.staple{background:var(--c-staple)}.note.other{background:var(--c-other)}
 .fr-empty{text-align:center;color:var(--muted);font-family:var(--hand);font-size:15px;padding:14px 0;line-height:1.8;width:100%}
 .lib-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:22px;margin-bottom:10px;flex-wrap:wrap}
 .lib-head h3{font-size:22px;flex:1;white-space:nowrap}
@@ -146,7 +160,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @media (min-width:721px){.overlay{align-items:center;padding:20px}.sheet{border-bottom:2.5px solid var(--ink);border-radius:18px 24px 16px 22px / 22px 16px 24px 18px;max-height:88vh;box-shadow:6px 8px 0 rgba(44,42,40,0.15)}}
 .sheet-head{padding:18px 20px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.sheet-head h2{font-size:30px;flex:1;line-height:1.2}
+.sheet-head h2{font-family:var(--hand-b);font-weight:600;font-size:27px;flex:1;line-height:1.25}
 .sheet-close{width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sheet-close:hover{background:var(--yellow)}
 .sheet-body{padding:0 20px 20px;overflow-y:auto;flex:1}
@@ -325,7 +339,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.4.1</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.5.0</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -334,9 +348,11 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
         </div>
       </div>
       <div class="search wob" id="r-search-box">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2c2a28" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 L20 20"></path></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2c2a28" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 L20 20"></path></svg>
         <input id="r-search" placeholder="搜尋料理或食材…"><button class="clr" data-clear="r-search">✕</button>
       </div>
+      <div class="cui-tabs" id="cui-tabs"></div>
+      <div id="focus-bar"></div>
     </div>
     <div class="page-body"><div class="rgrid" id="recipe-list"></div></div>
     <div class="pager" id="pager"></div>
@@ -389,6 +405,16 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.5.0 - 2026年9月23日</div>
+        <div class="changelog-content">
+          🎯 點冰箱裡的便條紙 → 左頁只顯示用得到它的料理（想把茄子消耗掉時很好用）；移出冰箱改成點便條紙上的 ✕<br>
+          🏷 料理書上方多了菜系篩選：全部／日式／台式／中華／韓式／西式／甜點<br>
+          🖍 標題與料理名稱加粗，搜尋列與翻頁列縮小，便條紙空間變大<br>
+          🎨 冰箱便條紙依分類上色：蔬菜綠、肉類紅、海鮮藍、蛋豆奶黃、主食米、其他紫<br>
+          🍽 新增 11 道料理，總共 110 道：洋蔥湯、莎莎醬涼麵、芋頭米粉、南非烘蛋、鳳梨蝦球、糖醋蓮藕、嫩煎雞胸肉、蒸蛋、酪梨海苔、台式涼麵、蒜香大茄子
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.4.1 - 2026年9月21日</div>
         <div class="changelog-content">
@@ -483,7 +509,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.4.1';
+const APP_VERSION = '1.5.0';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -510,6 +536,7 @@ const SEED_ITEMS = [
   ['i_mushroom','蘑菇','マッシュルーム','veg','🍄'],['i_kikurage','木耳','きくらげ','veg','🍄'],['i_hechima','絲瓜','ヘチマ','veg','🥒'],['i_takenoko','竹筍','たけのこ','veg','🎋'],
   ['i_corn','玉米','とうもろこし','veg','🌽'],['i_renkon','蓮藕','れんこん','veg','🪷'],['i_gobo','牛蒡','ごぼう','veg','🌿'],['i_cilantro','香菜','パクチー','veg','🌿'],
   ['i_green_bean','四季豆','いんげん','veg','🫛'],['i_celery','芹菜','セロリ','veg','🌿'],['i_banana','香蕉','バナナ','veg','🍌'],
+  ['i_taro','芋頭','タロイモ（里芋で代用可）','veg','🟣'],['i_shallot','紅蔥頭','エシャロット（赤小玉ねぎ）','veg','🧅'],['i_pineapple','鳳梨','パイナップル','veg','🍍'],['i_avocado','酪梨','アボカド','veg','🥑'],
   // 肉類
   ['i_pork_slice','豬肉片','豚こま切れ肉','meat','🥩'],['i_pork_belly','豬五花','豚バラ肉','meat','🥓'],['i_pork_mince','豬絞肉','豚ひき肉','meat','🥩'],
   ['i_mixed_mince','牛豬混合絞肉','合いびき肉','meat','🥩'],['i_chicken_thigh','雞腿肉','鶏もも肉','meat','🍗'],['i_chicken_breast','雞胸肉','鶏むね肉','meat','🍗'],
@@ -548,6 +575,7 @@ const SEED_SEASONINGS = [
   ['s_rock_sugar','冰糖','氷砂糖','🍬'],['s_shichimi','七味粉','七味唐辛子','🌶️'],['s_ponzu','柚子醋','ポン酢','🍋'],
   ['s_sansho','花椒粉','花椒粉（ホアジャオ）','🌶️'],['s_komeko','米粉（粉類）','米粉（こめこ）','🌾'],['s_gochujang','韓式辣醬','コチュジャン','🌶️'],
   ['s_red_wine','紅酒','赤ワイン','🍷'],['s_fermented_tofu','豆腐乳','腐乳','🟥'],['s_bakkutteh','肉骨茶包','肉骨茶パック','🍵'],
+  ['s_wasabi','芥末','わさび','🟩'],['s_sesame_paste','芝麻醬','ねりごま','🥜'],
 ];
 // [id, 名稱, 日文, 菜系, emoji, 食材[[id,用量,選項]...], 調味料[id...]]
 //   選項：OR('替代id',...) = 冰箱有其中任一種就算有；OPT = 可省略（不算進％）；OROPT(...) = 兩者都是
@@ -667,6 +695,18 @@ const SEED_RECIPES = [
   ['r_creamed_hakusai','奶油白菜','白菜のクリーム煮','west','🥬',[['i_hakusai','1/4個'],['i_milk','200ml'],['i_flour','1大匙'],['i_ham','2片',OROPT('i_bacon')],['i_garlic','1瓣',OPT]],['s_butter','s_salt','s_white_pepper','s_chicken_stock']],
   // 韓式
   ['r_japchae','韓式雜菜冬粉','チャプチェ','kr','🍜',[['i_harusame','100g'],['i_beef_slice','100g',OR('i_pork_slice')],['i_spinach','1/2把',OR('i_komatsuna')],['i_carrot','1/3根'],['i_onion','1/2個'],['i_garlic','1瓣'],['i_shiitake','2朵',OPT],['i_egg','1顆（蛋絲）',OPT]],['s_soy','s_sugar','s_sesame_oil','s_sesame','s_oil']],
+  // ── 1.5.0 新增 ──
+  ['r_onion_soup','洋蔥湯','オニオンスープ','west','🧅',[['i_onion','3個'],['i_bread','1片（烤過）',OPT],['i_cheese','1片',OPT],['i_garlic','1瓣',OPT]],['s_butter','s_chicken_stock','s_salt','s_black_pepper']],
+  ['r_salsa_pasta','莎莎醬涼麵','サルサ風冷製パスタ','west','🍝',[['i_pasta','200g',OR('i_ramen')],['i_tomato','2顆'],['i_lemon','1/2顆'],['i_onion','1/4個',OPT],['i_cilantro','少許',OPT],['i_chili','1根',OPT],['i_avocado','1/2顆',OPT]],['s_olive','s_salt','s_black_pepper','s_sugar']],
+  ['r_taro_bihun','芋頭米粉','タロイモ入りビーフン','tw','🟣',[['i_taro','1/2個'],['i_shallot','3瓣'],['i_bihun','200g'],['i_pork_slice','100g',OPT],['i_dried_shrimp','1大匙',OPT],['i_shiitake','3朵',OPT],['i_celery','1根',OPT]],['s_soy','s_white_pepper','s_salt','s_oil','s_chicken_stock']],
+  ['r_shakshuka','南非烘蛋','トマトと卵の焼き込み','west','🍳',[['i_tomato','3顆',OR('i_tomato_can')],['i_egg','3顆'],['i_onion','1/2個',OPT],['i_pepper','1個',OPT],['i_garlic','2瓣',OPT],['i_cheese','適量',OPT],['i_cilantro','少許',OPT]],['s_olive','s_salt','s_black_pepper','s_ketchup']],
+  ['r_pineapple_shrimp','鳳梨蝦球','パイナップルエビマヨ','tw','🍍',[['i_shrimp','250g'],['i_pineapple','1/4個'],['i_egg','1顆（裹粉）',OPT]],['s_mayo','s_katakuriko','s_sugar','s_salt','s_oil','s_honey']],
+  ['r_sweet_sour_renkon','糖醋蓮藕','れんこんの甘酢炒め','cn','🪷',[['i_renkon','1節'],['i_garlic','1瓣',OPT],['i_chili','1根',OPT]],['s_vinegar','s_sugar','s_soy','s_katakuriko','s_oil']],
+  ['r_seared_chicken','嫩煎雞胸肉','鶏むね肉のソテー','west','🍗',[['i_chicken_breast','1片'],['i_garlic','2瓣']],['s_honey','s_salt','s_black_pepper','s_olive']],
+  ['r_chawanmushi','蒸蛋','茶碗蒸し','jp','🥚',[['i_egg','3顆'],['i_shrimp','4隻',OPT],['i_shiitake','2朵',OPT],['i_asari','6顆',OPT],['i_kamaboko','2片',OPT],['i_negi','少許',OPT]],['s_dashi','s_salt','s_soy','s_mirin']],
+  ['r_avocado_nori','酪梨海苔','アボカドの海苔巻き','jp','🥑',[['i_avocado','1顆'],['i_nori','2片'],['i_rice','1碗',OPT]],['s_soy','s_wasabi','s_sesame_oil']],
+  ['r_tw_cold_noodle','台式涼麵','台湾風冷やし麺','tw','🍜',[['i_ramen','2球',OR('i_thin_noodle')],['i_carrot','1/3根'],['i_moyashi','1/2包',OPT],['i_chicken_breast','100g（手撕）',OPT],['i_egg','1顆（蛋絲）',OPT],['i_garlic','2瓣']],['s_sesame_paste','s_soy','s_vinegar','s_sugar','s_sesame_oil','s_rayu']],
+  ['r_garlic_eggplant','蒜香大茄子','なすのガーリック焼き','cn','🍆',[['i_eggplant','2條'],['i_garlic','4瓣'],['i_ginger','1片'],['i_negi','1根'],['i_chili','1根',OPT]],['s_olive','s_soy','s_salt','s_black_pepper']],
 ];
 
 function buildSeed(){
@@ -686,7 +726,7 @@ function buildSeed(){
    每次內建資料有變動就把 SEED_VERSION +1。舊裝置打開時：
    新增的內建項目會補進來；沒被使用者在後台改過的內建項目會更新成新版本；
    使用者改過的（edited:true）保留不動；REMOVED_SEED_IDS 裡未改過的會被移除。 */
-const SEED_VERSION = 4;
+const SEED_VERSION = 5;
 const REMOVED_SEED_IDS = ['r_potato_salad','r_chikuwa_cucumber','r_cucumber'];
 function migrate(db){
   if((db.seedVersion||1) >= SEED_VERSION) return db;
@@ -704,7 +744,7 @@ function migrate(db){
 let DB = migrate(Store.load() || buildSeed());
 if(!DB.settings) DB.settings = {threshold:70};
 if(!DB.fridge) DB.fridge = [];
-const ui = { rSearch:'', fSearch:'', fCat:'all', page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
+const ui = { rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
 let fridgeSet = new Set(DB.fridge);
 
 function persist(){ DB.fridge = [...fridgeSet]; Store.save(DB); }
@@ -772,7 +812,24 @@ function renderRecipes(){
     ? `冰箱是空的，先到右邊加入手邊的食材吧 →`
     : `冰箱裡有 ${nIng} 樣食材、${nSea} 樣調味料`;
 
-  const rows = DB.recipes.filter(r=>recipeMatchesSearch(r,q)).map(r=>({r, m:matchRecipe(r)}));
+  // 菜系分頁（只列出真的有料理的菜系）
+  const used = Object.keys(CUISINES).filter(k=>DB.recipes.some(r=>r.cuisine===k));
+  if(ui.cuisine!=='all' && !used.includes(ui.cuisine)) ui.cuisine='all';
+  $('#cui-tabs').innerHTML = [['all','全部'],...used.map(k=>[k,CUISINES[k]])]
+    .map(([k,l])=>`<button class="cui-tab ${ui.cuisine===k?'on':''}" data-cui="${k}">${l}</button>`).join('');
+
+  // 焦點食材：只看用得到它的料理
+  const fi = ui.focus ? itemById(ui.focus) : null;
+  if(ui.focus && !fi) ui.focus = null;
+  $('#focus-bar').innerHTML = fi
+    ? `<div class="focus-bar">只看用到 <b>${esc(fi.name)}</b> 的料理<button class="x" data-focus-clear>✕ 取消</button></div>`
+    : '';
+
+  const rows = DB.recipes
+    .filter(r=>recipeMatchesSearch(r,q))
+    .filter(r=>ui.cuisine==='all' || r.cuisine===ui.cuisine)
+    .filter(r=>!ui.focus || r.ings.some(x=>slotIds(x).includes(ui.focus)) || r.seas.includes(ui.focus))
+    .map(r=>({r, m:matchRecipe(r)}));
   if(!fridgeEmpty) rows.sort((a,b)=> b.m.ingPct-a.m.ingPct || b.m.seaPct-a.m.seaPct || (a.m.ingTotal-a.m.ingHave)-(b.m.ingTotal-b.m.ingHave) || a.r.name.localeCompare(b.r.name,'zh-Hant'));
   rows.forEach(x=>{ x.g = fridgeEmpty ? 'all' : x.m.ingPct===100 ? 'ready' : x.m.ingPct>=th ? 'near' : 'rest'; });
 
@@ -802,7 +859,8 @@ function renderRecipes(){
 
   let html = '';
   if(!rows.length){
-    html = `<div class="empty"><div class="big">🔍</div>找不到符合「${esc(q)}」的料理</div>`;
+    const why = [q?`符合「${esc(q)}」`:'', fi?`用到${esc(fi.name)}`:'', ui.cuisine!=='all'?`${CUISINES[ui.cuisine]}`:''].filter(Boolean).join('、');
+    html = `<div class="empty"><div class="big">🔍</div>沒有${why||'任何'}的料理${(fi||ui.cuisine!=='all')?'<br><button class="hbtn wob" data-filter-clear style="margin-top:10px">清除篩選</button>':''}</div>`;
   } else {
     let lastG = ui.page>0 ? rows[ui.page*size-1].g : null;
     slice.forEach((x,i)=>{
@@ -822,10 +880,11 @@ function renderRecipes(){
 /* =====================================================================
    冰箱
    ===================================================================== */
-const NOTE_BG = ['var(--n1)','var(--n2)','var(--n3)','var(--n4)'];
+// 便條紙顏色依分類：蔬菜綠、肉類紅、海鮮藍、蛋豆奶黃、主食米、其他紫；調味料維持白底虛線
 function note(it, i){
   const sea = it.kind==='seasoning';
-  return `<button class="note ${sea?'sea':''}" data-toggle="${it.id}" style="transform:rotate(${ROT[(i+3)%ROT.length]*2}deg);${sea?'':`background:${NOTE_BG[i%4]}`}">${esc(it.name)}${it.ja?`<span class="ja">${esc(it.ja)}</span>`:''}</button>`;
+  const cls = sea ? 'sea' : (CATS[it.cat] ? it.cat : 'other');
+  return `<span class="note ${cls} ${ui.focus===it.id?'focus':''}" data-focus="${it.id}" title="只看用到「${esc(it.name)}」的料理" style="transform:rotate(${ROT[(i+3)%ROT.length]*2}deg)">${esc(it.name)}${it.ja?`<span class="ja">${esc(it.ja)}</span>`:''}<span class="nx" data-toggle="${it.id}" title="從冰箱移出">✕</span></span>`;
 }
 function chip(it, on){
   return `<button class="chip ${on?'on':''} ${it.kind==='seasoning'?'sea':''} ${it.id.length%2?'wob':'wob2'}" data-toggle="${it.id}">${esc(it.name)}${it.ja?`<span class="ja">${esc(it.ja)}</span>`:''}</button>`;
@@ -833,7 +892,7 @@ function chip(it, on){
 function renderFridge(){
   const inItems = DB.items.filter(i=>fridgeSet.has(i.id));
   const ings = inItems.filter(i=>i.kind==='ingredient'), seas = inItems.filter(i=>i.kind==='seasoning');
-  $('#fridge-hint').textContent = fridgeSet.size ? `點便條紙可以移出冰箱` : '把手邊有的東西加進來，左邊就會推薦能做的料理';
+  $('#fridge-hint').textContent = fridgeSet.size ? `點便條紙只看用得到它的料理 ・ 點 ✕ 移出冰箱` : '把手邊有的東西加進來，左邊就會推薦能做的料理';
   $('#fridge-now').innerHTML = `
     <div class="fridge">
       <div class="fr-door top"><div class="handle"></div>
@@ -873,7 +932,8 @@ function renderFridge(){
 }
 
 function toggleFridge(id){
-  if(fridgeSet.has(id)) fridgeSet.delete(id); else fridgeSet.add(id);
+  if(fridgeSet.has(id)){ fridgeSet.delete(id); if(ui.focus===id){ ui.focus=null; ui.page=0; } }
+  else fridgeSet.add(id);
   persist(); renderAll();
 }
 function addStaples(){
@@ -883,7 +943,7 @@ function addStaples(){
 function clearFridge(){
   if(!fridgeSet.size) return;
   if(!confirm('要清空冰箱嗎？（食材庫不會被刪除）')) return;
-  fridgeSet.clear(); persist(); renderAll(); toast('冰箱已清空');
+  fridgeSet.clear(); ui.focus=null; ui.page=0; persist(); renderAll(); toast('冰箱已清空');
 }
 function quickAddItem(name){
   name = name.trim(); if(!name) return;
@@ -1013,7 +1073,7 @@ function deleteItem(id){
     r.ings = r.ings.map(x=>{ const alts=(x.alts||[]).filter(a=>a!==id); if(x.id!==id) return {...x, alts}; if(!alts.length) return null; return {...x, id:alts[0], alts:alts.slice(1)}; }).filter(Boolean);
     r.seas = r.seas.filter(x=>x!==id);
   });
-  fridgeSet.delete(id); persist(); renderAdmin(); toast('已刪除');
+  fridgeSet.delete(id); if(ui.focus===id) ui.focus=null; persist(); renderAdmin(); toast('已刪除');
 }
 
 /* ── 表單：料理 ── */
@@ -1161,6 +1221,10 @@ document.addEventListener('click', e=>{
   const el = s => t.closest(s);
   let x;
   if(x=el('[data-toggle]')){ toggleFridge(x.dataset.toggle); return; }
+  if(x=el('[data-focus]')){ ui.focus = ui.focus===x.dataset.focus ? null : x.dataset.focus; ui.page=0; renderAll(); return; }
+  if(el('[data-focus-clear]')){ ui.focus=null; ui.page=0; renderAll(); return; }
+  if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.page=0; renderAll(); return; }
+  if(x=el('[data-cui]')){ ui.cuisine=x.dataset.cui; ui.page=0; renderRecipes(); return; }
   if(x=el('[data-open]')){ openRecipe(x.dataset.open); return; }
   if(x=el('[data-pg]')){ if(x.disabled) return; ui.page += +x.dataset.pg; renderRecipes(); return; }
   if(x=el('[data-cat]')){ ui.fCat=x.dataset.cat; renderFridge(); return; }
