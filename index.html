@@ -12,7 +12,8 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --paper:#fbf9f3;--paper2:#f3efe4;--grid:rgba(120,150,190,0.16);--ink:#2c2a28;--muted:#7b7570;--line:rgba(44,42,40,0.22);
+  /* 文字分四層：ink 標題與主要內容｜ink-soft 暗掉的料理名稱｜ink2 要讀的次要文字（副標題、用量、說明）｜muted 純裝飾（日文讀音、菜系標籤、頁碼） */
+  --paper:#fbf9f3;--paper2:#f3efe4;--grid:rgba(120,150,190,0.10);--ink:#241f1c;--ink-soft:#473f3a;--ink2:#5e5650;--muted:#a9a19a;--line:rgba(44,42,40,0.22);
   --red:#e35d3c;--blue:#3d8fc2;--green:#5aa86b;--yellow:#ffe082;--yellow2:#fff3b0;
   --n1:#fff3b0;--n2:#d9efe1;--n3:#fce0d6;--n4:#d9e8f5;
   --hand:'Zen Kurenaido','Yomogi','Klee One','Noto Sans TC',cursive;--body:'Klee One','Zen Kurenaido','Noto Sans TC','Hiragino Sans',sans-serif;
@@ -46,9 +47,10 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .focus-bar b{font-family:var(--hand-b);font-weight:600}
 .focus-bar .x{margin-left:auto;font-family:var(--hand);font-size:13px;color:var(--red);white-space:nowrap;border-bottom:1px solid var(--red)}
 .page-head .row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.title{font-family:var(--hand-b);font-weight:600;font-size:32px;line-height:1.15;white-space:nowrap}
+/* 標題加粗：字體與字級不變，只把筆畫描粗 */
+.title{font-family:var(--hand-b);font-weight:600;font-size:32px;line-height:1.15;white-space:nowrap;-webkit-text-stroke:0.5px currentColor}
 .title span{padding:0 2px}
-.hint{font-family:var(--hand);font-size:14px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hint{font-family:var(--hand);font-size:14px;color:var(--ink2);margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .version-badge{font-family:var(--hand);font-size:13px;color:var(--muted);cursor:pointer;border-bottom:1px dashed var(--muted)}
 .version-badge:hover{color:var(--ink)}
 .page-body{flex:1;overflow-y:auto;padding:4px 26px 24px;-webkit-overflow-scrolling:touch}
@@ -79,29 +81,34 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 
 /* ── RECIPE LIST ── */
 .rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px;padding-top:8px}
-.group-h{grid-column:1/-1;font-family:var(--hand);font-size:17px;display:flex;align-items:center;gap:8px;margin-top:6px}
+.group-h{grid-column:1/-1;font-family:var(--hand);font-size:17px;display:flex;align-items:center;gap:8px;margin-top:6px;-webkit-text-stroke:0.3px currentColor}
 .group-h i{display:inline-block;width:12px;height:12px;border:2px solid var(--ink);border-radius:3px 6px 2px 7px;flex-shrink:0}
 .group-h.ready i{background:var(--green)}.group-h.near i{background:var(--yellow)}.group-h.rest i{background:#d8d2c4}.group-h.all i{background:var(--blue)}
 .rcard{position:relative;padding:14px 16px 12px;background:#fff;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;display:flex;flex-direction:column;gap:4px}
 .rcard:hover{box-shadow:4px 5px 0 rgba(44,42,40,0.14)}
-.rcard.dim{opacity:0.7}
+/* 食材不夠：不再整張變透明，改成「底色變白、膠帶拿掉、進度條轉灰」，名稱留在 ink-soft 這一層，看得清但明顯次要 */
+.rcard.dim{background:#faf8f3;border-color:rgba(44,42,40,0.16);box-shadow:none}
+.rcard.dim .tape{display:none}
+.rcard.dim .rname{color:var(--ink-soft);-webkit-text-stroke:0}
+.rcard.dim .scr{filter:grayscale(1);opacity:0.5}
+.rcard.dim:hover{box-shadow:3px 4px 0 rgba(44,42,40,0.10)}
 .tape{position:absolute;width:74px;height:22px;background:rgba(255,224,130,0.75);transform:rotate(-4deg);left:18px;top:-11px;box-shadow:0 1px 2px rgba(0,0,0,0.08);pointer-events:none}
 .tape.r{left:auto;right:18px;transform:rotate(5deg);background:rgba(178,222,200,0.8)}
 .rtop{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.rname{font-family:var(--hand-b);font-weight:600;font-size:22px;line-height:1.2}
+.rname{font-family:var(--hand-b);font-weight:600;font-size:22px;line-height:1.2;-webkit-text-stroke:0.35px currentColor}
 .emo{font-size:20px;line-height:1;align-self:center}
 .emo img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--ink);vertical-align:middle}
 .ctag{font-family:var(--hand);font-size:13px;color:var(--muted);margin-left:auto}
-.mrow{font-family:var(--hand);display:flex;justify-content:space-between;font-size:13px;margin-top:6px}
+.mrow{font-family:var(--hand);display:flex;justify-content:space-between;font-size:13px;margin-top:6px;color:var(--ink2)}
 .scr{height:10px;background:linear-gradient(90deg,var(--red) 0 var(--w),transparent var(--w));border-radius:6px 3px 8px 2px;border:1.5px solid var(--ink);margin-top:3px}
 .scr.blue{background:linear-gradient(90deg,var(--blue) 0 var(--w),transparent var(--w))}
 .scr.grn{background:linear-gradient(90deg,var(--green) 0 var(--w),transparent var(--w))}
-.miss{font-family:var(--hand);font-size:14px;margin-top:8px;line-height:1.9}
+.miss{font-family:var(--hand);font-size:14px;margin-top:8px;line-height:1.9;color:var(--ink2)}
 .miss.ok{color:var(--green)}
 .circ{display:inline-block;color:var(--red);border:2px solid var(--red);padding:0 6px;line-height:1.35;margin:0 2px}
 .circ.b{color:var(--blue);border-color:var(--blue);border-style:dashed}
 .circ.c1{border-radius:50% 40% 55% 45%}.circ.c2{border-radius:45% 55% 40% 50%}.circ.c3{border-radius:50% 45% 55% 40%}.circ.c4{border-radius:40% 50% 45% 55%}
-.empty{grid-column:1/-1;text-align:center;color:var(--muted);font-family:var(--hand);font-size:17px;padding:40px 16px;line-height:1.9}
+.empty{grid-column:1/-1;text-align:center;color:var(--ink2);font-family:var(--hand);font-size:17px;padding:40px 16px;line-height:1.9}
 .empty .big{font-size:40px;margin-bottom:6px}
 .pager{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px;font-family:var(--hand);font-size:14px;border-top:1.5px dashed var(--line);margin:0 26px}
 .pg{font-family:var(--hand);font-size:14px;display:flex;align-items:center;gap:6px;padding:3px 8px;color:var(--ink)}
@@ -116,7 +123,8 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .fr-door.top{border-bottom:2.5px solid var(--ink);border-radius:0 0 40px 10px / 0 0 6px 4px}
 .fr-door .handle{position:absolute;right:12px;top:16px;width:7px;height:44px;background:var(--ink);border-radius:4px 3px 5px 3px}
 .fr-door.bot .handle{top:14px}
-.fr-l{font-family:var(--hand-b);font-weight:600;font-size:17px;display:flex;align-items:center;gap:8px}
+.fr-l{font-family:var(--hand-b);font-weight:600;font-size:17px;display:flex;align-items:center;gap:8px;-webkit-text-stroke:0.5px currentColor}
+.fr-l .n{-webkit-text-stroke:0}
 .fr-l .n{font-size:13px;color:var(--muted)}
 .feet{display:flex;justify-content:space-between;padding:0 22px;margin-right:14px;margin-top:-1px}
 .feet i{width:20px;height:9px;background:var(--ink);border-radius:0 0 4px 4px;display:block}
@@ -130,7 +138,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .note .nx:hover{color:var(--red);background:rgba(255,255,255,0.7)}
 .note.veg{background:var(--c-veg)}.note.meat{background:var(--c-meat)}.note.seafood{background:var(--c-seafood)}
 .note.egg{background:var(--c-egg)}.note.staple{background:var(--c-staple)}.note.other{background:var(--c-other)}
-.fr-empty{text-align:center;color:var(--muted);font-family:var(--hand);font-size:15px;padding:14px 0;line-height:1.8;width:100%}
+.fr-empty{text-align:center;color:var(--ink2);font-family:var(--hand);font-size:15px;padding:14px 0;line-height:1.8;width:100%}
 .lib-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:22px;margin-bottom:10px;flex-wrap:wrap}
 .lib-head h3{font-size:22px;flex:1;white-space:nowrap}
 .lib-head .search{flex:0 1 220px;padding:6px 12px;font-size:13px}
@@ -139,7 +147,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .cat-tab{font-family:var(--hand);font-size:15px;color:var(--muted);white-space:nowrap;flex-shrink:0;padding:2px 2px}
 .cat-tab.on{color:var(--ink);background:linear-gradient(transparent 62%,var(--yellow) 62%)}
 .lib-group{margin-bottom:8px}
-.lib-group h4{font-family:var(--hand);font-weight:400;font-size:13px;color:var(--muted);margin:10px 2px 6px}
+.lib-group h4{font-family:var(--hand);font-weight:400;font-size:13px;color:var(--ink2);margin:10px 2px 6px}
 .chips{display:flex;flex-wrap:wrap;gap:8px 7px}
 .chip{font-family:var(--body);font-size:14px;padding:5px 11px;background:#fff;line-height:1.25;cursor:pointer;transition:transform 0.12s;display:inline-flex;align-items:baseline;gap:5px;color:var(--ink)}
 .chip:hover{box-shadow:var(--shadow)}
@@ -147,7 +155,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .chip.on .ja{color:rgba(255,255,255,0.65)}
 .chip.sea{border-style:dashed}
 .chip.sea.on{border-style:solid}
-.lib-none{font-family:var(--hand);font-size:15px;color:var(--muted);padding:12px 4px;line-height:1.9}
+.lib-none{font-family:var(--hand);font-size:15px;color:var(--ink2);padding:12px 4px;line-height:1.9}
 .lib-none button{font-family:var(--hand);font-size:15px;color:var(--blue);text-decoration:underline}
 /* ── 冰箱收起（右側抽屜） ── */
 .fr-rail{display:none}
@@ -173,7 +181,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @media (min-width:721px){.overlay{align-items:center;padding:20px}.sheet{border-bottom:2.5px solid var(--ink);border-radius:18px 24px 16px 22px / 22px 16px 24px 18px;max-height:88vh;box-shadow:6px 8px 0 rgba(44,42,40,0.15)}}
 .sheet-head{padding:18px 20px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.sheet-head h2{font-family:var(--hand-b);font-weight:600;font-size:27px;flex:1;line-height:1.25}
+.sheet-head h2{font-family:var(--hand-b);font-weight:600;font-size:27px;flex:1;line-height:1.25;-webkit-text-stroke:0.5px currentColor}
 .sheet-close{width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sheet-close:hover{background:var(--yellow)}
 .sheet-body{padding:0 20px 20px;overflow-y:auto;flex:1}
@@ -191,7 +199,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .d-ja{font-size:13px;color:var(--muted);margin-bottom:6px}
 .d-pcts{display:flex;gap:10px;margin-top:8px}
 .d-pct{flex:1;background:#fff;padding:8px 12px;position:relative}
-.d-pct .l{font-family:var(--hand);font-size:13px;color:var(--muted)}
+.d-pct .l{font-family:var(--hand);font-size:13px;color:var(--ink2)}
 .d-pct .v{font-family:var(--hand);font-size:26px;line-height:1.2}
 .d-pct .v small{font-size:12px;color:var(--muted);margin-left:5px}
 .d-pct.ing .v{color:var(--red)}.d-pct.sea .v{color:var(--blue)}.d-pct .v.full{color:var(--green)}
@@ -205,7 +213,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .irow.miss .ck{color:var(--red)}
 .irow .nm{flex:1;min-width:0;font-size:15px}
 .irow .nm .ja{margin-left:5px}
-.irow .amt{font-family:var(--hand);font-size:14px;color:var(--muted);white-space:nowrap}
+.irow .amt{font-family:var(--hand);font-size:14px;color:var(--ink2);white-space:nowrap}
 .irow.miss .nm{color:var(--red)}
 .irow.slot .nm{cursor:pointer}
 .irow.slot .cands{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}
@@ -218,7 +226,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .irow.optm{opacity:0.62}
 .irow.optm .ck{color:var(--muted);border-style:dashed}
 .irow.optm .nm{color:var(--ink)}
-.optag{font-family:var(--hand);font-size:12px;color:var(--muted);border:1.5px dashed var(--muted);padding:1px 7px;border-radius:12px;white-space:nowrap}
+.optag{font-family:var(--hand);font-size:12px;color:var(--ink2);border:1.5px dashed var(--muted);padding:1px 7px;border-radius:12px;white-space:nowrap}
 .miss .opt-note{color:var(--muted);font-size:12px}
 .d-note{font-size:14px;line-height:1.7;background:var(--n1);padding:10px 14px;margin-top:14px;box-shadow:var(--shadow)}
 .d-tip{font-family:var(--hand);font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
@@ -226,7 +234,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 /* changelog */
 .changelog-entry{margin-bottom:16px}
 .changelog-ver{font-family:var(--hand);font-size:17px;color:var(--red);margin-bottom:4px}
-.changelog-content{font-size:13px;color:var(--muted);line-height:1.9}
+.changelog-content{font-size:13px;color:var(--ink2);line-height:1.9}
 
 /* toast */
 #toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px) rotate(-1deg);background:var(--ink);color:#fff;padding:9px 18px;font-family:var(--hand);font-size:15px;opacity:0;pointer-events:none;transition:all 0.25s;z-index:300;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;border-radius:255px 15px 225px 15px / 15px 225px 15px 255px}
@@ -236,7 +244,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 #admin{position:fixed;inset:0;background:var(--paper);z-index:90;display:none;flex-direction:column;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
 #admin.open{display:flex}
 .a-top{padding:calc(14px + env(safe-area-inset-top)) 20px 8px;display:flex;align-items:flex-end;gap:12px;flex-shrink:0}
-.a-top h1{font-size:32px;flex:1;line-height:1}
+.a-top h1{font-family:var(--hand-b);font-weight:600;font-size:30px;flex:1;line-height:1.1;-webkit-text-stroke:0.5px currentColor}
 .a-tabs{display:flex;gap:18px;padding:6px 20px 0;border-bottom:2px solid var(--ink);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
 .a-tab{font-family:var(--hand);font-size:17px;padding:8px 4px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
 .a-tab.on{color:var(--ink);border-bottom-color:var(--ink)}
@@ -248,29 +256,29 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .a-row .e img{width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:middle;border:1.5px solid var(--ink)}
 .a-row .nm{flex:1;min-width:0;font-size:14px;line-height:1.3}
 .a-row .nm .ja{margin-left:6px}
-.a-row .nm .s{display:block;font-size:11px;color:var(--muted)}
+.a-row .nm .s{display:block;font-size:11px;color:var(--ink2)}
 .a-row .ic{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--muted)}
 .a-row .ic:hover{background:var(--yellow2);color:var(--ink)}
 .a-row .ic.del:hover{background:var(--n3);color:var(--red)}
 .a-group-h{font-family:var(--hand);font-size:16px;margin:16px 2px 8px}
 .a-card{background:#fff;padding:14px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .a-card h3{font-size:20px;margin-bottom:6px}
-.a-card p{font-size:13px;color:var(--muted);line-height:1.8}
+.a-card p{font-size:13px;color:var(--ink2);line-height:1.8}
 .a-card .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .stat{display:flex;gap:10px;margin-bottom:14px}
 .stat div{flex:1;background:#fff;padding:10px;text-align:center;box-shadow:var(--shadow)}
 .stat .v{font-family:var(--hand);font-size:26px;color:var(--blue)}
-.stat .l{font-family:var(--hand);font-size:12px;color:var(--muted)}
+.stat .l{font-family:var(--hand);font-size:12px;color:var(--ink2)}
 
 /* forms */
 .f{display:flex;flex-direction:column;gap:12px}
-.f label{display:flex;flex-direction:column;gap:5px;font-family:var(--hand);font-size:14px;color:var(--muted)}
+.f label{display:flex;flex-direction:column;gap:5px;font-family:var(--hand);font-size:14px;color:var(--ink2)}
 .f input[type=text],.f input[type=url],.f select,.f textarea{background:#fff;border:2px solid var(--ink);border-radius:255px 15px 225px 15px / 15px 225px 15px 255px;padding:9px 14px;font-size:14px;width:100%;font-family:var(--body);color:var(--ink)}
 .f input:focus,.f select:focus,.f textarea:focus{background:var(--yellow2)}
 .f textarea{min-height:64px;resize:vertical;border-radius:12px}
 .f .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .f .grid31{display:grid;grid-template-columns:1fr 84px;gap:10px}
-.f-help{font-size:11px;color:var(--muted);line-height:1.6;font-family:var(--body)}
+.f-help{font-size:11px;color:var(--ink2);line-height:1.6;font-family:var(--body)}
 .builder{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:10px 12px}
 .builder .b-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
 .b-row{display:flex;align-items:center;gap:8px}
@@ -287,14 +295,14 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .b-row .alt-rm:hover{color:var(--red)}
 .b-row .alt-add{font-family:var(--hand);font-size:13px;color:var(--blue);border:1.5px dashed var(--blue);border-radius:10px;padding:0 8px;line-height:1.6}
 .b-row .alt-add.on,.b-row .alt-add:hover{background:var(--blue);color:#fff;border-style:solid}
-.b-row .opt-l{display:flex;align-items:center;gap:5px;font-family:var(--hand);font-size:12px;color:var(--muted);flex-direction:row;cursor:pointer}
+.b-row .opt-l{display:flex;align-items:center;gap:5px;font-family:var(--hand);font-size:12px;color:var(--ink2);flex-direction:row;cursor:pointer}
 .b-row .opt-l input{accent-color:var(--ink)}
 .b-row.opt .nm{opacity:0.6}
 .b-row .rm{color:var(--muted);font-size:16px;padding:4px 6px}
 .alt-banner{font-family:var(--hand);font-size:14px;background:var(--n4);padding:6px 10px;margin-bottom:8px;border-radius:8px 3px 8px 3px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .alt-banner button{font-family:var(--hand);font-size:13px;color:var(--red);text-decoration:underline}
 .b-row .rm:hover{color:var(--red)}
-.b-none{font-size:12px;color:var(--muted);padding:4px 0 8px}
+.b-none{font-size:12px;color:var(--ink2);padding:4px 0 8px}
 .b-search{position:relative}
 .b-search input{width:100%;background:var(--paper);border:1.5px dashed var(--ink);border-radius:8px;padding:8px 10px;font-size:13px}
 .b-sug{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:2px solid var(--ink);border-radius:10px;box-shadow:var(--shadow);z-index:5;max-height:220px;overflow-y:auto;display:none}
@@ -359,7 +367,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.5.1</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.5.2</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -431,6 +439,16 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.5.2 - 2026年10月3日</div>
+        <div class="changelog-content">
+          👓 整體看得更清楚：文字分成四層深淺，要讀的字加深、純裝飾的字退淡<br>
+          📝 副標題（冰箱裡有幾樣、點便條紙⋯）、用量、說明文字都加深<br>
+          🖊 標題與料理名稱的筆畫加厚（字體、字級都沒變）<br>
+          🫥 食材不夠的料理不再整張變透明，改成底色變白、膠帶拿掉、進度條轉灰，名稱用專屬的深灰，和菜系標籤、副標題都不同色<br>
+          📄 方格紙的格線調淡
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.5.1 - 2026年9月23日</div>
         <div class="changelog-content">
@@ -543,7 +561,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.5.1';
+const APP_VERSION = '1.5.2';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
