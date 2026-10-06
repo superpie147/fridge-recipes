@@ -43,6 +43,20 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .cui-tabs::-webkit-scrollbar{display:none}
 .cui-tab{font-family:var(--hand);font-size:14px;color:var(--muted);white-space:nowrap;flex-shrink:0;padding:1px 2px}
 .cui-tab.on{color:var(--ink);background:linear-gradient(transparent 62%,var(--yellow) 62%)}
+/* 標籤篩選：平常收起來，只露一顆按鈕；展開後是一排可點的標籤 */
+.tagbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.tag-toggle{font-family:var(--hand);font-size:14px;color:var(--ink);display:inline-flex;align-items:center;gap:5px;padding:2px 10px 3px;border:1.5px dashed var(--line);border-radius:50px;line-height:1.5}
+.tag-toggle:hover{background:var(--yellow2);border-color:var(--ink)}
+.tag-toggle.on{border-style:solid;border-color:var(--ink);background:var(--yellow)}
+.tag-toggle .car{font-size:10px;color:var(--ink2)}
+.tag-clear{font-family:var(--hand);font-size:13px;color:var(--red);border-bottom:1px solid var(--red);line-height:1.4}
+.tag-panel{display:flex;flex-wrap:wrap;gap:7px;padding:9px 11px;margin-top:2px;background:#fff;border:2px dashed var(--line);border-radius:14px}
+.tchip{font-family:var(--body);font-size:13px;line-height:1.3;padding:4px 11px;border:1.5px solid var(--line);border-radius:50px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:var(--ink2);background:#fff}
+.tchip:hover{border-color:var(--ink);color:var(--ink)}
+.tchip.on{border-color:var(--ink);color:var(--ink);box-shadow:var(--shadow)}
+.tchip .cnt{font-size:11px;color:var(--muted)}
+.tchip.on .cnt{color:var(--ink2)}
+.tchip.mini{padding:2px 9px;font-size:12px;cursor:default}
 .focus-bar{display:flex;align-items:center;gap:8px;background:var(--n2);border:2px solid var(--ink);border-radius:255px 15px 225px 15px / 15px 225px 15px 255px;padding:5px 12px;font-family:var(--hand);font-size:14px;line-height:1.3}
 .focus-bar b{font-family:var(--hand-b);font-weight:600}
 .focus-bar .x{margin-left:auto;font-family:var(--hand);font-size:13px;color:var(--red);white-space:nowrap;border-bottom:1px solid var(--red)}
@@ -197,6 +211,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .d-img img{width:100%;height:100%;object-fit:cover}
 .d-meta{flex:1;min-width:0}
 .d-ja{font-size:13px;color:var(--muted);margin-bottom:6px}
+.d-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .d-pcts{display:flex;gap:10px;margin-top:8px}
 .d-pct{flex:1;background:#fff;padding:8px 12px;position:relative}
 .d-pct .l{font-family:var(--hand);font-size:13px;color:var(--ink2)}
@@ -310,6 +325,9 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .b-sug div{padding:9px 12px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;font-family:var(--body);color:var(--ink)}
 .b-sug div:hover{background:var(--yellow2)}
 .b-sug div.new{color:var(--blue);font-weight:600}
+.tf-c{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);cursor:pointer}
+.tf-c.on{border-color:var(--ink);box-shadow:var(--shadow)}
+.rf-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .img-box{display:flex;gap:12px;align-items:center}
 .img-prev{width:72px;height:72px;border-radius:50% 45% 55% 40%;border:2px solid var(--ink);background:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;flex-shrink:0}
 .img-prev img{width:100%;height:100%;object-fit:cover}
@@ -367,7 +385,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.5.2</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.6.0</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -380,6 +398,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
         <input id="r-search" placeholder="搜尋料理或食材…"><button class="clr" data-clear="r-search">✕</button>
       </div>
       <div class="cui-tabs" id="cui-tabs"></div>
+      <div id="tag-filter"></div>
       <div id="focus-bar"></div>
     </div>
     <div class="page-body"><div class="rgrid" id="recipe-list"></div></div>
@@ -439,6 +458,15 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.6.0 - 2026年10月6日</div>
+        <div class="changelog-content">
+          🏷 料理可以掛標籤了！內建 8 個：蔬菜多、高蛋白、膳食纖維、低醣、湯品鍋物、辣、快速、甜點，110 道料理已依食材自動判斷掛好<br>
+          🔎 料理書上多了「標籤」按鈕，平常收起來，點開可複選（選兩個以上＝兩個都要符合）<br>
+          ⚙ 後台多了「標籤」分頁：可以改名、換顏色、新增自己的標籤（例如常備菜、下飯）<br>
+          ✨ 編輯料理時可以按「依食材重新判斷」重跑一次自動判斷，你手動掛的標籤會保留
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.5.2 - 2026年10月3日</div>
         <div class="changelog-content">
@@ -533,6 +561,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
     <button class="a-tab on" data-atab="ingredient">食材</button>
     <button class="a-tab" data-atab="seasoning">調味料</button>
     <button class="a-tab" data-atab="recipe">料理</button>
+    <button class="a-tab" data-atab="tag">標籤</button>
     <button class="a-tab" data-atab="data">資料</button>
   </div>
   <div class="a-body" id="a-body"></div>
@@ -561,7 +590,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.5.2';
+const APP_VERSION = '1.6.0';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -629,6 +658,52 @@ const SEED_SEASONINGS = [
   ['s_red_wine','紅酒','赤ワイン','🍷'],['s_fermented_tofu','豆腐乳','腐乳','🟥'],['s_bakkutteh','肉骨茶包','肉骨茶パック','🍵'],
   ['s_wasabi','芥末','わさび','🟩'],['s_sesame_paste','芝麻醬','ねりごま','🥜'],
 ];
+/* ── 標籤庫 ──
+   [id, 名稱, emoji, 顏色]。料理的 tags 存標籤 id。
+   內建這 8 個是「可以從食材推導出來的」，deriveTags() 會在建立預設資料時自動判斷；
+   你在後台改過的料理不會被之後的更新覆蓋。自己新增的標籤（例如常備菜、下飯）純手動掛。 */
+const SEED_TAGS = [
+  ['t_veg','蔬菜多','🥬','#d9efe1'],
+  ['t_protein','高蛋白','🍖','#fbd8d2'],
+  ['t_fiber','膳食纖維','🌾','#f1e3c6'],
+  ['t_lowcarb','低醣','🥑','#e7ddf3'],
+  ['t_soup','湯品鍋物','🍲','#d9e8f5'],
+  ['t_spicy','辣','🌶️','#ffd9c7'],
+  ['t_quick','快速','⚡','#fff3b0'],
+  ['t_sweet','甜點','🍰','#fde4ec'],
+];
+// 推導用的分類：辛香料（量少，不算「蔬菜多」）、蛋白質、高纖維代表食材
+const AROMATIC = new Set(['i_garlic','i_ginger','i_negi','i_chili','i_shallot','i_cilantro','i_basil','i_lemon','i_peeled_chili']);
+const PROTEIN_EXTRA = new Set(['i_egg','i_tofu','i_egg_tofu','i_atsuage','i_aburaage','i_natto','i_dougan','i_cheese','i_soymilk','i_pidan','i_salted_egg']);
+const FIBER_STAR = new Set(['i_kikurage','i_gobo','i_konnyaku','i_wakame','i_renkon','i_edamame','i_shiitake','i_enoki','i_shimeji','i_mushroom','i_broccoli','i_shio_kombu','i_green_bean','i_nori']);
+const FIBER_EXTRA = new Set(['i_kimchi','i_sauerkraut','i_peanut','i_natto']);
+const STARCHY = new Set(['i_potato','i_pumpkin','i_taro','i_corn','i_corn_can','i_renkon','i_banana','i_pineapple']);
+const FRUIT = new Set(['i_banana','i_pineapple','i_avocado','i_lemon']);
+const SWEET_SEAS = new Set(['s_sugar','s_rock_sugar','s_honey','s_mirin','s_ketchup','s_tianmian','s_chuno','s_curry_roux']);
+const SPICY_SEAS = new Set(['s_doubanjiang','s_gochujang','s_rayu','s_sansho','s_shichimi']);
+const SPICY_ING = new Set(['i_chili','i_peeled_chili','i_kimchi']);
+function deriveTags(r, byId){
+  const req = r.ings.filter(x=>!x.opt).map(x=>byId[x.id]).filter(Boolean);
+  const all = r.ings.map(x=>byId[x.id]).filter(Boolean);
+  const isVeg = i => i.cat==='veg' && !AROMATIC.has(i.id) && !FRUIT.has(i.id);
+  const veg = req.filter(isVeg);
+  const hasProtein = req.some(i=>i.cat==='meat'||i.cat==='seafood'||PROTEIN_EXTRA.has(i.id));
+  const hasStaple = req.some(i=>i.cat==='staple');
+  const text = r.name + (r.ja||'');
+  const isSoup = /湯|鍋|煲|汁|スープ/.test(text);
+  const t = new Set();
+  if(veg.length>=3 || (veg.length>=1 && !hasProtein && !hasStaple)) t.add('t_veg');
+  if(hasProtein) t.add('t_protein');
+  const fiber = all.filter(i=>isVeg(i)||FIBER_EXTRA.has(i.id)).length;
+  if(fiber>=2 || all.some(i=>FIBER_STAR.has(i.id))) t.add('t_fiber');
+  if(isSoup) t.add('t_soup');
+  if(r.seas.some(s=>SPICY_SEAS.has(s)) || req.some(i=>SPICY_ING.has(i.id))) t.add('t_spicy');
+  if(r.cuisine==='sweet') t.add('t_sweet');
+  else if(!hasStaple && !req.some(i=>STARCHY.has(i.id)) && !r.seas.some(s=>SWEET_SEAS.has(s))) t.add('t_lowcarb');
+  if(req.length<=3 && r.ings.length<=4 && !isSoup && !/燉|滷|煮|煲|東坡|筑前|唐揚|揚げ/.test(text)) t.add('t_quick');
+  return [...t];
+}
+
 // [id, 名稱, 日文, 菜系, emoji, 食材[[id,用量,選項]...], 調味料[id...]]
 //   選項：OR('替代id',...) = 冰箱有其中任一種就算有；OPT = 可省略（不算進％）；OROPT(...) = 兩者都是
 const OR = (...alts) => ({alts});
@@ -766,24 +841,33 @@ function buildSeed(){
     ...SEED_ITEMS.map(([id,name,ja,cat,emoji])=>({id,kind:'ingredient',name,ja,cat,emoji})),
     ...SEED_SEASONINGS.map(([id,name,ja,emoji])=>({id,kind:'seasoning',name,ja,cat:'',emoji})),
   ];
-  const recipes = SEED_RECIPES.map(([id,name,ja,cuisine,emoji,ings,seas])=>({
-    id,name,ja,cuisine,emoji,image:'',note:'',
-    ings: ings.map(([iid,amt,o])=>({id:iid,amt,...(o||{})})),
-    seas: seas.slice(),
-  }));
-  return { schema:1, seedVersion:SEED_VERSION, items, recipes, fridge:[], settings:{threshold:70} };
+  const tags = SEED_TAGS.map(([id,name,emoji,color])=>({id,name,emoji,color}));
+  const byId = Object.fromEntries(items.map(i=>[i.id,i]));
+  const recipes = SEED_RECIPES.map(([id,name,ja,cuisine,emoji,ings,seas])=>{
+    const r = {
+      id,name,ja,cuisine,emoji,image:'',note:'',
+      ings: ings.map(([iid,amt,o])=>({id:iid,amt,...(o||{})})),
+      seas: seas.slice(),
+    };
+    r.tags = deriveTags(r, byId);
+    return r;
+  });
+  return { schema:1, seedVersion:SEED_VERSION, items, tags, recipes, fridge:[], settings:{threshold:70} };
 }
 
 /* ── 內建資料升級 ──
    每次內建資料有變動就把 SEED_VERSION +1。舊裝置打開時：
    新增的內建項目會補進來；沒被使用者在後台改過的內建項目會更新成新版本；
    使用者改過的（edited:true）保留不動；REMOVED_SEED_IDS 裡未改過的會被移除。 */
-const SEED_VERSION = 5;
+const SEED_VERSION = 6;
 const REMOVED_SEED_IDS = ['r_potato_salad','r_chikuwa_cucumber','r_cucumber'];
 function migrate(db){
   if((db.seedVersion||1) >= SEED_VERSION) return db;
   const seed = buildSeed();
   const cur = arr => Object.fromEntries(arr.map(x=>[x.id,x]));
+  if(!Array.isArray(db.tags)) db.tags = [];
+  const ct = cur(db.tags);
+  seed.tags.forEach(s=>{ const c=ct[s.id]; if(!c) db.tags.push(s); else if(!c.edited) Object.assign(c, s); });
   const ci = cur(db.items), cr = cur(db.recipes);
   seed.items.forEach(s=>{ const c=ci[s.id]; if(!c) db.items.push(s); else if(!c.edited) Object.assign(c, s); });
   seed.recipes.forEach(s=>{ const c=cr[s.id]; if(!c) db.recipes.push(s); else if(!c.edited) Object.assign(c, s); });
@@ -796,7 +880,10 @@ function migrate(db){
 let DB = migrate(Store.load() || buildSeed());
 if(!DB.settings) DB.settings = {threshold:70};
 if(!DB.fridge) DB.fridge = [];
-const ui = { rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
+if(!Array.isArray(DB.tags)) DB.tags = [];
+DB.recipes.forEach(r=>{ if(!Array.isArray(r.tags)) r.tags = []; });
+const ui = { rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
+const tagById = id => DB.tags.find(t=>t.id===id);
 let fridgeSet = new Set(DB.fridge);
 
 function persist(){ DB.fridge = [...fridgeSet]; Store.save(DB); }
@@ -882,9 +969,23 @@ function renderRecipes(){
     ? `<div class="focus-bar">只看用到 <b>${esc(fi.name)}</b> 的料理<button class="x" data-focus-clear>✕ 取消</button></div>`
     : '';
 
+  // 標籤篩選（可複選，要全部符合）；只列出真的有料理掛著的標籤
+  const inUse = DB.tags.filter(t=>DB.recipes.some(r=>(r.tags||[]).includes(t.id)));
+  [...ui.tags].forEach(id=>{ if(!inUse.some(t=>t.id===id)) ui.tags.delete(id); });
+  const tcount = t => DB.recipes.filter(r=>(r.tags||[]).includes(t.id)).length;
+  const chip = (t,cls) => `<button class="tchip ${cls} ${ui.tags.has(t.id)?'on':''}" data-tag="${t.id}" style="${ui.tags.has(t.id)?`background:${esc(t.color||'#fff')}`:''}">${t.emoji||''} ${esc(t.name)}${cls==='mini'?'':`<span class="cnt">${tcount(t)}</span>`}</button>`;
+  $('#tag-filter').innerHTML = inUse.length ? `
+    <div class="tagbar">
+      <button class="tag-toggle ${ui.tagOpen||ui.tags.size?'on':''}" data-tag-toggle>標籤<span class="car">${ui.tagOpen?'▲':'▼'}</span></button>
+      ${!ui.tagOpen ? inUse.filter(t=>ui.tags.has(t.id)).map(t=>chip(t,'mini')).join('') : ''}
+      ${ui.tags.size ? '<button class="tag-clear" data-tag-clear>清除標籤</button>' : ''}
+    </div>
+    ${ui.tagOpen ? `<div class="tag-panel">${inUse.map(t=>chip(t,'')).join('')}</div>` : ''}` : '';
+
   const rows = DB.recipes
     .filter(r=>recipeMatchesSearch(r,q))
     .filter(r=>ui.cuisine==='all' || r.cuisine===ui.cuisine)
+    .filter(r=>!ui.tags.size || [...ui.tags].every(id=>(r.tags||[]).includes(id)))
     .filter(r=>!ui.focus || r.ings.some(x=>slotIds(x).includes(ui.focus)) || r.seas.includes(ui.focus))
     .map(r=>({r, m:matchRecipe(r)}));
   if(!fridgeEmpty) rows.sort((a,b)=> b.m.ingPct-a.m.ingPct || b.m.seaPct-a.m.seaPct || (a.m.ingTotal-a.m.ingHave)-(b.m.ingTotal-b.m.ingHave) || a.r.name.localeCompare(b.r.name,'zh-Hant'));
@@ -916,8 +1017,9 @@ function renderRecipes(){
 
   let html = '';
   if(!rows.length){
-    const why = [q?`符合「${esc(q)}」`:'', fi?`用到${esc(fi.name)}`:'', ui.cuisine!=='all'?`${CUISINES[ui.cuisine]}`:''].filter(Boolean).join('、');
-    html = `<div class="empty"><div class="big">🔍</div>沒有${why||'任何'}的料理${(fi||ui.cuisine!=='all')?'<br><button class="hbtn wob" data-filter-clear style="margin-top:10px">清除篩選</button>':''}</div>`;
+    const why = [q?`符合「${esc(q)}」`:'', fi?`用到${esc(fi.name)}`:'', ui.cuisine!=='all'?`${CUISINES[ui.cuisine]}`:'',
+      ui.tags.size?[...ui.tags].map(id=>tagById(id)?.name).filter(Boolean).join('＋'):''].filter(Boolean).join('、');
+    html = `<div class="empty"><div class="big">🔍</div>沒有${why||'任何'}的料理${(fi||ui.cuisine!=='all'||ui.tags.size)?'<br><button class="hbtn wob" data-filter-clear style="margin-top:10px">清除篩選</button>':''}</div>`;
   } else {
     let lastG = ui.page>0 ? rows[ui.page*size-1].g : null;
     slice.forEach((x,i)=>{
@@ -1044,7 +1146,9 @@ function renderRecipeModal(){
   };
   $('#rm-body').innerHTML = `
     <div class="d-hero">${r.image?`<div class="d-img"><img src="${esc(r.image)}" alt=""></div>`:`<div class="d-img">${r.emoji||'🍽️'}</div>`}
-      <div class="d-meta"><div class="d-ja">${esc(r.ja)}</div><span class="ctag hand" style="margin:0;font-size:15px">${CUISINES[r.cuisine]||CUISINES.other}</span></div>
+      <div class="d-meta"><div class="d-ja">${esc(r.ja)}</div><span class="ctag hand" style="margin:0;font-size:15px">${CUISINES[r.cuisine]||CUISINES.other}</span>
+        ${(r.tags||[]).length?`<div class="d-tags">${(r.tags||[]).map(id=>{const t=tagById(id); return t?`<span class="tchip mini" style="background:${esc(t.color||'#fff')};border-color:var(--ink)">${t.emoji||''} ${esc(t.name)}</span>`:'';}).join('')}</div>`:''}
+      </div>
     </div>
     <div class="d-pcts">
       <div class="d-pct ing wob"><div class="l">食材</div><div class="v ${m.ingPct===100?'full':''}">${m.ingPct}%<small>${m.ingHave}／${m.ingTotal}</small></div></div>
@@ -1084,6 +1188,13 @@ function renderAdmin(){
       listHtml = Object.entries(CATS).map(([k,l])=>{ const arr=list.filter(i=>i.cat===k); return arr.length?`<div class="a-group-h">${l}（${arr.length}）</div><div class="a-list">${arr.map(rowHtml).join('')}</div>`:''; }).join('');
     } else listHtml = `<div class="a-list">${list.map(rowHtml).join('')}</div>`;
     body.innerHTML = `<div class="a-toolbar">${searchBox('搜尋…')}<button class="hbtn wob2 ink" data-new-item="${kind}">＋ 新增${kind==='ingredient'?'食材':'調味料'}</button></div>${listHtml||'<div class="empty">沒有資料</div>'}`;
+  }
+  else if(ui.adminTab==='tag'){
+    const list = DB.tags.filter(t=>!q || t.name.toLowerCase().includes(q));
+    const used = t => DB.recipes.filter(r=>(r.tags||[]).includes(t.id)).length;
+    body.innerHTML = `<div class="a-toolbar">${searchBox('搜尋標籤…')}<button class="hbtn wob2 ink" data-new-tag>＋ 新增標籤</button></div>
+      <p class="f-help" style="margin-bottom:12px">標籤用來在料理書上快速篩選，例如「想吃蔬菜多的」。內建的 8 個是依食材自動判斷的；你可以自己改，也可以新增像「常備菜」「下飯」這種只能自己判斷的標籤。</p>
+      <div class="a-list">${list.map((t,k)=>`<div class="a-row ${k%2?'wob2':'wob'}"><span class="e">${t.emoji||'🏷'}</span><span class="nm">${esc(t.name)}<span class="s">用於 ${used(t)} 道料理</span></span><span style="width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);background:${esc(t.color||'#fff')};flex-shrink:0"></span><button class="ic" data-edit-tag="${t.id}" title="編輯">✎</button><button class="ic del" data-del-tag="${t.id}" title="刪除">🗑</button></div>`).join('')||'<div class="empty">還沒有標籤</div>'}</div>`;
   }
   else if(ui.adminTab==='recipe'){
     const list = DB.recipes.filter(r=>!q || (r.name+r.ja).toLowerCase().includes(q));
@@ -1140,6 +1251,37 @@ function deleteItem(id){
   fridgeSet.delete(id); if(ui.focus===id) ui.focus=null; persist(); renderAdmin(); toast('已刪除');
 }
 
+/* ── 表單：標籤 ── */
+const TAG_COLORS = ['#d9efe1','#fbd8d2','#f1e3c6','#e7ddf3','#d9e8f5','#ffd9c7','#fff3b0','#fde4ec'];
+function openTagForm(id){
+  const t = id ? tagById(id) : {name:'', emoji:'🏷', color:TAG_COLORS[0]};
+  openForm((id?'編輯':'新增')+'標籤', `
+    <div class="f">
+      <div class="grid31"><label>標籤名稱<input type="text" id="tf-name" value="${esc(t.name)}" placeholder="例：常備菜"></label><label>Emoji<input type="text" id="tf-emoji" value="${esc(t.emoji||'')}" placeholder="🏷"></label></div>
+      <label>顏色
+        <div class="chips" id="tf-colors">${TAG_COLORS.map(c=>`<button type="button" class="tf-c ${c===t.color?'on':''}" data-color="${c}" style="background:${c}"></button>`).join('')}</div>
+      </label>
+    </div>`,
+    `<button class="btn" onclick="closeForm()">取消</button><button class="btn primary" onclick="saveTag('${id||''}')">儲存</button>`);
+  setTimeout(()=>$('#tf-name').focus(),50);
+}
+function saveTag(id){
+  const name = $('#tf-name').value.trim(); if(!name){ toast('請輸入標籤名稱'); return; }
+  const color = $('#tf-colors .tf-c.on')?.dataset.color || TAG_COLORS[0];
+  const data = { name, emoji:$('#tf-emoji').value.trim(), color };
+  if(id) Object.assign(tagById(id), data, {edited:true});
+  else DB.tags.push({ id:uid('t_'), ...data });
+  persist(); closeForm(); renderAdmin(); toast('已儲存');
+}
+function deleteTag(id){
+  const t = tagById(id); if(!t) return;
+  const n = DB.recipes.filter(r=>(r.tags||[]).includes(id)).length;
+  if(!confirm(`確定刪除標籤「${t.name}」？${n?`\n有 ${n} 道料理掛著它，刪除後會從那些料理上拿掉。`:''}`)) return;
+  DB.tags = DB.tags.filter(x=>x.id!==id);
+  DB.recipes.forEach(r=>{ if(r.tags) r.tags = r.tags.filter(x=>x!==id); });
+  ui.tags.delete(id); persist(); renderAdmin(); toast('已刪除');
+}
+
 /* ── 表單：料理 ── */
 let rDraft = null;
 function openRecipeForm(id){
@@ -1165,12 +1307,26 @@ function openRecipeForm(id){
         <div class="builder"><div class="b-rows" id="rf-seas"></div>
           <div class="b-search"><input type="text" id="rf-sea-q" placeholder="輸入調味料名稱搜尋，點選加入…" autocomplete="off"><div class="b-sug" id="rf-sea-sug"></div></div></div>
       </label>
+      <label>標籤<span class="f-help">用來在料理書上篩選。「依食材重新判斷」會套用內建規則（蔬菜多、高蛋白、膳食纖維、低醣、湯品鍋物、辣、快速、甜點），你手動掛的其他標籤會保留。</span>
+        <div class="builder"><div class="rf-tags" id="rf-tags"></div>
+          <div style="display:flex;gap:8px;margin-top:9px;flex-wrap:wrap">
+            <button class="hbtn wob2" type="button" data-tag-auto>✨ 依食材重新判斷</button>
+            <button class="hbtn wob" type="button" data-tag-new>＋ 新增標籤</button>
+          </div></div>
+      </label>
       <label>備註（選填）<textarea id="rf-note" placeholder="小訣竅、替代食材…">${esc(rDraft.note||'')}</textarea></label>
     </div>`,
     `<button class="btn" onclick="closeForm()">取消</button>${id?`<button class="btn danger" onclick="deleteRecipe('${id}',true)">刪除</button>`:''}<button class="btn primary" onclick="saveRecipe()">儲存</button>`);
-  renderImgPrev(); renderBuilder('ingredient'); renderBuilder('seasoning');
+  renderImgPrev(); renderBuilder('ingredient'); renderBuilder('seasoning'); renderTagPicker();
   bindSuggest('ingredient'); bindSuggest('seasoning');
   setTimeout(()=>$('#rf-name').focus(),50);
+}
+function renderTagPicker(){
+  const box = $('#rf-tags'); if(!box) return;
+  if(!rDraft.tags) rDraft.tags = [];
+  box.innerHTML = DB.tags.length
+    ? DB.tags.map(t=>{ const on=rDraft.tags.includes(t.id); return `<button type="button" class="tchip ${on?'on':''}" data-rtag="${t.id}" style="${on?`background:${esc(t.color||'#fff')}`:''}">${t.emoji||''} ${esc(t.name)}</button>`; }).join('')
+    : '<span class="b-none">還沒有任何標籤</span>';
 }
 function renderImgPrev(){ const p=$('#rf-img-prev'); if(!p) return; p.innerHTML = rDraft.image ? `<img src="${esc(rDraft.image)}">` : (rDraft.emoji||'🍽️'); }
 function setImageUrl(){ const u = prompt('貼上圖片網址（https://…）', rDraft.image && !rDraft.image.startsWith('data:') ? rDraft.image : ''); if(u===null) return; rDraft.image=u.trim(); renderImgPrev(); }
@@ -1238,7 +1394,7 @@ function bindSuggest(kind){
 function saveRecipe(){
   const name = $('#rf-name').value.trim(); if(!name){ toast('請輸入料理名稱'); return; }
   if(!rDraft.ings.length){ toast('至少加入一樣食材'); return; }
-  Object.assign(rDraft, { name, ja:$('#rf-ja').value.trim(), cuisine:$('#rf-cuisine').value, emoji:$('#rf-emoji').value.trim(), note:$('#rf-note').value.trim(), edited:true });
+  Object.assign(rDraft, { name, ja:$('#rf-ja').value.trim(), cuisine:$('#rf-cuisine').value, emoji:$('#rf-emoji').value.trim(), note:$('#rf-note').value.trim(), tags:rDraft.tags||[], edited:true });
   if(rDraft.id){ const i=DB.recipes.findIndex(r=>r.id===rDraft.id); DB.recipes[i]=rDraft; }
   else { rDraft.id=uid('r_'); DB.recipes.push(rDraft); }
   const ok = persist(); closeForm(); renderAdmin(); if(ok!==false) toast('料理已儲存');
@@ -1287,8 +1443,11 @@ document.addEventListener('click', e=>{
   if(x=el('[data-toggle]')){ toggleFridge(x.dataset.toggle); return; }
   if(x=el('[data-focus]')){ ui.focus = ui.focus===x.dataset.focus ? null : x.dataset.focus; ui.page=0; renderAll(); return; }
   if(el('[data-focus-clear]')){ ui.focus=null; ui.page=0; renderAll(); return; }
-  if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.page=0; renderAll(); return; }
+  if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.tags.clear(); ui.page=0; renderAll(); return; }
   if(x=el('[data-cui]')){ ui.cuisine=x.dataset.cui; ui.page=0; renderRecipes(); return; }
+  if(el('[data-tag-toggle]')){ ui.tagOpen=!ui.tagOpen; renderRecipes(); return; }
+  if(el('[data-tag-clear]')){ ui.tags.clear(); ui.page=0; renderRecipes(); return; }
+  if(x=el('[data-tag]')){ const id=x.dataset.tag; ui.tags.has(id)?ui.tags.delete(id):ui.tags.add(id); ui.page=0; renderRecipes(); return; }
   if(x=el('[data-open]')){ openRecipe(x.dataset.open); return; }
   if(x=el('[data-pg]')){ if(x.disabled) return; ui.page += +x.dataset.pg; renderRecipes(); return; }
   if(x=el('[data-cat]')){ ui.fCat=x.dataset.cat; renderFridge(); return; }
@@ -1299,6 +1458,25 @@ document.addEventListener('click', e=>{
   if(x=el('[data-new-item]')){ openItemForm(x.dataset.newItem,''); return; }
   if(x=el('[data-edit-item]')){ const it=itemById(x.dataset.editItem); openItemForm(it.kind, it.id); return; }
   if(x=el('[data-del-item]')){ deleteItem(x.dataset.delItem); return; }
+  if(x=el('[data-new-tag]')){ openTagForm(''); return; }
+  if(x=el('[data-edit-tag]')){ openTagForm(x.dataset.editTag); return; }
+  if(x=el('[data-del-tag]')){ deleteTag(x.dataset.delTag); return; }
+  if(x=el('[data-color]')){ document.querySelectorAll('#tf-colors .tf-c').forEach(b=>b.classList.toggle('on', b===x)); return; }
+  if(x=el('[data-rtag]')){ const id=x.dataset.rtag; rDraft.tags = rDraft.tags.includes(id) ? rDraft.tags.filter(t=>t!==id) : [...rDraft.tags, id]; renderTagPicker(); return; }
+  if(el('[data-tag-new]')){
+    const name = prompt('新標籤名稱（例：常備菜、下飯）'); if(!name || !name.trim()) return;
+    const t = { id:uid('t_'), name:name.trim(), emoji:'🏷', color:TAG_COLORS[DB.tags.length % TAG_COLORS.length] };
+    DB.tags.push(t); rDraft.tags = [...rDraft.tags, t.id]; renderTagPicker(); toast(`已新增標籤「${t.name}」`);
+    return;
+  }
+  if(el('[data-tag-auto]')){
+    const byId = Object.fromEntries(DB.items.map(i=>[i.id,i]));
+    const auto = deriveTags({...rDraft, cuisine:$('#rf-cuisine').value, name:$('#rf-name').value, ja:$('#rf-ja').value}, byId);
+    const seedIds = SEED_TAGS.map(t=>t[0]);
+    rDraft.tags = [...new Set([...rDraft.tags.filter(id=>!seedIds.includes(id)), ...auto])];
+    renderTagPicker(); toast(auto.length?`判斷出：${auto.map(id=>tagById(id)?.name).join('、')}`:'依規則判斷不出標籤');
+    return;
+  }
   if(x=el('[data-new-recipe]')){ openRecipeForm(''); return; }
   if(x=el('[data-edit-recipe]')){ openRecipeForm(x.dataset.editRecipe); return; }
   if(x=el('[data-del-recipe]')){ deleteRecipe(x.dataset.delRecipe,false); return; }
