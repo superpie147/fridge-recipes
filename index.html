@@ -385,7 +385,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.6.0</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.6.1</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -458,6 +458,15 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.6.1 - 2026年10月12日</div>
+        <div class="changelog-content">
+          🧱 菜單推薦的資料地基（畫面還沒有變化）<br>
+          🥗 151 樣食材與調味料補上每 100 克的熱量、蛋白質、碳水、脂肪，以及「一份大約幾克」的換算<br>
+          🍽 110 道料理補上份數（多數 2 人份）與角色（一品完食／主菜／主食／配菜／湯品／甜點）<br>
+          ⏭ 下一步：把食材用量換算成克數，然後在料理詳情顯示粗估營養
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.6.0 - 2026年10月6日</div>
         <div class="changelog-content">
@@ -590,7 +599,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.6.0';
+const APP_VERSION = '1.6.1';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -658,6 +667,105 @@ const SEED_SEASONINGS = [
   ['s_red_wine','紅酒','赤ワイン','🍷'],['s_fermented_tofu','豆腐乳','腐乳','🟥'],['s_bakkutteh','肉骨茶包','肉骨茶パック','🍵'],
   ['s_wasabi','芥末','わさび','🟩'],['s_sesame_paste','芝麻醬','ねりごま','🥜'],
 ];
+
+/* ── 營養資料（階段一）──
+   [每100g熱量kcal, 蛋白質g, 碳水g, 脂肪g, 參考重量g]
+   食材的第 5 個數字是「常用單位一份大約幾克」（1個洋蔥、1片雞腿、1碗飯…），用來把「1/2個」換算成克數。
+   調味料的第 5 個數字是「一道菜大約用幾克」，因為本工具不記調味料用量，改用常見份量估算。
+   數值取自食品成分表，是生重的概略值，不是實測。 */
+const NUTRI = {
+  // 蔬菜
+  i_carrot:[39,0.7,9.3,0.2,150], i_onion:[37,1.0,8.8,0.1,200], i_potato:[76,1.8,17.6,0.1,150],
+  i_cabbage:[23,1.3,5.2,0.2,1000], i_daikon:[18,0.5,4.1,0.1,800], i_negi:[35,1.4,8.3,0.1,100],
+  i_garlic:[136,6.4,27.5,0.9,5], i_ginger:[30,0.9,6.6,0.3,10], i_tomato:[19,0.7,4.7,0.1,150],
+  i_pepper:[22,0.9,5.1,0.2,35], i_eggplant:[22,1.1,5.1,0.1,80], i_cucumber:[14,1.0,3.0,0.1,100],
+  i_spinach:[20,2.2,3.1,0.4,200], i_komatsuna:[14,1.5,2.4,0.2,200], i_hakusai:[14,0.8,3.2,0.1,1200],
+  i_moyashi:[14,1.7,2.6,0.1,200], i_shiitake:[19,3.0,4.9,0.4,15], i_enoki:[22,2.7,7.6,0.2,100],
+  i_shimeji:[18,2.7,4.8,0.5,100], i_nira:[21,1.7,4.0,0.3,100], i_pumpkin:[91,1.9,20.6,0.3,1000],
+  i_broccoli:[37,4.3,6.6,0.5,250], i_basil:[23,3.2,2.7,0.6,20], i_chili:[40,2.0,9.0,0.4,5],
+  i_lemon:[29,0.9,9.3,0.3,100], i_lettuce:[12,0.6,2.8,0.1,20], i_chingensai:[13,0.9,2.1,0.1,100],
+  i_mushroom:[15,2.9,2.1,0.3,100], i_kikurage:[13,0.6,3.0,0.1,80], i_hechima:[17,0.8,3.8,0.1,300],
+  i_takenoko:[27,3.6,4.3,0.2,200], i_corn:[92,3.6,16.8,1.7,200], i_renkon:[66,1.9,15.5,0.1,200],
+  i_gobo:[65,1.8,15.4,0.1,180], i_cilantro:[23,2.1,3.7,0.5,5], i_green_bean:[23,1.8,5.1,0.1,100],
+  i_celery:[15,0.4,3.6,0.1,100], i_banana:[86,1.1,22.5,0.2,100], i_taro:[58,1.5,13.1,0.1,300],
+  i_shallot:[72,2.5,16.8,0.1,10], i_pineapple:[51,0.6,13.4,0.1,1000], i_avocado:[176,2.1,7.9,17.5,150],
+  // 肉類
+  i_pork_slice:[221,18.5,0.1,14.6,100], i_pork_belly:[366,14.2,0.1,34.6,100], i_pork_mince:[209,17.7,0.1,17.2,100],
+  i_mixed_mince:[224,17.4,0.3,15.1,100], i_chicken_thigh:[190,16.6,0,14.2,250], i_chicken_breast:[105,23.3,0.1,1.9,200],
+  i_beef_slice:[259,17.1,0.2,20.0,100], i_bacon:[400,12.9,0.3,39.1,15], i_ham:[118,16.5,1.3,3.8,15],
+  i_sausage:[321,13.2,3.0,28.5,50], i_lamb_slice:[227,18.0,0.2,16.0,100], i_pork_ribs:[253,17.0,0.3,19.0,100],
+  i_chicken_wing:[210,17.5,0,14.6,50], i_chicken_mince:[171,17.5,0,12.0,100], i_beef_chunk:[259,17.0,0.3,20.0,100],
+  // 海鮮
+  i_salmon:[133,22.3,0.1,4.1,80], i_saba:[211,20.6,0.3,16.8,80], i_shrimp:[82,18.4,0.3,0.6,15],
+  i_asari:[30,6.0,0.4,0.3,10], i_squid:[83,18.1,0.2,1.2,200], i_tuna_can:[267,17.7,0.1,21.7,70],
+  i_shirasu:[113,24.5,0.1,1.4,20], i_white_fish:[100,20.0,0.1,2.0,300], i_dried_shrimp:[233,48.6,0.3,2.8,8],
+  // 蛋豆奶
+  i_egg:[142,12.2,0.4,10.2,50], i_tofu:[73,7.0,1.5,4.9,300], i_egg_tofu:[76,6.0,1.9,5.0,150],
+  i_atsuage:[143,10.7,0.9,11.3,120], i_aburaage:[377,23.4,0.4,34.4,20], i_natto:[190,16.5,12.1,10.0,45],
+  i_milk:[61,3.3,4.8,3.8,200], i_cheese:[339,22.7,1.3,26.0,18], i_cream:[404,2.0,3.1,43.0,100],
+  i_pidan:[171,13.7,0.8,12.4,60], i_salted_egg:[340,14.0,2.0,30.0,18], i_soymilk:[46,3.6,3.1,2.0,200],
+  i_dougan:[180,19.0,6.0,9.0,35],
+  // 主食
+  i_rice:[156,2.5,37.1,0.3,150], i_udon:[95,2.6,21.6,0.4,230], i_pasta:[347,12.9,73.1,1.8,100],
+  i_ramen:[249,8.6,55.7,1.2,120], i_bread:[248,8.9,46.4,4.1,60], i_bihun:[360,7.0,79.0,1.6,100],
+  i_gyoza_skin:[275,9.3,57.0,1.4,6], i_flour:[349,8.3,75.8,1.5,9], i_thin_noodle:[333,9.5,72.7,1.1,100],
+  i_harusame:[346,0.2,86.0,0.2,100], i_raw_rice:[342,6.1,77.1,0.9,150],
+  // 其他
+  i_wakame:[16,1.5,3.4,0.2,20], i_nori:[188,41.4,44.3,3.7,3], i_kamaboko:[93,12.0,9.7,0.9,10],
+  i_chikuwa:[121,12.2,13.5,2.0,30], i_konnyaku:[5,0.1,2.3,0.1,250], i_edamame:[135,11.7,8.8,6.2,100],
+  i_kimchi:[46,2.8,7.9,0.4,100], i_corn_can:[82,2.3,18.6,0.5,190], i_tomato_can:[21,0.9,4.4,0.2,400],
+  i_shio_kombu:[110,16.9,37.0,0.4,6], i_cola:[46,0,11.4,0,200], i_sauerkraut:[25,1.2,4.5,0.2,100],
+  i_radish_pickle:[150,4.0,30.0,0.5,50], i_peeled_chili:[120,1.5,8.0,9.0,10], i_peanut:[562,25.4,18.8,47.5,30],
+  // 調味料（第 5 個數字是一道菜的預設用量）
+  s_salt:[0,0,0,0,3], s_sugar:[384,0,99.2,0,8], s_soy:[71,7.7,7.9,0,18], s_mirin:[241,0.2,43.2,0,18],
+  s_sake:[103,0.4,4.9,0,15], s_miso:[192,12.5,21.9,6.0,18], s_vinegar:[25,0.1,2.4,0,15],
+  s_sesame_oil:[921,0,0,100,6], s_oil:[921,0,0,100,10], s_olive:[921,0,0,100,10],
+  s_pepper:[371,11,66,6,0.5], s_black_pepper:[371,11,66,6,0.5], s_white_pepper:[371,11,66,6,0.5],
+  s_oyster:[107,7.7,18.3,0.3,12], s_doubanjiang:[60,2.0,7.0,2.3,12], s_tianmian:[249,8.2,38.1,7.7,12],
+  s_ketchup:[106,1.6,27.6,0.2,15], s_mayo:[703,1.4,4.5,75.3,12], s_honey:[294,0.3,81.9,0,12],
+  s_dashi:[223,24.2,31.1,0.3,3], s_chicken_stock:[212,12.2,28.0,1.5,3], s_curry_roux:[512,6.5,44.7,34.1,40],
+  s_katakuriko:[330,0.1,81.6,0.1,6], s_panko:[369,14.6,63.4,6.8,15], s_butter:[745,0.6,0.2,81.0,10],
+  s_five_spice:[350,10,50,10,1], s_rice_wine:[103,0.4,4.9,0,15], s_sesame:[578,19.8,18.5,51.9,3],
+  s_rayu:[919,0.1,0,99.8,4], s_soy_paste:[120,5.0,20.0,0.2,18], s_katsuobushi:[356,77.1,0.8,2.9,3],
+  s_chuno:[132,0.8,30.9,0.1,15], s_shacha:[600,8.0,10.0,58.0,15], s_black_vinegar:[54,1.0,9.0,0,12],
+  s_parmesan:[475,44.0,1.9,30.8,6], s_rock_sugar:[387,0,99.9,0,10], s_shichimi:[320,11,50,10,1],
+  s_ponzu:[50,3.0,8.0,0,15], s_sansho:[375,10,69,6,1], s_komeko:[356,6.0,81.9,0.7,15],
+  s_gochujang:[247,5.0,49.0,1.5,15], s_red_wine:[73,0.2,1.5,0,100], s_fermented_tofu:[142,12.0,3.0,8.0,20],
+  s_bakkutteh:[300,10,50,5,10], s_wasabi:[265,3.3,39.8,10.3,3], s_sesame_paste:[605,19.0,15.0,54.0,15],
+};
+
+/* ── 份數（階段一）── 沒列出來的都是 2 人份 */
+const SERVINGS = {
+  r_banana_milk:1, r_banana_toast:1, r_avocado_nori:1, r_seared_chicken:1, r_saba_shio:1,
+  r_omurice:1, r_soymilk_noodle:1,
+  r_gyoza:3, r_sauerkraut_hotpot:3, r_kimchi_nabe:3, r_curry:3, r_sanbeiji:3, r_mayou_ji:3,
+  r_shiitake_chicken:3, r_peeled_chili_soup:3, r_pepper_chicken_soup:3, r_furu_chicken:3,
+  r_rib_soup:3, r_sweet_sour_ribs:3, r_rouzao:3, r_bihun:3, r_taro_bihun:3, r_chikuzenni:3,
+  r_tonjiru:3, r_corn_soup:3, r_onion_soup:3, r_steamed_fish:3, r_braised_fish:3,
+  r_hakka_stirfry:3, r_cola_wings:3, r_braised_daikon:3,
+  r_dongpo:4, r_beef_bourguignon:4, r_baicai_lu:4,
+};
+
+/* ── 料理角色（階段一）── 菜單推薦時用來組合：一品完食／主菜／主食／配菜／湯品／甜點 */
+const ROLES = { onedish:'一品完食', main:'主菜', staple:'主食', side:'配菜', soup:'湯品', sweet:'甜點' };
+// 自動判斷不準的少數幾道，直接指定
+const ROLE_FIX = {
+  r_creamed_hakusai:'side',                      // 麵粉只是勾芡，不是主食
+  r_shacha_noodle:'onedish', r_salsa_pasta:'onedish', r_taro_bihun:'onedish',
+  r_tw_cold_noodle:'onedish', r_danbing:'onedish',
+  r_pidan_tofu:'side', r_leijiao_pidan:'side', r_chawanmushi:'side', r_tamagoyaki:'side',
+};
+function deriveRole(r, byId){
+  if(ROLE_FIX[r.id]) return ROLE_FIX[r.id];
+  if(r.cuisine==='sweet') return 'sweet';
+  const text = r.name + (r.ja||'');
+  if(/湯|鍋|煲|スープ|汁/.test(text)) return 'soup';
+  const req = r.ings.filter(x=>!x.opt).map(x=>byId[x.id]).filter(Boolean);
+  const hasStaple = req.some(i=>i.cat==='staple' && i.id!=='i_flour');
+  const hasProtein = req.some(i=>i.cat==='meat'||i.cat==='seafood'||PROTEIN_EXTRA.has(i.id));
+  if(hasStaple) return hasProtein ? 'onedish' : 'staple';
+  return hasProtein ? 'main' : 'side';
+}
 /* ── 標籤庫 ──
    [id, 名稱, emoji, 顏色]。料理的 tags 存標籤 id。
    內建這 8 個是「可以從食材推導出來的」，deriveTags() 會在建立預設資料時自動判斷；
@@ -836,10 +944,16 @@ const SEED_RECIPES = [
   ['r_garlic_eggplant','蒜香大茄子','なすのガーリック焼き','cn','🍆',[['i_eggplant','2條'],['i_garlic','4瓣'],['i_ginger','1片'],['i_negi','1根'],['i_chili','1根',OPT]],['s_olive','s_soy','s_salt','s_black_pepper']],
 ];
 
+// 把 NUTRI 的數字掛到食材上：kcal/p/c/f 是每 100g，g 是參考重量（食材＝一份幾克，調味料＝一道菜幾克）
+function withNutrition(it){
+  const n = NUTRI[it.id];
+  if(n) Object.assign(it, {kcal:n[0], p:n[1], c:n[2], f:n[3], g:n[4]});
+  return it;
+}
 function buildSeed(){
   const items = [
-    ...SEED_ITEMS.map(([id,name,ja,cat,emoji])=>({id,kind:'ingredient',name,ja,cat,emoji})),
-    ...SEED_SEASONINGS.map(([id,name,ja,emoji])=>({id,kind:'seasoning',name,ja,cat:'',emoji})),
+    ...SEED_ITEMS.map(([id,name,ja,cat,emoji])=>withNutrition({id,kind:'ingredient',name,ja,cat,emoji})),
+    ...SEED_SEASONINGS.map(([id,name,ja,emoji])=>withNutrition({id,kind:'seasoning',name,ja,cat:'',emoji})),
   ];
   const tags = SEED_TAGS.map(([id,name,emoji,color])=>({id,name,emoji,color}));
   const byId = Object.fromEntries(items.map(i=>[i.id,i]));
@@ -850,6 +964,8 @@ function buildSeed(){
       seas: seas.slice(),
     };
     r.tags = deriveTags(r, byId);
+    r.servings = SERVINGS[id] || 2;
+    r.role = deriveRole(r, byId);
     return r;
   });
   return { schema:1, seedVersion:SEED_VERSION, items, tags, recipes, fridge:[], settings:{threshold:70} };
@@ -859,7 +975,7 @@ function buildSeed(){
    每次內建資料有變動就把 SEED_VERSION +1。舊裝置打開時：
    新增的內建項目會補進來；沒被使用者在後台改過的內建項目會更新成新版本；
    使用者改過的（edited:true）保留不動；REMOVED_SEED_IDS 裡未改過的會被移除。 */
-const SEED_VERSION = 6;
+const SEED_VERSION = 7;
 const REMOVED_SEED_IDS = ['r_potato_salad','r_chikuwa_cucumber','r_cucumber'];
 function migrate(db){
   if((db.seedVersion||1) >= SEED_VERSION) return db;
@@ -881,7 +997,14 @@ let DB = migrate(Store.load() || buildSeed());
 if(!DB.settings) DB.settings = {threshold:70};
 if(!DB.fridge) DB.fridge = [];
 if(!Array.isArray(DB.tags)) DB.tags = [];
-DB.recipes.forEach(r=>{ if(!Array.isArray(r.tags)) r.tags = []; });
+{ // 自己新增的料理補上份數與角色的預設值
+  const byId = Object.fromEntries(DB.items.map(i=>[i.id,i]));
+  DB.recipes.forEach(r=>{
+    if(!Array.isArray(r.tags)) r.tags = [];
+    if(!r.servings) r.servings = 2;
+    if(!r.role) r.role = deriveRole(r, byId);
+  });
+}
 const ui = { rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
 const tagById = id => DB.tags.find(t=>t.id===id);
 let fridgeSet = new Set(DB.fridge);
