@@ -221,6 +221,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .d-sec{margin-top:16px}
 .d-sec h3{font-size:18px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .d-sec h3 small{font-size:12px;color:var(--muted)}
+.d-sec h3 small .srv{color:var(--ink2);font-weight:600;background:linear-gradient(transparent 60%,var(--yellow) 60%);padding:0 2px}
 .irow{display:flex;align-items:center;gap:10px;background:#fff;padding:8px 12px;margin-bottom:8px;cursor:pointer;transition:transform 0.12s;box-shadow:var(--shadow)}
 .irow:hover{transform:translateX(2px)}
 .irow .ck{width:22px;height:22px;border:2px solid var(--ink);border-radius:5px 3px 6px 3px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-family:var(--hand);font-weight:700}
@@ -250,6 +251,10 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .n-cell .n-l{font-family:var(--hand);font-size:12px;color:var(--ink2);margin-top:1px}
 .n-cell.kc .n-v{color:var(--red)}.n-cell.pp .n-v{color:var(--green)}
 .n-cell.cc .n-v{color:var(--gold,#c8860a)}.n-cell.ff .n-v{color:var(--blue)}
+.n-day{font-family:var(--hand);font-size:14px;color:var(--ink);margin-top:9px;background:var(--n2);border-radius:10px;padding:7px 12px;line-height:1.6}
+.n-day b{font-family:var(--hand-b);font-weight:600}
+.n-day .sub{display:block;font-size:12px;color:var(--ink2)}
+.n-day.none{background:none;border:1.5px dashed var(--line);color:var(--ink2);font-size:12.5px}
 .n-note{font-size:11.5px;color:var(--ink2);line-height:1.7;margin-top:7px}
 .d-note{font-size:14px;line-height:1.7;background:var(--n1);padding:10px 14px;margin-top:14px;box-shadow:var(--shadow)}
 .d-tip{font-family:var(--hand);font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
@@ -400,7 +405,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.7.0</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.8.0</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -473,6 +478,14 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.8.0 - 2026年10月13日</div>
+        <div class="changelog-content">
+          🍳 料理詳情的「食材」標題旁直接標出這是幾人份，備料時就看得到<br>
+          🧍 後台多了「我的」：填身高體重年齡性別與活動量，算出你一天的參考需求與一餐目標<br>
+          📊 料理詳情顯示這一份約佔你一天熱量與蛋白質的幾成（填了身體資料才會出現）
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.7.0 - 2026年10月12日</div>
         <div class="changelog-content">
@@ -589,6 +602,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
     <button class="a-tab" data-atab="seasoning">調味料</button>
     <button class="a-tab" data-atab="recipe">料理</button>
     <button class="a-tab" data-atab="tag">標籤</button>
+    <button class="a-tab" data-atab="me">我的</button>
     <button class="a-tab" data-atab="data">資料</button>
   </div>
   <div class="a-body" id="a-body"></div>
@@ -617,7 +631,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.7.0';
+const APP_VERSION = '1.8.0';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -628,6 +642,10 @@ const Store = {
 const CATS = { veg:'蔬菜', meat:'肉類', seafood:'海鮮', egg:'蛋豆奶', staple:'主食', other:'其他' };
 const CUISINES = { jp:'日式', tw:'台式', cn:'中華', kr:'韓式', west:'西式', sweet:'甜點', other:'其他' };
 const STAPLE_SEASONINGS = ['s_salt','s_sugar','s_soy','s_oil','s_pepper'];
+// 活動量係數，用來把基礎代謝換算成一天所需
+const ACT = { sed:['久坐，幾乎不運動',1.2], light:['輕度，每週運動 1–3 天',1.375], mod:['中度，每週 3–5 天',1.55], high:['高度，每週 6–7 天',1.725] };
+// 午餐與晚餐各佔一天的比例；剩下約四分之一是早餐，不由這個工具安排
+const MEAL_SHARE = 0.375;
 
 /* ── 預設資料 ── */
 const SEED_ITEMS = [
@@ -995,6 +1013,23 @@ function parseAmountToG(amt, it){
   return Math.max(1, Math.round(qty * mod * per));
 }
 
+/* ── 每日所需（階段二）──
+   用 Mifflin-St Jeor 公式從身高體重年齡性別推算基礎代謝，再乘活動量得到一天所需。
+   蛋白質以每公斤體重 1.2 克估算，脂肪取總熱量的 25%，其餘算碳水。都是參考值。 */
+const profile = () => DB.settings.profile || null;
+function dailyTarget(){
+  const p = profile();
+  if(!p || !(p.w>0) || !(p.h>0) || !(p.age>0)) return null;
+  const bmr = 10*p.w + 6.25*p.h - 5*p.age + (p.sex==='m' ? 5 : -161);
+  const kcal = Math.round(bmr * (ACT[p.act] ? ACT[p.act][1] : 1.2));
+  const prot = Math.round(p.w * 1.2);
+  const fat = Math.round(kcal * 0.25 / 9);
+  const carb = Math.max(0, Math.round((kcal - prot*4 - fat*9) / 4));
+  const share = v => Math.round(v * MEAL_SHARE);
+  return { bmr:Math.round(bmr), kcal, p:prot, c:carb, f:fat,
+           meal:{ kcal:share(kcal), p:share(prot), c:share(carb), f:share(fat) } };
+}
+
 /* 一道菜的粗估營養（每一人份）。只算必要食材，加上調味料的預設用量；有替代食材時以第一個為準。 */
 function recipeNutrition(r){
   let kcal=0,p=0,c=0,f=0,known=0,total=0;
@@ -1347,7 +1382,7 @@ function renderRecipeModal(){
       <div class="d-pct ing wob"><div class="l">食材</div><div class="v ${m.ingPct===100?'full':''}">${m.ingPct}%<small>${m.ingHave}／${m.ingTotal}</small></div></div>
       <div class="d-pct sea wob2"><div class="l">調味料</div><div class="v ${m.seaPct===100?'full':''}">${m.seaPct}%<small>${m.seaHave}／${m.seaTotal}</small></div></div>
     </div>
-    <div class="d-sec"><h3>食材 <small>（含用量${r.ings.some(x=>x.alts?.length)?'・「或」表示任一種都可以':''}）</small></h3>${r.ings.map(slotRow).join('')||'<div class="b-none">（無）</div>'}</div>
+    <div class="d-sec"><h3>食材 <small>（<b class="srv">${r.servings} 人份</b>的用量${r.ings.some(x=>x.alts?.length)?'・「或」表示任一種都可以':''}）</small></h3>${r.ings.map(slotRow).join('')||'<div class="b-none">（無）</div>'}</div>
     <div class="d-sec"><h3>調味料</h3>${r.seas.map((id,i)=>{const it=itemById(id); return it?row(it,'',i):'';}).join('')||'<div class="b-none">（無）</div>'}</div>
     ${nutritionBlock(r)}
     ${r.note?`<div class="d-note">📝 ${esc(r.note)}</div>`:''}
@@ -1367,8 +1402,17 @@ function nutritionBlock(r){
       ${cell('碳水', z.c, ' g', 'cc')}
       ${cell('脂肪', z.f, ' g', 'ff')}
     </div>
+    ${dayShare(z)}
     <div class="n-note">依食材成分表推算的參考值，誤差約兩成。含調味料的常見用量，不含可省略的食材。${missing?`<br>有 ${missing} 樣食材還沒有營養資料，沒算進去。`:''}</div>
   </div>`;
+}
+// 這一份佔你一天的幾成（填了身體資料才有）
+function dayShare(z){
+  const t = dailyTarget();
+  if(!t) return `<div class="n-day none">在後台「我的」填入身高體重，這裡就會顯示這一份佔你一天的幾成</div>`;
+  const pc = (a,b) => Math.round(a/b*100);
+  return `<div class="n-day">這一份約佔你一天熱量的 <b>${pc(z.kcal,t.kcal)}%</b>、蛋白質的 <b>${pc(z.p,t.p)}%</b>
+    <span class="sub">一餐目標約 ${t.meal.kcal} kcal・蛋白質 ${t.meal.p} g</span></div>`;
 }
 function editCurrentRecipe(){ const id=ui.openRecipe; closeRecipe(); openAdmin('recipe'); openRecipeForm(id); }
 
@@ -1406,6 +1450,40 @@ function renderAdmin(){
     body.innerHTML = `<div class="a-toolbar">${searchBox('搜尋標籤…')}<button class="hbtn wob2 ink" data-new-tag>＋ 新增標籤</button></div>
       <p class="f-help" style="margin-bottom:12px">標籤用來在料理書上快速篩選，例如「想吃蔬菜多的」。內建的 8 個是依食材自動判斷的；你可以自己改，也可以新增像「常備菜」「下飯」這種只能自己判斷的標籤。</p>
       <div class="a-list">${list.map((t,k)=>`<div class="a-row ${k%2?'wob2':'wob'}"><span class="e">${t.emoji||'🏷'}</span><span class="nm">${esc(t.name)}<span class="s">用於 ${used(t)} 道料理</span></span><span style="width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);background:${esc(t.color||'#fff')};flex-shrink:0"></span><button class="ic" data-edit-tag="${t.id}" title="編輯">✎</button><button class="ic del" data-del-tag="${t.id}" title="刪除">🗑</button></div>`).join('')||'<div class="empty">還沒有標籤</div>'}</div>`;
+  }
+  else if(ui.adminTab==='me'){
+    const p = profile() || {sex:'f', age:'', h:'', w:'', act:'light'};
+    const t = dailyTarget();
+    const num = (id,v,u) => `<span class="nin"><input type="text" id="${id}" value="${v??''}" placeholder="—"><em>${u}</em></span>`;
+    body.innerHTML = `
+      <div class="a-card wob"><h3>我的身體資料</h3>
+        <p>用來推算你一天大約需要多少熱量和營養。資料只存在這台裝置，不會傳出去，也不會跟別人同步。</p>
+        <div class="f" style="margin-top:12px">
+          <div class="grid2">
+            <label>生理性別<select id="pf-sex"><option value="f" ${p.sex==='f'?'selected':''}>女</option><option value="m" ${p.sex==='m'?'selected':''}>男</option></select></label>
+            <label>年齡${num('pf-age',p.age,'歲')}</label>
+          </div>
+          <div class="grid2">
+            <label>身高${num('pf-h',p.h,'cm')}</label>
+            <label>體重${num('pf-w',p.w,'kg')}</label>
+          </div>
+          <label>活動量<select id="pf-act">${Object.entries(ACT).map(([k,v])=>`<option value="${k}" ${p.act===k?'selected':''}>${v[0]}</option>`).join('')}</select></label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="hbtn wob2 ink" onclick="saveProfile()">儲存</button>
+            ${profile()?'<button class="hbtn wob red" onclick="clearProfile()">清除資料</button>':''}
+          </div>
+        </div>
+      </div>
+      ${t ? `<div class="a-card wob2"><h3>你的參考需求</h3>
+        <div class="stat">
+          <div class="wob"><div class="v">${t.kcal}</div><div class="l">一天 kcal</div></div>
+          <div class="wob2"><div class="v">${t.p}</div><div class="l">蛋白質 g</div></div>
+          <div class="wob"><div class="v">${t.c}</div><div class="l">碳水 g</div></div>
+          <div class="wob2"><div class="v">${t.f}</div><div class="l">脂肪 g</div></div>
+        </div>
+        <p>午餐和晚餐各一餐的目標大約是 <b>${t.meal.kcal} kcal</b>、蛋白質 ${t.meal.p} g、碳水 ${t.meal.c} g、脂肪 ${t.meal.f} g。這裡假設早餐約佔一天的四分之一，由這個工具之外解決。</p>
+        <p class="f-help" style="margin-top:8px">基礎代謝 ${t.bmr} kcal，用 Mifflin-St Jeor 公式推算。以上都是概略的參考值，不是健康或醫療建議。</p>
+      </div>` : `<div class="a-card wob2"><p>填好上面四項並儲存，這裡就會算出你一天的參考需求，料理詳情也會顯示每一份佔你一天的幾成。</p></div>`}`;
   }
   else if(ui.adminTab==='recipe'){
     const list = DB.recipes.filter(r=>!q || (r.name+r.ja).toLowerCase().includes(q));
@@ -1473,6 +1551,19 @@ function deleteItem(id){
     r.seas = r.seas.filter(x=>x!==id);
   });
   fridgeSet.delete(id); if(ui.focus===id) ui.focus=null; persist(); renderAdmin(); toast('已刪除');
+}
+
+/* ── 身體資料 ── */
+function saveProfile(){
+  const n = sel => { const v = parseFloat($(sel).value.trim()); return isNaN(v) ? 0 : v; };
+  const p = { sex:$('#pf-sex').value, age:n('#pf-age'), h:n('#pf-h'), w:n('#pf-w'), act:$('#pf-act').value };
+  if(!(p.age>0 && p.h>0 && p.w>0)){ toast('年齡、身高、體重都要填'); return; }
+  if(p.age>120 || p.h>250 || p.w>400){ toast('有數字看起來不太對，再確認一下'); return; }
+  DB.settings.profile = p; persist(); renderAdmin(); toast('已儲存，料理詳情會顯示佔一天的比例');
+}
+function clearProfile(){
+  if(!confirm('要清除身體資料嗎？料理詳情就不會再顯示佔一天的比例。')) return;
+  delete DB.settings.profile; persist(); renderAdmin(); toast('已清除');
 }
 
 /* ── 表單：標籤 ── */
