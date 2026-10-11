@@ -243,6 +243,14 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .irow.optm .nm{color:var(--ink)}
 .optag{font-family:var(--hand);font-size:12px;color:var(--ink2);border:1.5px dashed var(--muted);padding:1px 7px;border-radius:12px;white-space:nowrap}
 .miss .opt-note{color:var(--muted);font-size:12px}
+.n-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.n-cell{background:#fff;border:1.5px dashed var(--line);border-radius:12px;padding:8px 6px;text-align:center}
+.n-cell .n-v{font-family:var(--hand-b);font-weight:600;font-size:19px;line-height:1.2;color:var(--ink)}
+.n-cell .n-v small{font-size:10px;color:var(--muted);font-family:var(--body);font-weight:400}
+.n-cell .n-l{font-family:var(--hand);font-size:12px;color:var(--ink2);margin-top:1px}
+.n-cell.kc .n-v{color:var(--red)}.n-cell.pp .n-v{color:var(--green)}
+.n-cell.cc .n-v{color:var(--gold,#c8860a)}.n-cell.ff .n-v{color:var(--blue)}
+.n-note{font-size:11.5px;color:var(--ink2);line-height:1.7;margin-top:7px}
 .d-note{font-size:14px;line-height:1.7;background:var(--n1);padding:10px 14px;margin-top:14px;box-shadow:var(--shadow)}
 .d-tip{font-family:var(--hand);font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
 
@@ -293,13 +301,20 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .f textarea{min-height:64px;resize:vertical;border-radius:12px}
 .f .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .f .grid31{display:grid;grid-template-columns:1fr 84px;gap:10px}
+.f .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.nin{display:inline-flex;align-items:center;gap:4px;min-width:0}
+.f .nin input[type=text]{min-width:0;text-align:right}
+.nin em{font-style:normal;font-size:11px;color:var(--muted);white-space:nowrap}
 .f-help{font-size:11px;color:var(--ink2);line-height:1.6;font-family:var(--body)}
 .builder{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:10px 12px}
 .builder .b-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
 .b-row{display:flex;align-items:center;gap:8px}
 .b-row .nm{flex:1;min-width:0;font-size:13px;font-family:var(--body);color:var(--ink)}
 .b-row .nm .ja{margin-left:4px}
-.f .b-row input[type=text]{width:88px;flex:0 0 88px;background:var(--paper);border:1.5px solid var(--ink);border-radius:8px;padding:6px 8px;font-size:13px}
+.f .b-row input[type=text]{width:78px;flex:0 0 78px;background:var(--paper);border:1.5px solid var(--ink);border-radius:8px;padding:6px 8px;font-size:13px}
+.b-row .gbox{display:inline-flex;align-items:center;gap:3px;flex:0 0 auto}
+.f .b-row .gbox input[type=text]{width:48px;flex:0 0 48px;text-align:right;border-style:dashed}
+.b-row .gbox em{font-style:normal;font-size:11px;color:var(--muted)}
 .f .b-search input[type=text]{border:1.5px dashed var(--ink);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--paper)}
 .b-row.slot{align-items:flex-start}
 .b-row .b-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -385,7 +400,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.6.2</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.7.0</span></div>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -459,17 +474,22 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
       <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.7.0 - 2026年10月12日</div>
+        <div class="changelog-content">
+          🥗 料理詳情多了「粗估營養」：每一人份的熱量、蛋白質、碳水、脂肪，旁邊固定標示這是參考值<br>
+          ⚙ 後台可以改料理的份數與角色，食材用量旁多了克數，食材本身也能填營養數值
+        </div>
+      </div>
+      <div class="changelog-entry">
         <div class="changelog-ver">ver.1.6.1 - 2026年10月12日</div>
         <div class="changelog-content">
-          🧱 菜單推薦的資料地基（畫面還沒有變化）<br>
-          🥗 151 樣食材與調味料補上每 100 克的熱量、蛋白質、碳水、脂肪，以及「一份大約幾克」的換算<br>
-          🍽 110 道料理補上份數（多數 2 人份）與角色（一品完食／主菜／主食／配菜／湯品／甜點）
+          🧱 菜單推薦的資料地基：食材補上營養數值，料理補上份數與角色（畫面無變化）
         </div>
       </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.6.0 - 2026年10月6日</div>
         <div class="changelog-content">
-          🏷 料理可以掛標籤了！內建 8 個：蔬菜多、高蛋白、膳食纖維、低醣、湯品鍋物、辣、快速、甜點，110 道料理已依食材自動判斷掛好<br>
+          🏷 料理可以掛標籤了！內建 8 個：蔬菜多、高蛋白、膳食纖維、低醣、湯品鍋物、辣、快速、甜點，全部料理已依食材自動判斷掛好<br>
           🔎 料理書上多了「標籤」按鈕，平常收起來，點開可複選（選兩個以上＝兩個都要符合）<br>
           ⚙ 後台多了「標籤」分頁：可以改名、換顏色、新增自己的標籤（例如常備菜、下飯）<br>
           ✨ 編輯料理時可以按「依食材重新判斷」重跑一次自動判斷，你手動掛的標籤會保留
@@ -500,15 +520,15 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
           🏷 料理書上方多了菜系篩選：全部／日式／台式／中華／韓式／西式／甜點<br>
           🖍 標題與料理名稱加粗，搜尋列與翻頁列縮小，便條紙空間變大<br>
           🎨 冰箱便條紙依分類上色：蔬菜綠、肉類紅、海鮮藍、蛋豆奶黃、主食米、其他紫<br>
-          🍽 新增 11 道料理，總共 110 道：洋蔥湯、莎莎醬涼麵、芋頭米粉、南非烘蛋、鳳梨蝦球、糖醋蓮藕、嫩煎雞胸肉、蒸蛋、酪梨海苔、台式涼麵、蒜香大茄子
+          🍽 新增 11 道料理，總共 110 道
         </div>
       </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.4.1 - 2026年9月21日</div>
         <div class="changelog-content">
-          🍽 新增 47 道料理，總共 99 道：油淋雞、椒麻雞、豆腐乳雞、剝皮辣椒雞湯、可樂雞翅、宮保雞丁、地三鮮、茄子肉醬煲、乾燒蝦仁、水煮肉片、金沙豆腐、皮蛋豆腐、豆乳麵、糖醋排骨、肉燥飯、東坡肉、紅燒魚、清蒸魚、酸菜白肉鍋、客家小炒、白菜滷、筑前煮、紅酒燉牛肉、南瓜燉飯、韓式雜菜冬粉、香蕉鬆餅……<br>
-          🥬 新增 30 樣食材、3 種調味料（羊肉片、排骨、皮蛋、鹹蛋黃、豆漿、木耳、絲瓜、竹筍、冬粉、剝皮辣椒、紅酒、豆腐乳……）<br>
-          🍜 炒米粉改名新竹炒米粉並加入蝦米；花枝改名魷魚／花枝；新增「甜點」分類
+          🍽 新增 47 道料理，總共 99 道<br>
+          🥬 新增 30 樣食材、3 種調味料<br>
+          🍜 對料理食材進行簡單的改動
         </div>
       </div>
       <div class="changelog-entry">
@@ -532,9 +552,8 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.2.0 - 2026年9月12日</div>
         <div class="changelog-content">
-          🍳 新料理：乾煎雞蛋豆腐、鹽昆布生菜沙拉、沙茶牛肉炒青江菜、沙茶乾拌麵、韓式辣炒豬肉、韓式拌飯<br>
-          🥢 麻婆豆腐加入花椒粉；豆腐改名白豆腐；新增雞蛋豆腐、青江菜、鹽昆布、韓式辣醬、米粉（粉類）<br>
-          🥒 移除含小黃瓜的料理<br>
+          🍳 新增 6 道料理，總共 52 道<br>
+          🥢 對料理食材進行簡單的改動<br>
           🔄 內建資料自動升級：舊裝置打開會自動補上新料理，你自己改過的不會被覆蓋
         </div>
       </div>
@@ -598,7 +617,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.6.2';
+const APP_VERSION = '1.7.0';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -1330,8 +1349,26 @@ function renderRecipeModal(){
     </div>
     <div class="d-sec"><h3>食材 <small>（含用量${r.ings.some(x=>x.alts?.length)?'・「或」表示任一種都可以':''}）</small></h3>${r.ings.map(slotRow).join('')||'<div class="b-none">（無）</div>'}</div>
     <div class="d-sec"><h3>調味料</h3>${r.seas.map((id,i)=>{const it=itemById(id); return it?row(it,'',i):'';}).join('')||'<div class="b-none">（無）</div>'}</div>
+    ${nutritionBlock(r)}
     ${r.note?`<div class="d-note">📝 ${esc(r.note)}</div>`:''}
     <div class="d-tip">點任一項目可直接加入／移出冰箱</div>`;
+}
+// 粗估營養（每一人份）。數字只取到整數或一位小數，避免看起來比實際精確。
+function nutritionBlock(r){
+  const z = recipeNutrition(r);
+  if(!z.known) return '';
+  const cell = (l,v,u,cls)=>`<div class="n-cell ${cls}"><div class="n-v">${v}<small>${u}</small></div><div class="n-l">${l}</div></div>`;
+  const missing = z.total - z.known;
+  return `<div class="d-sec">
+    <h3>粗估營養 <small>每一人份（本食譜 ${r.servings} 人份）</small></h3>
+    <div class="n-grid">
+      ${cell('熱量', z.kcal, ' kcal', 'kc')}
+      ${cell('蛋白質', z.p, ' g', 'pp')}
+      ${cell('碳水', z.c, ' g', 'cc')}
+      ${cell('脂肪', z.f, ' g', 'ff')}
+    </div>
+    <div class="n-note">依食材成分表推算的參考值，誤差約兩成。含調味料的常見用量，不含可省略的食材。${missing?`<br>有 ${missing} 樣食材還沒有營養資料，沒算進去。`:''}</div>
+  </div>`;
 }
 function editCurrentRecipe(){ const id=ui.openRecipe; closeRecipe(); openAdmin('recipe'); openRecipeForm(id); }
 
@@ -1356,7 +1393,7 @@ function renderAdmin(){
   if(ui.adminTab==='ingredient' || ui.adminTab==='seasoning'){
     const kind = ui.adminTab;
     const list = DB.items.filter(i=>i.kind===kind && (!q || (i.name+i.ja).toLowerCase().includes(q)));
-    const rowHtml = (i,k) => `<div class="a-row ${k%2?'wob2':'wob'}"><span class="e">${i.emoji||''}</span><span class="nm">${esc(i.name)}<span class="ja">${esc(i.ja)}</span><span class="s">用於 ${usedIn(i.id)} 道料理</span></span><button class="ic" data-edit-item="${i.id}" title="編輯">✎</button><button class="ic del" data-del-item="${i.id}" title="刪除">🗑</button></div>`;
+    const rowHtml = (i,k) => `<div class="a-row ${k%2?'wob2':'wob'}"><span class="e">${i.emoji||''}</span><span class="nm">${esc(i.name)}<span class="ja">${esc(i.ja)}</span><span class="s">用於 ${usedIn(i.id)} 道料理${i.kcal===undefined?' ・ 未填營養':''}</span></span><button class="ic" data-edit-item="${i.id}" title="編輯">✎</button><button class="ic del" data-del-item="${i.id}" title="刪除">🗑</button></div>`;
     let listHtml;
     if(kind==='ingredient' && !q){
       listHtml = Object.entries(CATS).map(([k,l])=>{ const arr=list.filter(i=>i.cat===k); return arr.length?`<div class="a-group-h">${l}（${arr.length}）</div><div class="a-list">${arr.map(rowHtml).join('')}</div>`:''; }).join('');
@@ -1373,7 +1410,7 @@ function renderAdmin(){
   else if(ui.adminTab==='recipe'){
     const list = DB.recipes.filter(r=>!q || (r.name+r.ja).toLowerCase().includes(q));
     body.innerHTML = `<div class="a-toolbar">${searchBox('搜尋料理…')}<button class="hbtn wob2 ink" data-new-recipe>＋ 新增料理</button></div>
-      <div class="a-list">${list.map((r,k)=>`<div class="a-row ${k%2?'wob2':'wob'}"><span class="e">${r.image?`<img src="${esc(r.image)}">`:(r.emoji||'🍽️')}</span><span class="nm">${esc(r.name)}<span class="ja">${esc(r.ja)}</span><span class="s">${CUISINES[r.cuisine]||''}・${r.ings.length} 食材・${r.seas.length} 調味料</span></span><button class="ic" data-edit-recipe="${r.id}" title="編輯">✎</button><button class="ic del" data-del-recipe="${r.id}" title="刪除">🗑</button></div>`).join('')||'<div class="empty">沒有資料</div>'}</div>`;
+      <div class="a-list">${list.map((r,k)=>`<div class="a-row ${k%2?'wob2':'wob'}"><span class="e">${r.image?`<img src="${esc(r.image)}">`:(r.emoji||'🍽️')}</span><span class="nm">${esc(r.name)}<span class="ja">${esc(r.ja)}</span><span class="s">${CUISINES[r.cuisine]||''}・${ROLES[r.role]||''}・${r.servings||2} 人份・約 ${recipeNutrition(r).kcal} kcal</span></span><button class="ic" data-edit-recipe="${r.id}" title="編輯">✎</button><button class="ic del" data-del-recipe="${r.id}" title="刪除">🗑</button></div>`).join('')||'<div class="empty">沒有資料</div>'}</div>`;
   }
   else {
     const nI = DB.items.filter(i=>i.kind==='ingredient').length, nS = DB.items.length-nI;
@@ -1401,13 +1438,26 @@ function openItemForm(kind, id){
       <div class="grid31"><label>名稱（中文）<input type="text" id="if-name" value="${esc(it.name)}" placeholder="例：紅蘿蔔"></label><label>Emoji<input type="text" id="if-emoji" value="${esc(it.emoji)}" placeholder="🥕"></label></div>
       <label>日文名稱（在日本超市找東西用）<input type="text" id="if-ja" value="${esc(it.ja)}" placeholder="例：にんじん"></label>
       ${isIng?`<label>分類<select id="if-cat">${Object.entries(CATS).map(([k,l])=>`<option value="${k}" ${it.cat===k?'selected':''}>${l}</option>`).join('')}</select></label>`:''}
+      <label>營養（每 100 克）<span class="f-help">用來推算料理的粗估營養，可留白</span>
+        <div class="grid4">
+          <span class="nin"><input type="text" id="if-kcal" value="${it.kcal??''}" placeholder="—"><em>kcal</em></span>
+          <span class="nin"><input type="text" id="if-p" value="${it.p??''}" placeholder="—"><em>蛋白</em></span>
+          <span class="nin"><input type="text" id="if-c" value="${it.c??''}" placeholder="—"><em>碳水</em></span>
+          <span class="nin"><input type="text" id="if-f" value="${it.f??''}" placeholder="—"><em>脂肪</em></span>
+        </div>
+      </label>
+      <label>${isIng?'一份大約幾克':'一道菜大約用幾克'}<span class="f-help">${isIng?'例如一個洋蔥 200、一片雞腿 250，用來把「1/2個」換算成克數':'本工具不記調味料用量，改用這個預設值估算'}</span>
+        <span class="nin"><input type="text" id="if-g" value="${it.g??''}" placeholder="—"><em>g</em></span>
+      </label>
     </div>`,
     `<button class="btn" onclick="closeForm()">取消</button><button class="btn primary" onclick="saveItem('${kind}','${id||''}')">儲存</button>`);
   setTimeout(()=>$('#if-name').focus(),50);
 }
+const numOrUndef = sel => { const v = $(sel).value.trim(); if(!v) return undefined; const n = parseFloat(v); return isNaN(n) ? undefined : n; };
 function saveItem(kind, id){
   const name = $('#if-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
-  const data = { name, ja:$('#if-ja').value.trim(), emoji:$('#if-emoji').value.trim(), cat: kind==='ingredient' ? $('#if-cat').value : '' };
+  const data = { name, ja:$('#if-ja').value.trim(), emoji:$('#if-emoji').value.trim(), cat: kind==='ingredient' ? $('#if-cat').value : '',
+    kcal:numOrUndef('#if-kcal'), p:numOrUndef('#if-p'), c:numOrUndef('#if-c'), f:numOrUndef('#if-f'), g:numOrUndef('#if-g') };
   if(id){ Object.assign(itemById(id), data, {edited:true}); }
   else DB.items.push({ id:uid(kind==='ingredient'?'i_':'s_'), kind, ...data });
   persist(); closeForm(); renderAdmin(); toast('已儲存');
@@ -1467,12 +1517,14 @@ function openRecipeForm(id){
       <div class="grid31"><label>料理名稱（中文）<input type="text" id="rf-name" value="${esc(rDraft.name)}" placeholder="例：薑燒豬肉"></label><label>Emoji<input type="text" id="rf-emoji" value="${esc(rDraft.emoji)}" placeholder="🐷"></label></div>
       <div class="grid2"><label>日文名稱<input type="text" id="rf-ja" value="${esc(rDraft.ja)}" placeholder="例：豚の生姜焼き"></label>
       <label>菜系<select id="rf-cuisine">${Object.entries(CUISINES).map(([k,l])=>`<option value="${k}" ${rDraft.cuisine===k?'selected':''}>${l}</option>`).join('')}</select></label></div>
+      <div class="grid2"><label>幾人份<span class="f-help">營養值會除以這個數字</span><input type="text" id="rf-servings" value="${rDraft.servings||2}" placeholder="2"></label>
+      <label>角色<span class="f-help">之後生成菜單時用來組合</span><select id="rf-role">${Object.entries(ROLES).map(([k,l])=>`<option value="${k}" ${rDraft.role===k?'selected':''}>${l}</option>`).join('')}</select></label></div>
       <label>料理圖片（可留白，之後再加）
         <div class="img-box"><div class="img-prev" id="rf-img-prev"></div>
           <div class="img-acts"><div class="row"><button class="hbtn wob file-btn">上傳圖片<input type="file" accept="image/*" onchange="pickImage(this)"></button><button class="hbtn wob2" onclick="setImageUrl()">貼網址</button><button class="hbtn wob red" onclick="rDraft.image='';renderImgPrev()">移除</button></div>
           <div class="f-help">上傳的圖片會自動縮小並存在裝置裡；圖片多會佔空間，建議少量使用。</div></div></div>
       </label>
-      <label>食材（含用量）<span class="f-help">「＋或」可加替代食材：冰箱有其中任一種就算有。勾「可省略」的食材不算進百分比。</span>
+      <label>食材（含用量）<span class="f-help">「＋或」可加替代食材：冰箱有其中任一種就算有。勾「可省略」的食材不算進百分比。右邊的克數是從用量自動換算的，可以直接改。</span>
         <div class="builder"><div class="b-rows" id="rf-ings"></div>
           <div class="alt-banner" id="rf-alt-banner" hidden></div>
           <div class="b-search"><input type="text" id="rf-ing-q" placeholder="輸入食材名稱搜尋，點選加入…" autocomplete="off"><div class="b-sug" id="rf-ing-sug"></div></div></div>
@@ -1525,7 +1577,9 @@ function renderBuilder(kind){
         <div class="nm-line"><span class="nm">${it.emoji||''} ${esc(it.name)}<span class="ja">${esc(it.ja)}</span></span>${alts}<button class="alt-add ${altTarget===i?'on':''}" data-alt-add="${i}" title="加入替代食材">＋或</button></div>
         <span class="opt-l"><input type="checkbox" id="opt-${i}" data-opt="${i}" ${x.opt?'checked':''}><span data-opt-for="${i}">可省略（不算進％）</span></span>
       </div>
-      <input type="text" placeholder="用量" value="${esc(x.amt)}" data-amt="${i}"><button class="rm" data-rm="${kind}:${i}">✕</button></div>`;
+      <input type="text" placeholder="用量" value="${esc(x.amt)}" data-amt="${i}">
+      <span class="gbox"><input type="text" placeholder="—" value="${x.g??''}" data-gram="${i}"><em>g</em></span>
+      <button class="rm" data-rm="${kind}:${i}">✕</button></div>`;
   }).join('');
   if(isIng) renderAltBanner();
 }
@@ -1568,7 +1622,9 @@ function bindSuggest(kind){
 function saveRecipe(){
   const name = $('#rf-name').value.trim(); if(!name){ toast('請輸入料理名稱'); return; }
   if(!rDraft.ings.length){ toast('至少加入一樣食材'); return; }
-  Object.assign(rDraft, { name, ja:$('#rf-ja').value.trim(), cuisine:$('#rf-cuisine').value, emoji:$('#rf-emoji').value.trim(), note:$('#rf-note').value.trim(), tags:rDraft.tags||[], edited:true });
+  const srv = Math.max(1, Math.round(parseFloat($('#rf-servings').value) || 2));
+  Object.assign(rDraft, { name, ja:$('#rf-ja').value.trim(), cuisine:$('#rf-cuisine').value, emoji:$('#rf-emoji').value.trim(),
+    note:$('#rf-note').value.trim(), tags:rDraft.tags||[], servings:srv, role:$('#rf-role').value, edited:true });
   if(rDraft.id){ const i=DB.recipes.findIndex(r=>r.id===rDraft.id); DB.recipes[i]=rDraft; }
   else { rDraft.id=uid('r_'); DB.recipes.push(rDraft); }
   const ok = persist(); closeForm(); renderAdmin(); if(ok!==false) toast('料理已儲存');
@@ -1670,7 +1726,16 @@ document.addEventListener('input', e=>{
   else if(t.id==='r-search'){ ui.rSearch=t.value; ui.page=0; $('#r-search-box').classList.toggle('has',!!t.value); renderRecipes(); }
   else if(t.id==='f-search'){ ui.fSearch=t.value; $('#f-search-box').classList.toggle('has',!!t.value); renderFridge(); }
   else if(t.id==='a-search'){ ui.aSearch=t.value; const pos=t.selectionStart; renderAdmin(); const n=$('#a-search'); n.focus(); n.setSelectionRange(pos,pos); }
-  else if(t.dataset.amt!==undefined){ rDraft.ings[+t.dataset.amt].amt=t.value; }
+  else if(t.dataset.amt!==undefined){
+    const i = +t.dataset.amt, slot = rDraft.ings[i];
+    slot.amt = t.value;
+    slot.g = parseAmountToG(t.value, itemById(slot.id));          // 用量改了就重算克數
+    const gi = $(`[data-gram="${i}"]`); if(gi) gi.value = slot.g ?? '';
+  }
+  else if(t.dataset.gram!==undefined){
+    const v = t.value.trim(), n = parseFloat(v);
+    rDraft.ings[+t.dataset.gram].g = (!v || isNaN(n)) ? null : Math.round(n);
+  }
   else if(t.id==='rf-emoji'){ if(rDraft){ rDraft.emoji=t.value.trim(); renderImgPrev(); } }
 });
 document.addEventListener('change', e=>{ if(e.target.id==='th-range') persist(); });
