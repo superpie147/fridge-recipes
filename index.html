@@ -39,6 +39,32 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .page{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .bind{width:3px;flex-shrink:0;background:rgba(44,42,40,0.16);box-shadow:0 0 22px 6px rgba(44,42,40,0.07)}
 .page-head{padding:18px 26px 8px;flex-shrink:0;display:flex;flex-direction:column;gap:9px}
+#page-recipes.meal .th-box,#page-recipes.meal #r-search-box{display:none}
+.mode-tabs{display:flex;gap:4px;background:rgba(44,42,40,0.07);border-radius:50px;padding:3px}
+.mode-tab{font-family:var(--hand);font-size:14px;padding:4px 13px;border-radius:50px;color:var(--ink2);white-space:nowrap}
+.mode-tab.on{background:#fff;color:var(--ink);box-shadow:var(--shadow);font-family:var(--hand-b);font-weight:600}
+/* 一餐推薦 */
+.meal-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--hand);font-size:14px;color:var(--ink2);margin:4px 0 12px}
+.meal-top b{font-family:var(--hand-b);font-weight:600;color:var(--ink)}
+.combo{position:relative;background:#fff;border:2px solid var(--ink);border-radius:255px 15px 225px 15px / 15px 225px 15px 255px;padding:14px 16px 12px;margin-bottom:16px}
+.combo:nth-child(even){border-radius:15px 225px 15px 255px / 255px 15px 225px 15px}
+.combo-h{font-family:var(--hand-b);font-weight:600;font-size:17px;display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.combo-h .sc{font-family:var(--hand);font-weight:400;font-size:12px;color:var(--muted);margin-left:auto}
+.mslot{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.mslot:last-of-type{border-bottom:none}
+.mslot .rl{font-family:var(--hand);font-size:12px;color:var(--ink2);background:var(--paper2);border-radius:50px;padding:2px 9px;white-space:nowrap;flex-shrink:0}
+.mslot .nm{flex:1;min-width:0;font-size:15px;cursor:pointer}
+.mslot .nm:hover{text-decoration:underline}
+.mslot .kc{font-family:var(--hand);font-size:12px;color:var(--ink2);white-space:nowrap}
+.mslot .sw{font-family:var(--hand);font-size:12px;color:var(--blue);border:1.5px dashed var(--blue);border-radius:50px;padding:2px 9px;white-space:nowrap;flex-shrink:0}
+.mslot .sw:hover{background:var(--blue);color:#fff;border-style:solid}
+.mslot .sw:disabled{opacity:0.35;cursor:default}
+.combo-sum{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;font-family:var(--hand);font-size:13px}
+.combo-sum span{background:var(--n2);border-radius:50px;padding:2px 10px}
+.combo-sum span.off{background:var(--n3)}
+.combo-miss{font-family:var(--hand);font-size:13px;color:var(--ink2);margin-top:8px;line-height:1.7}
+.combo-miss i{font-style:normal;color:var(--red)}
+.combo-miss.ok{color:var(--green)}
 .cui-tabs{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;font-family:var(--hand);font-size:14px;padding-bottom:2px}
 .cui-tabs::-webkit-scrollbar{display:none}
 .cui-tab{font-family:var(--hand);font-size:14px;color:var(--muted);white-space:nowrap;flex-shrink:0;padding:1px 2px}
@@ -405,7 +431,11 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.8.0</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.0</span></div>
+        </div>
+        <div class="mode-tabs" id="mode-tabs">
+          <button class="mode-tab" data-mode="browse">翻食譜</button>
+          <button class="mode-tab" data-mode="meal">這一餐</button>
         </div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
@@ -421,7 +451,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div id="tag-filter"></div>
       <div id="focus-bar"></div>
     </div>
-    <div class="page-body"><div class="rgrid" id="recipe-list"></div></div>
+    <div class="page-body"><div class="rgrid" id="recipe-list"></div><div id="meal-list"></div></div>
     <div class="pager" id="pager"></div>
   </section>
 
@@ -478,6 +508,16 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.9.0 - 2026年10月13日</div>
+        <div class="changelog-content">
+          🍽 左頁多了「這一餐」：依冰箱現有食材配出整餐，一次給三套組合<br>
+          🔄 每一道旁邊的「換」可以在同一類裡換別道（主食換主食、主菜換主菜）<br>
+          🧮 每套顯示合計熱量與三大營養，和你的一餐目標對照<br>
+          🛒 每套下方列出要補買的生鮮與調味料<br>
+          🍚 新增白飯、蒸地瓜、烤馬鈴薯、蒸南瓜，讓碳水那一格有得選
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.8.0 - 2026年10月13日</div>
         <div class="changelog-content">
@@ -631,7 +671,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.8.0';
+const APP_VERSION = '1.9.0';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -680,6 +720,7 @@ const SEED_ITEMS = [
   ['i_rice','白飯','ご飯','staple','🍚'],['i_udon','烏龍麵','うどん','staple','🍜'],['i_pasta','義大利麵','パスタ','staple','🍝'],['i_ramen','中華麵','中華麺','staple','🍜'],
   ['i_bread','吐司','食パン','staple','🍞'],['i_bihun','米粉（ビーフン）','ビーフン','staple','🍜'],['i_gyoza_skin','水餃皮','餃子の皮','staple','🥟'],['i_flour','麵粉','小麦粉','staple','🌾'],
   ['i_thin_noodle','細麵','そうめん','staple','🍜'],['i_harusame','冬粉','春雨','staple','🍜'],['i_raw_rice','生米','米（炊く前）','staple','🌾'],
+  ['i_sweet_potato','地瓜','さつまいも','staple','🍠'],
   // 其他
   ['i_wakame','海帶芽','わかめ','other','🌊'],['i_nori','海苔','のり','other','⬛'],['i_kamaboko','魚板','かまぼこ','other','🍥'],['i_chikuwa','竹輪','ちくわ','other','🍥'],
   ['i_konnyaku','蒟蒻','こんにゃく','other','⬜'],['i_edamame','毛豆','枝豆','other','🫛'],['i_kimchi','泡菜','キムチ','other','🥬'],
@@ -745,7 +786,7 @@ const NUTRI = {
   i_rice:[156,2.5,37.1,0.3,150], i_udon:[95,2.6,21.6,0.4,230], i_pasta:[347,12.9,73.1,1.8,100],
   i_ramen:[249,8.6,55.7,1.2,120], i_bread:[248,8.9,46.4,4.1,60], i_bihun:[360,7.0,79.0,1.6,100],
   i_gyoza_skin:[275,9.3,57.0,1.4,6], i_flour:[349,8.3,75.8,1.5,9], i_thin_noodle:[333,9.5,72.7,1.1,100],
-  i_harusame:[346,0.2,86.0,0.2,100], i_raw_rice:[342,6.1,77.1,0.9,150],
+  i_harusame:[346,0.2,86.0,0.2,100], i_raw_rice:[342,6.1,77.1,0.9,150], i_sweet_potato:[132,1.2,31.9,0.2,200],
   // 其他
   i_wakame:[16,1.5,3.4,0.2,20], i_nori:[188,41.4,44.3,3.7,3], i_kamaboko:[93,12.0,9.7,0.9,10],
   i_chikuwa:[121,12.2,13.5,2.0,30], i_konnyaku:[5,0.1,2.3,0.1,250], i_edamame:[135,11.7,8.8,6.2,100],
@@ -790,6 +831,7 @@ const ROLE_FIX = {
   r_shacha_noodle:'onedish', r_salsa_pasta:'onedish', r_taro_bihun:'onedish',
   r_tw_cold_noodle:'onedish', r_danbing:'onedish',
   r_pidan_tofu:'side', r_leijiao_pidan:'side', r_chawanmushi:'side', r_tamagoyaki:'side',
+  r_baked_potato:'staple', r_steamed_pumpkin:'staple',          // 當成碳水那一格，不是配菜
 };
 function deriveRole(r, byId){
   if(ROLE_FIX[r.id]) return ROLE_FIX[r.id];
@@ -978,6 +1020,11 @@ const SEED_RECIPES = [
   ['r_avocado_nori','酪梨海苔','アボカドの海苔巻き','jp','🥑',[['i_avocado','1顆'],['i_nori','2片'],['i_rice','1碗',OPT]],['s_soy','s_wasabi','s_sesame_oil']],
   ['r_tw_cold_noodle','台式涼麵','台湾風冷やし麺','tw','🍜',[['i_ramen','2球',OR('i_thin_noodle')],['i_carrot','1/3根'],['i_moyashi','1/2包',OPT],['i_chicken_breast','100g（手撕）',OPT],['i_egg','1顆（蛋絲）',OPT],['i_garlic','2瓣']],['s_sesame_paste','s_soy','s_vinegar','s_sugar','s_sesame_oil','s_rayu']],
   ['r_garlic_eggplant','蒜香大茄子','なすのガーリック焼き','cn','🍆',[['i_eggplant','2條'],['i_garlic','4瓣'],['i_ginger','1片'],['i_negi','1根'],['i_chili','1根',OPT]],['s_olive','s_soy','s_salt','s_black_pepper']],
+  // 主食：讓「主食＋主菜＋配菜」這種組合有碳水可以選
+  ['r_rice_bowl','白飯','ご飯','other','🍚',[['i_rice','1碗']],[]],
+  ['r_steamed_sweet_potato','蒸地瓜','蒸しさつまいも','other','🍠',[['i_sweet_potato','1條']],[]],
+  ['r_baked_potato','烤馬鈴薯','焼きじゃがいも','west','🥔',[['i_potato','2個'],['i_garlic','1瓣',OPT]],['s_olive','s_salt','s_black_pepper']],
+  ['r_steamed_pumpkin','蒸南瓜','蒸しかぼちゃ','other','🎃',[['i_pumpkin','1/4個']],['s_salt']],
 ];
 
 /* ── 用量換算成克數（階段一 1D）──
@@ -1079,7 +1126,7 @@ function buildSeed(){
    每次內建資料有變動就把 SEED_VERSION +1。舊裝置打開時：
    新增的內建項目會補進來；沒被使用者在後台改過的內建項目會更新成新版本；
    使用者改過的（edited:true）保留不動；REMOVED_SEED_IDS 裡未改過的會被移除。 */
-const SEED_VERSION = 8;
+const SEED_VERSION = 9;
 const REMOVED_SEED_IDS = ['r_potato_salad','r_chikuwa_cucumber','r_cucumber'];
 function migrate(db){
   if((db.seedVersion||1) >= SEED_VERSION) return db;
@@ -1110,7 +1157,7 @@ if(!Array.isArray(DB.tags)) DB.tags = [];
     r.ings.forEach(x=>{ if(x.g===undefined) x.g = parseAmountToG(x.amt, byId[x.id]); });
   });
 }
-const ui = { rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
+const ui = { mode:'browse', mealData:null, rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
 const tagById = id => DB.tags.find(t=>t.id===id);
 let fridgeSet = new Set(DB.fridge);
 
@@ -1174,7 +1221,63 @@ const GROUP_LABEL = {
 const ARROW_L = '<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M44 12.5 C 30 11, 18 13, 6 12"></path><path d="M13 5 C 10 8, 7 10, 4 12 C 7 14, 10 17, 13 19.5"></path></svg>';
 const ARROW_R = '<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 C 18 13, 30 11, 42 12"></path><path d="M35 5 C 38 8, 41 10, 44 12 C 41 14, 38 17, 35 19.5"></path></svg>';
 
+function renderMeal(){
+  if(!ui.mealData) ui.mealData = mealSuggestions();
+  const { target, combos, usedFloor } = ui.mealData;
+  const t = dailyTarget();
+  const box = $('#meal-list');
+  if(!combos.length){ box.innerHTML = `<div class="empty"><div class="big">🍽️</div>湊不出組合<br>先到右邊的冰箱加入幾樣食材</div>`; return; }
+  box.innerHTML = `
+    <div class="meal-top">
+      <span>這一餐目標 <b>約 ${target.kcal} kcal</b>・蛋白質 ${target.p} g</span>
+      ${t?'':'<span class="n-day none" style="padding:2px 9px">還沒填身體資料，先用一般成人的概略值</span>'}
+      <button class="hbtn wob2 yel" data-meal-again>再給我幾套</button>
+    </div>
+    ${usedFloor<60?`<div class="combo-miss" style="margin:-6px 0 12px">冰箱裡的東西不太夠，下面的組合有些要補買。</div>`:''}
+    ${combos.map((cb,ci)=>{
+      const picks = cb.picks.map(p=>p.list[p.i]);
+      const tot = comboTotals(picks);
+      const miss = comboMissing(cb);
+      const okK = Math.abs(tot.kcal-target.kcal) <= target.kcal*0.25;
+      const okP = tot.p >= target.p*0.8;
+      return `<div class="combo">
+        <div class="combo-h">組合 ${ci+1}<span class="sc">${cb.tpl.map(r=>ROLES[r]).join(' ＋ ')}</span></div>
+        ${cb.picks.map((p,si)=>{
+          const x = p.list[p.i];
+          return `<div class="mslot">
+            <span class="rl">${ROLES[p.role]}</span>
+            <span class="nm" data-open="${x.r.id}">${x.r.emoji||''} ${esc(x.r.name)}</span>
+            <span class="kc">${x.n.kcal} kcal・食材 ${x.m.ingHave}/${x.m.ingTotal}</span>
+            <button class="sw" data-swap="${ci}:${si}" ${p.list.length<2?'disabled':''}>換</button>
+          </div>`;
+        }).join('')}
+        <div class="combo-sum">
+          <span class="${okK?'':'off'}">合計 約 ${tot.kcal} kcal</span>
+          <span class="${okP?'':'off'}">蛋白質 ${Math.round(tot.p)} g</span>
+          <span>碳水 ${Math.round(tot.c)} g</span>
+          <span>脂肪 ${Math.round(tot.f)} g</span>
+        </div>
+        ${miss.ings.length
+          ? `<div class="combo-miss">要補買：${miss.ings.map(n=>`<i>${esc(n)}</i>`).join('、')}</div>`
+          : `<div class="combo-miss ok">✓ 生鮮都有，不用出門</div>`}
+        ${miss.seas.length?`<div class="combo-miss" style="color:var(--muted)">調味料還差：${esc(miss.seas.join('、'))}</div>`:''}
+      </div>`;
+    }).join('')}`;
+}
+
 function renderRecipes(){
+  if(ui.mode==='meal'){
+    document.querySelectorAll('.mode-tab').forEach(b=>b.classList.toggle('on', b.dataset.mode==='meal'));
+    $('#recipe-list').innerHTML = ''; $('#pager').innerHTML = '';
+    $('#tag-filter').innerHTML = ''; $('#cui-tabs').innerHTML = ''; $('#focus-bar').innerHTML = '';
+    $('#page-recipes').classList.add('meal');
+    const nIng = [...fridgeSet].filter(id=>itemById(id)?.kind==='ingredient').length;
+    $('#recipe-hint').textContent = `依冰箱裡的 ${nIng} 樣食材配出整餐`;
+    renderMeal();
+    return;
+  }
+  document.querySelectorAll('.mode-tab').forEach(b=>b.classList.toggle('on', b.dataset.mode==='browse'));
+  $('#meal-list').innerHTML = ''; $('#page-recipes').classList.remove('meal');
   const th = DB.settings.threshold;
   const q = ui.rSearch.trim();
   const fridgeEmpty = fridgeSet.size===0;
@@ -1328,6 +1431,7 @@ function setFridgeOpen(open){
 function toggleFridge(id){
   if(fridgeSet.has(id)){ fridgeSet.delete(id); if(ui.focus===id){ ui.focus=null; ui.page=0; } }
   else fridgeSet.add(id);
+  ui.mealData = null;                 // 冰箱變了，重新配
   persist(); renderAll();
 }
 function addStaples(){
@@ -1344,6 +1448,87 @@ function quickAddItem(name){
   const it = {id:uid('i_'), kind:'ingredient', name, ja:'', cat:'other', emoji:'🍽️'};
   DB.items.push(it); fridgeSet.add(it.id); ui.fSearch=''; $('#f-search').value='';
   persist(); renderAll(); toast(`已新增「${name}」（分類：其他），可到後台補日文名`);
+}
+
+/* =====================================================================
+   一餐推薦（階段三）
+   作法：先決定這一餐由哪幾個角色組成（模板），每個角色各挑幾道冰箱最接近的料理，
+   再把組合的總營養跟一餐目標比對，挑分數最高的幾套。每一格都可以在同角色裡換。
+   ===================================================================== */
+const MEAL_TEMPLATES = [
+  ['onedish'],
+  ['onedish','side'],
+  ['staple','main','side'],
+  ['staple','main'],
+  ['main','side'],
+  ['staple','main','soup'],
+];
+const DEFAULT_MEAL = { kcal:600, p:25, c:75, f:20 };
+
+function candidatesFor(role, floor){
+  return DB.recipes.filter(r=>r.role===role).map(r=>{
+    const m = matchRecipe(r);
+    return { r, m, n:recipeNutrition(r), miss:m.ingTotal-m.ingHave, rnd:Math.random() };
+  }).filter(x=>x.m.ingPct>=floor)
+    .sort((a,b)=> a.miss-b.miss || b.m.ingPct-a.m.ingPct || a.rnd-b.rnd)
+    .slice(0,10);
+}
+function comboTotals(picks){
+  return picks.reduce((s,x)=>({ kcal:s.kcal+x.n.kcal, p:s.p+x.n.p, c:s.c+x.n.c, f:s.f+x.n.f, miss:s.miss+x.miss }),
+    {kcal:0,p:0,c:0,f:0,miss:0});
+}
+function scoreCombo(tot, target){
+  const kcalFit = Math.max(0, 1 - Math.abs(tot.kcal-target.kcal)/target.kcal);
+  const protFit = Math.min(1, tot.p/Math.max(1,target.p));
+  const fridgeFit = Math.max(0, 1 - tot.miss/6);
+  return kcalFit*0.4 + protFit*0.3 + fridgeFit*0.3;
+}
+// 回傳最多 3 套組合，每套的每一格都帶著同角色的其他選擇
+function mealSuggestions(){
+  const t = dailyTarget();
+  const target = t ? t.meal : DEFAULT_MEAL;
+  let floor = 60, pools = {};
+  const roles = [...new Set(MEAL_TEMPLATES.flat())];
+  for(;;){
+    pools = Object.fromEntries(roles.map(k=>[k, candidatesFor(k, floor)]));
+    if(roles.every(k=>pools[k].length) || floor===0) break;
+    floor = floor===60 ? 30 : 0;
+  }
+  const out = [];
+  MEAL_TEMPLATES.forEach(tpl=>{
+    if(tpl.some(role=>!pools[role].length)) return;
+    let best = null;
+    const walk = (i, picks)=>{
+      if(i===tpl.length){
+        const tot = comboTotals(picks), sc = scoreCombo(tot, target);
+        if(!best || sc>best.score) best = { score:sc, picks:picks.slice(), tot };
+        return;
+      }
+      pools[tpl[i]].slice(0,6).forEach(c=>walk(i+1, [...picks, c]));
+    };
+    walk(0, []);
+    if(best) out.push({ tpl, score:best.score, picks:best.picks.map((c,k)=>({ role:tpl[k], list:pools[tpl[k]], i:pools[tpl[k]].indexOf(c) })) });
+  });
+  out.sort((a,b)=>b.score-a.score);
+  const seen = new Set(), keep = [];
+  out.forEach(cb=>{
+    const key = cb.picks.map(p=>p.list[p.i].r.id).sort().join('|');
+    const lead = cb.picks.find(p=>p.role==='onedish'||p.role==='main');
+    const leadId = lead ? lead.list[lead.i].r.id : key;
+    if(seen.has(leadId) || seen.has(key)) return;
+    seen.add(leadId); seen.add(key); keep.push(cb);
+  });
+  return { target, usedFloor:floor, combos:keep.slice(0,3) };
+}
+// 缺的東西分開列：生鮮是真的要跑一趟超市，調味料多半是家裡本來就有、只是沒登記
+function comboMissing(cb){
+  const ings = new Map(), seas = new Map();
+  cb.picks.forEach(p=>{
+    const x = p.list[p.i];
+    reqSlots(x.r).filter(s=>!slotHave(s)).forEach(s=>{ if(!ings.has(s.id)) ings.set(s.id, slotName(s)); });
+    x.r.seas.filter(id=>!fridgeSet.has(id)).forEach(id=>{ const it=itemById(id); if(it && !seas.has(id)) seas.set(id, it.name); });
+  });
+  return { ings:[...ings.values()], seas:[...seas.values()] };
 }
 
 function renderAll(){ renderRecipes(); renderFridge(); if(ui.openRecipe) renderRecipeModal(); }
@@ -1765,6 +1950,9 @@ document.addEventListener('click', e=>{
   if(x=el('[data-focus]')){ ui.focus = ui.focus===x.dataset.focus ? null : x.dataset.focus; ui.page=0; renderAll(); return; }
   if(el('[data-focus-clear]')){ ui.focus=null; ui.page=0; renderAll(); return; }
   if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.tags.clear(); ui.page=0; renderAll(); return; }
+  if(x=el('[data-mode]')){ ui.mode=x.dataset.mode; if(ui.mode==='meal' && !ui.mealData) ui.mealData=mealSuggestions(); renderRecipes(); return; }
+  if(el('[data-meal-again]')){ ui.mealData=mealSuggestions(); renderRecipes(); return; }
+  if(x=el('[data-swap]')){ const [ci,si]=x.dataset.swap.split(':').map(Number); const p=ui.mealData.combos[ci].picks[si]; p.i=(p.i+1)%p.list.length; renderMeal(); return; }
   if(x=el('[data-cui]')){ ui.cuisine=x.dataset.cui; ui.page=0; renderRecipes(); return; }
   if(el('[data-tag-toggle]')){ ui.tagOpen=!ui.tagOpen; renderRecipes(); return; }
   if(el('[data-tag-clear]')){ ui.tags.clear(); ui.page=0; renderRecipes(); return; }
