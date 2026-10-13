@@ -13,7 +13,9 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   /* 文字分四層：ink 標題與主要內容｜ink-soft 暗掉的料理名稱｜ink2 要讀的次要文字（副標題、用量、說明）｜muted 純裝飾（日文讀音、菜系標籤、頁碼） */
-  --paper:#fbf9f3;--paper2:#f3efe4;--grid:rgba(120,150,190,0.10);--ink:#241f1c;--ink-soft:#473f3a;--ink2:#5e5650;--muted:#a9a19a;--line:rgba(44,42,40,0.22);
+  --paper:#faf7f0;--paper2:#f2ede2;--ink:#241f1c;--ink-soft:#5f574f;--ink2:#4a433d;--muted:#a9a19a;--line:rgba(44,42,40,0.22);
+  /* 紙張：素色暖白＋極淡的纖維雜訊，不用格線 */
+  --paper-tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
   --red:#e35d3c;--blue:#3d8fc2;--green:#5aa86b;--yellow:#ffe082;--yellow2:#fff3b0;
   --n1:#fff3b0;--n2:#d9efe1;--n3:#fce0d6;--n4:#d9e8f5;
   --hand:'Zen Kurenaido','Yomogi','Klee One','Noto Sans TC',cursive;--body:'Klee One','Zen Kurenaido','Noto Sans TC','Hiragino Sans',sans-serif;
@@ -23,7 +25,7 @@
 }
 html,body{height:100%}
 body{font-family:var(--body);background:var(--paper);color:var(--ink);height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;-webkit-tap-highlight-color:transparent;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+  background-image:var(--paper-tex)}
 button,input,select,textarea{font-family:var(--body);font-size:14px;color:var(--ink)}
 button{cursor:pointer;border:none;background:none}
 input,select,textarea{outline:none}
@@ -75,7 +77,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .cooked{font-family:var(--hand);font-size:12px;color:var(--green);border:1.5px solid var(--green);border-radius:50px;padding:2px 11px;margin-left:auto;white-space:nowrap}
 .cooked:hover{background:var(--green);color:#fff}
 .meals-pick{font-family:var(--hand);font-size:13px;color:var(--ink2);display:inline-flex;align-items:center;gap:3px}
-.meals-pick button{font-family:var(--hand);font-size:13px;width:24px;height:24px;border-radius:50%;border:1.5px dashed var(--line);color:var(--ink2);line-height:1}
+.meals-pick button{font-family:var(--hand);font-size:13px;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);color:var(--ink2);line-height:1}
 .meals-pick button.on{background:var(--ink);color:#fff;border-style:solid;border-color:var(--ink)}
 .home-help{font-family:var(--hand);font-size:12px;color:var(--blue);border-bottom:1px solid var(--blue);margin-left:8px}
 /* 引導 */
@@ -102,8 +104,8 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .mslot .nm{flex:1;min-width:0;font-size:15px;cursor:pointer}
 .mslot .nm:hover{text-decoration:underline}
 .mslot .kc{font-family:var(--hand);font-size:12px;color:var(--ink2);white-space:nowrap}
-.mslot .sw{font-family:var(--hand);font-size:12px;color:var(--blue);border:1.5px dashed var(--blue);border-radius:50px;padding:2px 9px;white-space:nowrap;flex-shrink:0}
-.mslot .sw:hover{background:var(--blue);color:#fff;border-style:solid}
+.mslot .sw{font-family:var(--hand);font-size:12px;color:var(--blue);border:1.5px solid var(--blue);border-radius:50px;padding:2px 9px;white-space:nowrap;flex-shrink:0}
+.mslot .sw:hover{background:var(--blue);color:#fff}
 .mslot .sw:disabled{opacity:0.35;cursor:default}
 .combo-sum{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;font-family:var(--hand);font-size:13px}
 .combo-sum span{background:var(--n2);border-radius:50px;padding:2px 10px}
@@ -263,7 +265,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .overlay{position:fixed;inset:0;background:rgba(44,42,40,0.5);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
 .overlay.open{display:flex}
 .sheet{background:var(--paper);width:100%;max-width:560px;max-height:92vh;max-height:92dvh;border:2.5px solid var(--ink);border-bottom:none;border-radius:22px 22px 0 0 / 18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:up 0.22s ease;position:relative;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+  background-image:var(--paper-tex)}
 @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @media (min-width:721px){.overlay{align-items:center;padding:20px}.sheet{border-bottom:2.5px solid var(--ink);border-radius:18px 24px 16px 22px / 22px 16px 24px 18px;max-height:88vh;box-shadow:6px 8px 0 rgba(44,42,40,0.15)}}
 .sheet-head{padding:18px 20px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -312,7 +314,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .irow .cand.on:hover{background:var(--green)}
 .irow .or{font-family:var(--hand);font-size:13px;color:var(--muted)}
 .irow.optm{opacity:0.62}
-.irow.optm .ck{color:var(--muted);border-style:dashed}
+.irow.optm .ck{color:var(--muted)}
 .irow.optm .nm{color:var(--ink)}
 .optag{font-family:var(--hand);font-size:12px;color:var(--ink2);border:1.5px dashed var(--muted);padding:1px 7px;border-radius:12px;white-space:nowrap}
 .miss .opt-note{color:var(--muted);font-size:12px}
@@ -341,7 +343,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0) rotate(-1deg)}
 
 /* ── ADMIN ── */
-#admin{position:fixed;inset:0;background:var(--paper);z-index:90;display:none;flex-direction:column;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+#admin{position:fixed;inset:0;background:var(--paper);z-index:90;display:none;flex-direction:column;background-image:var(--paper-tex)}
 #admin.open{display:flex}
 .a-top{padding:calc(14px + env(safe-area-inset-top)) 20px 8px;display:flex;align-items:flex-end;gap:12px;flex-shrink:0}
 .a-top h1{font-family:var(--hand-b);font-weight:600;font-size:30px;flex:1;line-height:1.1;-webkit-text-stroke:0.5px currentColor}
@@ -559,44 +561,42 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.2 - 2026年10月13日</div>
         <div class="changelog-content">
-          🍳 熱量改成按「今天吃幾餐」平均分配，早餐照吃，不會把早餐的份硬塞到午晚餐<br>
-          🔢 推薦畫面上可以直接切換今天吃 2、3 或 4 餐<br>
-          👋 第一次打開會有簡單的使用說明，並可以當場填身高體重（也可以跳過）<br>
-          🧊 第一次打開時冰箱先收著，照著說明展開即可
+          🎨 背景改成素紙，拿掉方格線<br>
+          🍳 熱量改成按今天吃幾餐分配，早餐不再被併入午晚餐<br>
+          🔢 推薦畫面可以切換今天吃幾餐<br>
+          👋 新增第一次打開的簡單使用說明<br>
+          🔤 次要文字加深，後台「我的」改名「個人資料」
         </div>
       </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.1 - 2026年10月13日</div>
         <div class="changelog-content">
-          🏠 左頁改成首頁，三個入口各自寫明用途：今天吃什麼、這一餐吃什麼、翻食譜<br>
-          🌞🌙 「今天吃什麼」一次配出午餐和晚餐，兩餐不重複，合計對照你一天的需求<br>
-          ✓ 每套組合可以按「煮了這套」記下來，三天內煮過的不會一直被推薦<br>
-          📊 首頁顯示本週午晚餐的熱量長條圖與最近煮過的紀錄
+          🏠 左頁改成首頁，分成三個入口<br>
+          🌞🌙 新增整日推薦：一次配出午餐和晚餐<br>
+          ✓ 可以記錄煮過什麼，首頁顯示本週熱量與最近煮過
         </div>
       </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.0 - 2026年10月13日</div>
         <div class="changelog-content">
-          🍽 左頁多了「這一餐」：依冰箱現有食材配出整餐，一次給三套組合<br>
-          🔄 每一道旁邊的「換」可以在同一類裡換別道（主食換主食、主菜換主菜）<br>
-          🧮 每套顯示合計熱量與三大營養，和你的一餐目標對照<br>
-          🛒 每套下方列出要補買的生鮮與調味料<br>
-          🍚 新增白飯、蒸地瓜、烤馬鈴薯、蒸南瓜，讓碳水那一格有得選
+          🍽 新增一餐推薦：依冰箱食材配出整餐，每一道可以逐一替換<br>
+          🛒 列出要補買的生鮮與調味料<br>
+          🍚 新增 4 道主食料理
         </div>
       </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.8.0 - 2026年10月13日</div>
         <div class="changelog-content">
-          🍳 料理詳情的「食材」標題旁直接標出這是幾人份，備料時就看得到<br>
-          🧍 後台多了「我的」：填身高體重年齡性別與活動量，算出你一天的參考需求與一餐目標<br>
-          📊 料理詳情顯示這一份約佔你一天熱量與蛋白質的幾成（填了身體資料才會出現）
+          🍳 料理詳情的食材標題旁標出幾人份<br>
+          🧍 後台新增個人資料，算出你一天與一餐的參考需求<br>
+          📊 料理詳情顯示這一份約佔你一天的幾成
         </div>
       </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.7.0 - 2026年10月12日</div>
         <div class="changelog-content">
-          🥗 料理詳情多了「粗估營養」：每一人份的熱量、蛋白質、碳水、脂肪，旁邊固定標示這是參考值<br>
-          ⚙ 後台可以改料理的份數與角色，食材用量旁多了克數，食材本身也能填營養數值
+          🥗 料理詳情新增粗估營養：每一人份的熱量與三大營養素<br>
+          ⚙ 後台可以修改份數、角色、食材克數與營養數值
         </div>
       </div>
       <div class="changelog-entry">
@@ -708,7 +708,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
     <button class="a-tab" data-atab="seasoning">調味料</button>
     <button class="a-tab" data-atab="recipe">料理</button>
     <button class="a-tab" data-atab="tag">標籤</button>
-    <button class="a-tab" data-atab="me">我的</button>
+    <button class="a-tab" data-atab="me">個人資料</button>
     <button class="a-tab" data-atab="data">資料</button>
   </div>
   <div class="a-body" id="a-body"></div>
@@ -1379,7 +1379,7 @@ function renderHome(){
       ${opt('meal','🍽️','這一餐吃什麼','依你一餐需要的熱量，配出一套主食加主菜加配菜，可以逐道替換')}
       ${opt('browse','📖','翻食譜','瀏覽全部 '+DB.recipes.length+' 道料理，看冰箱裡的食材能做出哪些')}
     </div>
-    ${!t?`<div class="home-tip">還沒填身體資料，推薦會先用一般成人的概略值。到右上角「後台」的「我的」填身高體重，就會依你的需求來配。</div>`:''}
+    ${!t?`<div class="home-tip">還沒填身體資料，推薦會先用一般成人的概略值。到右上角「後台」的「個人資料」填身高體重，就會依你的需求來配。</div>`:''}
     <div class="home-sec">
       <h3>本週午晚餐</h3>
       <div class="week">${week.map(w=>`<div class="wd">
@@ -1782,7 +1782,7 @@ function nutritionBlock(r){
 // 這一份佔你一天的幾成（填了身體資料才有）
 function dayShare(z){
   const t = dailyTarget();
-  if(!t) return `<div class="n-day none">在後台「我的」填入身高體重，這裡就會顯示這一份佔你一天的幾成</div>`;
+  if(!t) return `<div class="n-day none">在後台「個人資料」填入身高體重，這裡就會顯示這一份佔你一天的幾成</div>`;
   const pc = (a,b) => Math.round(a/b*100);
   return `<div class="n-day">這一份約佔你一天熱量的 <b>${pc(z.kcal,t.kcal)}%</b>、蛋白質的 <b>${pc(z.p,t.p)}%</b>
     <span class="sub">一餐目標約 ${t.meal.kcal} kcal・蛋白質 ${t.meal.p} g</span></div>`;
@@ -1834,7 +1834,7 @@ function finishGuide(save){
     DB.settings.profile = p;
     toast('記下了，推薦會依你的需求來配');
   } else {
-    toast('之後可以到右上角「後台」的「我的」補上');
+    toast('之後可以到右上角「後台」的「個人資料」補上');
   }
   DB.settings.seenGuide = true; persist();
   $('#guide-modal').classList.remove('open');
@@ -1881,7 +1881,7 @@ function renderAdmin(){
     const t = dailyTarget();
     const num = (id,v,u) => `<span class="nin"><input type="text" id="${id}" value="${v??''}" placeholder="—"><em>${u}</em></span>`;
     body.innerHTML = `
-      <div class="a-card wob"><h3>我的身體資料</h3>
+      <div class="a-card wob"><h3>個人資料</h3>
         <p>用來推算你一天大約需要多少熱量和營養。資料只存在這台裝置，不會傳出去，也不會跟別人同步。</p>
         <div class="f" style="margin-top:12px">
           <div class="grid2">
