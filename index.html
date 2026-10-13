@@ -74,6 +74,21 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .day-sum .ok{color:var(--green)}.day-sum .off{color:var(--red)}
 .cooked{font-family:var(--hand);font-size:12px;color:var(--green);border:1.5px solid var(--green);border-radius:50px;padding:2px 11px;margin-left:auto;white-space:nowrap}
 .cooked:hover{background:var(--green);color:#fff}
+.meals-pick{font-family:var(--hand);font-size:13px;color:var(--ink2);display:inline-flex;align-items:center;gap:3px}
+.meals-pick button{font-family:var(--hand);font-size:13px;width:24px;height:24px;border-radius:50%;border:1.5px dashed var(--line);color:var(--ink2);line-height:1}
+.meals-pick button.on{background:var(--ink);color:#fff;border-style:solid;border-color:var(--ink)}
+.home-help{font-family:var(--hand);font-size:12px;color:var(--blue);border-bottom:1px solid var(--blue);margin-left:8px}
+/* 引導 */
+.g-h{font-family:var(--hand-b);font-weight:600;font-size:24px;-webkit-text-stroke:0.4px currentColor;margin-bottom:8px}
+.g-p{font-size:14px;color:var(--ink2);line-height:1.8}
+.g-p b{color:var(--ink)}
+.g-list{list-style:none;counter-reset:g;margin:14px 0 0;display:flex;flex-direction:column;gap:12px}
+.g-list li{counter-increment:g;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+.g-list li::before{content:counter(g);font-family:var(--hand-b);font-weight:600;font-size:15px;width:28px;height:28px;border:2px solid var(--ink);border-radius:50% 45% 55% 40%;display:flex;align-items:center;justify-content:center}
+.g-list .gt{min-width:0}
+.g-list .gt b{font-family:var(--hand-b);font-weight:600;font-size:16px;display:block}
+.g-list .gt span{font-size:13.5px;color:var(--ink2);line-height:1.75;display:block;margin-top:2px}
+.g-btns{display:flex;gap:10px;margin-top:20px}
 /* 一餐推薦 */
 .meal-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--hand);font-size:14px;color:var(--ink2);margin:4px 0 12px}
 .meal-top b{font-family:var(--hand-b);font-weight:600;color:var(--ink)}
@@ -462,7 +477,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.1</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.2</span></div>
         </div>
         <div class="mode-tabs" id="mode-tabs"></div>
         <div class="th-box wob2">
@@ -531,11 +546,25 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   </div>
 </div>
 
+<!-- ── 第一次使用的引導 ── -->
+<div class="overlay" id="guide-modal" style="z-index:130">
+  <div class="sheet"><div class="sheet-body" id="guide-body" style="padding-top:20px"></div></div>
+</div>
+
 <!-- ── CHANGELOG MODAL ── -->
 <div class="overlay" id="changelog-modal" onclick="if(event.target===this)closeChangelog()">
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.9.2 - 2026年10月13日</div>
+        <div class="changelog-content">
+          🍳 熱量改成按「今天吃幾餐」平均分配，早餐照吃，不會把早餐的份硬塞到午晚餐<br>
+          🔢 推薦畫面上可以直接切換今天吃 2、3 或 4 餐<br>
+          👋 第一次打開會有簡單的使用說明，並可以當場填身高體重（也可以跳過）<br>
+          🧊 第一次打開時冰箱先收著，照著說明展開即可
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.1 - 2026年10月13日</div>
         <div class="changelog-content">
@@ -708,7 +737,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.9.1';
+const APP_VERSION = '1.9.2';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -721,8 +750,9 @@ const CUISINES = { jp:'日式', tw:'台式', cn:'中華', kr:'韓式', west:'西
 const STAPLE_SEASONINGS = ['s_salt','s_sugar','s_soy','s_oil','s_pepper'];
 // 活動量係數，用來把基礎代謝換算成一天所需
 const ACT = { sed:['久坐，幾乎不運動',1.2], light:['輕度，每週運動 1–3 天',1.375], mod:['中度，每週 3–5 天',1.55], high:['高度，每週 6–7 天',1.725] };
-// 午餐與晚餐各佔一天的比例；剩下約四分之一是早餐，不由這個工具安排
-const MEAL_SHARE = 0.375;
+// 一天吃幾餐（早餐照吃，只是不由這個工具安排），每餐就是一天的 1/N
+const mealsPerDay = () => DB.settings.meals || 3;
+const mealShare = () => 1 / mealsPerDay();
 
 /* ── 預設資料 ── */
 const SEED_ITEMS = [
@@ -1109,7 +1139,7 @@ function dailyTarget(){
   const prot = Math.round(p.w * 1.2);
   const fat = Math.round(kcal * 0.25 / 9);
   const carb = Math.max(0, Math.round((kcal - prot*4 - fat*9) / 4));
-  const share = v => Math.round(v * MEAL_SHARE);
+  const share = v => Math.round(v * mealShare());
   return { bmr:Math.round(bmr), kcal, p:prot, c:carb, f:fat,
            meal:{ kcal:share(kcal), p:share(prot), c:share(carb), f:share(fat) } };
 }
@@ -1156,7 +1186,8 @@ function buildSeed(){
     r.role = deriveRole(r, byId);
     return r;
   });
-  return { schema:1, seedVersion:SEED_VERSION, items, tags, recipes, fridge:[], settings:{threshold:70} };
+  return { schema:1, seedVersion:SEED_VERSION, items, tags, recipes, fridge:[],
+           settings:{ threshold:70, meals:3, fridgeOpen:false } };   // 第一次打開：冰箱收著，先看引導
 }
 
 /* ── 內建資料升級 ──
@@ -1258,6 +1289,10 @@ const GROUP_LABEL = {
 const ARROW_L = '<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M44 12.5 C 30 11, 18 13, 6 12"></path><path d="M13 5 C 10 8, 7 10, 4 12 C 7 14, 10 17, 13 19.5"></path></svg>';
 const ARROW_R = '<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 C 18 13, 30 11, 42 12"></path><path d="M35 5 C 38 8, 41 10, 44 12 C 41 14, 38 17, 35 19.5"></path></svg>';
 
+// 今天打算吃幾餐：直接影響每一餐分到多少熱量
+function mealsPicker(){
+  return `<span class="meals-pick">今天吃 ${[2,3,4].map(n=>`<button class="${mealsPerDay()===n?'on':''}" data-meals="${n}">${n}</button>`).join('')} 餐</span>`;
+}
 // 一套組合的卡片。key 是給「換」用的識別（meal 用索引，整日用 lunch/dinner）
 function comboCard(cb, key, title, target){
   const picks = cb.picks.map(p=>p.list[p.i]);
@@ -1298,6 +1333,7 @@ function renderMeal(){
   box.innerHTML = `
     <div class="meal-top">
       <span>這一餐目標 <b>約 ${target.kcal} kcal</b>・蛋白質 ${target.p} g</span>
+      ${mealsPicker()}
       ${dailyTarget()?'':'<span class="n-day none" style="padding:2px 9px">還沒填身體資料，先用一般成人的概略值</span>'}
       <button class="hbtn wob2 yel" data-meal-again>再給我幾套</button>
     </div>
@@ -1312,10 +1348,11 @@ function renderDay(){
   const t = dailyTarget();
   const tot = [d.lunch, d.dinner].map(cb=>comboTotals(cb.picks.map(p=>p.list[p.i])));
   const sum = { kcal:tot[0].kcal+tot[1].kcal, p:Math.round(tot[0].p+tot[1].p) };
-  const dayGoal = t ? Math.round(t.kcal*MEAL_SHARE*2) : d.target.kcal*2;
+  const dayGoal = t ? Math.round(t.kcal*mealShare()*2) : d.target.kcal*2;
   box.innerHTML = `
     <div class="meal-top">
-      <span>午晚兩餐目標 <b>約 ${dayGoal} kcal</b>${t?`（一天 ${t.kcal} kcal，扣掉早餐）`:''}</span>
+      <span>午晚兩餐目標 <b>約 ${dayGoal} kcal</b>${t?`（一天 ${t.kcal} kcal 分成 ${mealsPerDay()} 餐，這裡安排其中兩餐）`:''}</span>
+      ${mealsPicker()}
       ${t?'':'<span class="n-day none" style="padding:2px 9px">還沒填身體資料，先用一般成人的概略值</span>'}
       <button class="hbtn wob2 yel" data-day-again>換一組</button>
     </div>
@@ -1329,8 +1366,8 @@ function renderHome(){
   const box = $('#meal-list');
   const t = dailyTarget();
   const nIng = [...fridgeSet].filter(id=>itemById(id)?.kind==='ingredient').length;
-  const week = weekDays(), maxK = Math.max(1, ...week.map(w=>w.kcal), t?Math.round(t.kcal*MEAL_SHARE*2):0);
-  const goal = t ? Math.round(t.kcal*MEAL_SHARE*2) : 0;
+  const week = weekDays(), maxK = Math.max(1, ...week.map(w=>w.kcal), t?Math.round(t.kcal*mealShare()*2):0);
+  const goal = t ? Math.round(t.kcal*mealShare()*2) : 0;
   const hist = (DB.history||[]).slice(0,5);
   const opt = (mode,emoji,title,desc) => `<button class="home-opt wob" data-mode="${mode}">
       <span class="ho-e">${emoji}</span>
@@ -1355,7 +1392,8 @@ function renderHome(){
     ${hist.length?`<div class="home-sec"><h3>最近煮過</h3>
       <div class="hist">${hist.map(h=>`<div class="hrow"><span class="hd">${h.d.slice(5)}</span><span class="hn">${h.ids.map(id=>{const r=DB.recipes.find(x=>x.id===id); return r?esc(r.name):'';}).filter(Boolean).join('、')}</span><span class="hk">${h.kcal} kcal</span></div>`).join('')}</div>
       </div>`:''}
-    <div class="home-fridge">冰箱裡有 ${nIng} 樣食材。推薦都是從這些開始配的，缺的會另外列出來。</div>`;
+    <div class="home-fridge">冰箱裡有 ${nIng} 樣食材。推薦都是從這些開始配的，缺的會另外列出來。
+      <button class="home-help" onclick="openGuide(1)">使用說明</button></div>`;
 }
 
 // 左頁的總渲染：首頁 / 整日推薦 / 一餐推薦 / 翻食譜
@@ -1751,6 +1789,58 @@ function dayShare(z){
 }
 function editCurrentRecipe(){ const id=ui.openRecipe; closeRecipe(); openAdmin('recipe'); openRecipeForm(id); }
 
+/* ── 第一次使用的引導 ── */
+function openGuide(step){
+  const b = $('#guide-body');
+  if(step===2){
+    b.innerHTML = `
+      <h2 class="g-h">先認識你一下</h2>
+      <p class="g-p">填了身高體重，推薦就會依你的需求來配，而不是用一般人的平均值。<b>這些資料只有你看得到</b>，存在這台裝置裡，不會傳出去，也不會跟別人同步。</p>
+      <div class="f" style="margin-top:14px">
+        <div class="grid2">
+          <label>生理性別<select id="g-sex"><option value="f">女</option><option value="m">男</option></select></label>
+          <label>年齡<span class="nin"><input type="text" id="g-age" placeholder="—"><em>歲</em></span></label>
+        </div>
+        <div class="grid2">
+          <label>身高<span class="nin"><input type="text" id="g-h" placeholder="—"><em>cm</em></span></label>
+          <label>體重<span class="nin"><input type="text" id="g-w" placeholder="—"><em>kg</em></span></label>
+        </div>
+      </div>
+      <div class="g-btns">
+        <button class="btn" onclick="finishGuide(false)">先跳過</button>
+        <button class="btn primary" onclick="finishGuide(true)">儲存，開始用</button>
+      </div>`;
+    setTimeout(()=>$('#g-age').focus(),60);
+  } else {
+    b.innerHTML = `
+      <h2 class="g-h">歡迎！三件事就會用了</h2>
+      <ol class="g-list">
+        <li><div class="gt"><b>右邊是你的冰箱</b><span>先把它展開，再把手邊有的食材和調味料點進去。這是整個工具的起點。</span></div></li>
+        <li><div class="gt"><b>填身高體重會更準</b><span>系統會算出你一餐大概需要多少熱量，再照著配。資料只有你自己看得到。</span></div></li>
+        <li><div class="gt"><b>左邊會告訴你今天煮什麼</b><span>依冰箱裡現有的食材推薦整天或一餐的組合，缺什麼也會列出來。</span></div></li>
+      </ol>
+      <div class="g-btns">
+        <button class="btn" onclick="finishGuide(false)">我自己摸索</button>
+        <button class="btn primary" onclick="openGuide(2)">下一步</button>
+      </div>`;
+  }
+  $('#guide-modal').classList.add('open');
+}
+function finishGuide(save){
+  if(save){
+    const n = sel => { const v = parseFloat($(sel).value.trim()); return isNaN(v) ? 0 : v; };
+    const p = { sex:$('#g-sex').value, age:n('#g-age'), h:n('#g-h'), w:n('#g-w'), act:'light' };
+    if(!(p.age>0 && p.h>0 && p.w>0)){ toast('年齡、身高、體重都要填，或先跳過'); return; }
+    DB.settings.profile = p;
+    toast('記下了，推薦會依你的需求來配');
+  } else {
+    toast('之後可以到右上角「後台」的「我的」補上');
+  }
+  DB.settings.seenGuide = true; persist();
+  $('#guide-modal').classList.remove('open');
+  renderAll();
+}
+
 /* changelog */
 function openChangelog(){ $('#changelog-modal').classList.add('open'); }
 function closeChangelog(){ $('#changelog-modal').classList.remove('open'); }
@@ -1816,7 +1906,8 @@ function renderAdmin(){
           <div class="wob"><div class="v">${t.c}</div><div class="l">碳水 g</div></div>
           <div class="wob2"><div class="v">${t.f}</div><div class="l">脂肪 g</div></div>
         </div>
-        <p>午餐和晚餐各一餐的目標大約是 <b>${t.meal.kcal} kcal</b>、蛋白質 ${t.meal.p} g、碳水 ${t.meal.c} g、脂肪 ${t.meal.f} g。這裡假設早餐約佔一天的四分之一，由這個工具之外解決。</p>
+        <p>你設定一天吃 ${mealsPerDay()} 餐，所以每一餐的目標大約是 <b>${t.meal.kcal} kcal</b>、蛋白質 ${t.meal.p} g、碳水 ${t.meal.c} g、脂肪 ${t.meal.f} g。早餐照吃，只是不由這個工具安排。</p>
+        <div class="f" style="margin-top:10px"><label>一天吃幾餐<select id="pf-meals" onchange="setMeals(this.value)">${[2,3,4].map(n=>`<option value="${n}" ${mealsPerDay()===n?'selected':''}>${n} 餐</option>`).join('')}</select></label></div>
         <p class="f-help" style="margin-top:8px">基礎代謝 ${t.bmr} kcal，用 Mifflin-St Jeor 公式推算。以上都是概略的參考值，不是健康或醫療建議。</p>
       </div>` : `<div class="a-card wob2"><p>填好上面四項並儲存，這裡就會算出你一天的參考需求，料理詳情也會顯示每一份佔你一天的幾成。</p></div>`}`;
   }
@@ -1886,6 +1977,12 @@ function deleteItem(id){
     r.seas = r.seas.filter(x=>x!==id);
   });
   fridgeSet.delete(id); if(ui.focus===id) ui.focus=null; persist(); renderAdmin(); toast('已刪除');
+}
+
+function setMeals(n){
+  DB.settings.meals = Math.max(2, Math.min(5, parseInt(n,10)||3));
+  ui.mealData = null; ui.dayData = null; persist();
+  $('#admin').classList.contains('open') ? renderAdmin() : renderRecipes();
 }
 
 /* ── 身體資料 ── */
@@ -2101,6 +2198,7 @@ document.addEventListener('click', e=>{
   if(el('[data-focus-clear]')){ ui.focus=null; ui.page=0; renderAll(); return; }
   if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.tags.clear(); ui.page=0; renderAll(); return; }
   if(x=el('[data-mode]')){ ui.mode=x.dataset.mode; ui.page=0; renderRecipes(); return; }
+  if(x=el('[data-meals]')){ setMeals(x.dataset.meals); return; }
   if(el('[data-meal-again]')){ ui.mealData=mealSuggestions(); renderMeal(); return; }
   if(el('[data-day-again]')){ ui.dayData=daySuggestion(); renderDay(); return; }
   if(x=el('[data-swap]')){
@@ -2185,6 +2283,8 @@ let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz=setTimeo
 if(DB.settings.fridgeOpen === false) document.body.classList.add('fridge-closed');
 syncThresholdPills();
 renderAll();
+// 看起來是第一次用（沒填資料、冰箱空的、沒煮過）才自動跳引導
+if(!DB.settings.seenGuide && !profile() && !fridgeSet.size && !(DB.history||[]).length) openGuide(1);
 </script>
 </body>
 </html>
