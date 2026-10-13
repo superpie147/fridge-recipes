@@ -13,7 +13,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   /* 文字分四層：ink 標題與主要內容｜ink-soft 暗掉的料理名稱｜ink2 要讀的次要文字（副標題、用量、說明）｜muted 純裝飾（日文讀音、菜系標籤、頁碼） */
-  --paper:#faf7f0;--paper2:#f2ede2;--ink:#241f1c;--ink-soft:#5f574f;--ink2:#4a433d;--muted:#a9a19a;--line:rgba(44,42,40,0.22);
+  --paper:#faf7f0;--paper2:#f2ede2;--ink:#241f1c;--ink-soft:#5f574f;--ink2:#4a433d;--ink3:#766d66;--muted:#a9a19a;--line:rgba(44,42,40,0.22);
   /* 紙張：素色暖白＋極淡的纖維雜訊，不用格線 */
   --paper-tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
   --red:#e35d3c;--blue:#3d8fc2;--green:#5aa86b;--yellow:#ffe082;--yellow2:#fff3b0;
@@ -43,7 +43,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .page-head{padding:18px 26px 8px;flex-shrink:0;display:flex;flex-direction:column;gap:9px}
 #page-recipes.meal .th-box,#page-recipes.meal #r-search-box{display:none}
 .mode-tabs{display:flex;gap:4px}
-.mode-back{font-family:var(--hand);font-size:14px;padding:4px 13px;border-radius:50px;color:var(--ink2);border:1.5px dashed var(--line);white-space:nowrap}
+.mode-back{font-family:var(--hand);font-size:14px;padding:4px 13px;border-radius:50px;color:var(--ink2);border:1.5px solid var(--line);white-space:nowrap}
 .mode-back:hover{background:var(--yellow2);border-color:var(--ink);color:var(--ink)}
 /* 首頁 */
 .home-opts{display:flex;flex-direction:column;gap:11px;margin-top:4px}
@@ -80,7 +80,22 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .meals-pick button{font-family:var(--hand);font-size:13px;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);color:var(--ink2);line-height:1}
 .meals-pick button.on{background:var(--ink);color:#fff;border-style:solid;border-color:var(--ink)}
 .home-help{font-family:var(--hand);font-size:12px;color:var(--blue);border-bottom:1px solid var(--blue);margin-left:8px}
-/* 引導 */
+/* 引導：指著畫面上的東西說明 */
+#tour{position:fixed;inset:0;z-index:140}
+#tour-hole{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(44,42,40,0.6);transition:all 0.3s ease;pointer-events:none}
+#tour-box{position:absolute;width:300px;max-width:calc(100vw - 32px);background:var(--paper);border:2.5px solid var(--ink);border-radius:255px 15px 225px 15px / 15px 225px 15px 255px;padding:15px 17px;box-shadow:5px 6px 0 rgba(44,42,40,0.25)}
+#tour-box::after{content:'';position:absolute;width:0;height:0;border:11px solid transparent}
+#tour-box.pt-right::after{right:-22px;top:28px;border-left-color:var(--ink)}
+#tour-box.pt-left::after{left:-22px;top:28px;border-right-color:var(--ink)}
+#tour-box.pt-down::after{bottom:-22px;left:30px;border-top-color:var(--ink)}
+#tour-box.pt-up::after{top:-22px;left:30px;border-bottom-color:var(--ink)}
+.tb-n{font-family:var(--hand);font-size:12px;color:var(--ink3)}
+.tb-h{font-family:var(--hand-b);font-weight:600;font-size:18px;margin:2px 0 5px;-webkit-text-stroke:0.3px currentColor}
+.tb-p{font-size:13.5px;color:var(--ink2);line-height:1.75}
+.tb-btns{display:flex;align-items:center;gap:10px;margin-top:13px}
+.tb-next{flex:1;font-family:var(--hand-b);font-weight:600;font-size:16px;background:var(--ink);color:#fff;border-radius:50px;padding:9px 0}
+.tb-skip{font-family:var(--hand);font-size:12px;color:var(--muted);border-bottom:1px solid currentColor;white-space:nowrap}
+.tb-skip:hover{color:var(--ink2)}
 .g-h{font-family:var(--hand-b);font-weight:600;font-size:24px;-webkit-text-stroke:0.4px currentColor;margin-bottom:8px}
 .g-p{font-size:14px;color:var(--ink2);line-height:1.8}
 .g-p b{color:var(--ink)}
@@ -115,11 +130,11 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .combo-miss.ok{color:var(--green)}
 .cui-tabs{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;font-family:var(--hand);font-size:14px;padding-bottom:2px}
 .cui-tabs::-webkit-scrollbar{display:none}
-.cui-tab{font-family:var(--hand);font-size:14px;color:var(--muted);white-space:nowrap;flex-shrink:0;padding:1px 2px}
+.cui-tab{font-family:var(--hand);font-size:14px;color:var(--ink3);white-space:nowrap;flex-shrink:0;padding:1px 2px}
 .cui-tab.on{color:var(--ink);background:linear-gradient(transparent 62%,var(--yellow) 62%)}
 /* 標籤篩選：平常收起來，只露一顆按鈕；展開後是一排可點的標籤 */
 .tagbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.tag-toggle{font-family:var(--hand);font-size:14px;color:var(--ink);display:inline-flex;align-items:center;gap:5px;padding:2px 10px 3px;border:1.5px dashed var(--line);border-radius:50px;line-height:1.5}
+.tag-toggle{font-family:var(--hand);font-size:14px;color:var(--ink);display:inline-flex;align-items:center;gap:5px;padding:2px 10px 3px;border:1.5px solid var(--line);border-radius:50px;line-height:1.5}
 .tag-toggle:hover{background:var(--yellow2);border-color:var(--ink)}
 .tag-toggle.on{border-style:solid;border-color:var(--ink);background:var(--yellow)}
 .tag-toggle .car{font-size:10px;color:var(--ink2)}
@@ -186,7 +201,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .rname{font-family:var(--hand-b);font-weight:600;font-size:22px;line-height:1.2;-webkit-text-stroke:0.35px currentColor}
 .emo{font-size:20px;line-height:1;align-self:center}
 .emo img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--ink);vertical-align:middle}
-.ctag{font-family:var(--hand);font-size:13px;color:var(--muted);margin-left:auto}
+.ctag{font-family:var(--hand);font-size:13px;color:var(--ink3);margin-left:auto}
 .mrow{font-family:var(--hand);display:flex;justify-content:space-between;font-size:13px;margin-top:6px;color:var(--ink2)}
 .scr{height:10px;background:linear-gradient(90deg,var(--red) 0 var(--w),transparent var(--w));border-radius:6px 3px 8px 2px;border:1.5px solid var(--ink);margin-top:3px}
 .scr.blue{background:linear-gradient(90deg,var(--blue) 0 var(--w),transparent var(--w))}
@@ -280,7 +295,24 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .btn:hover{box-shadow:var(--shadow)}
 
 /* recipe detail */
-.d-hero{display:flex;gap:16px;align-items:center;margin-bottom:12px}
+.d-hero{display:flex;gap:16px;align-items:center;margin-bottom:12px;position:relative}
+.d-cook{position:absolute;right:0;top:0;margin:0}
+.ck-sec{margin-top:14px}
+.ck-sec h4{font-family:var(--hand);font-weight:400;font-size:13px;color:var(--ink2);margin-bottom:6px}
+.ck-meals{display:flex;gap:6px;flex-wrap:wrap}
+.ck-meals button{font-family:var(--hand);font-size:14px;padding:5px 14px;border-radius:50px;border:1.5px solid var(--line);color:var(--ink2)}
+.ck-meals button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ck-row{display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 11px;margin-bottom:5px;cursor:pointer}
+.ck-row.off{opacity:0.5;background:none}
+.ck-row .b{width:20px;height:20px;border:2px solid var(--ink);border-radius:5px 3px 6px 3px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-family:var(--hand)}
+.ck-row.on .b{background:var(--green);color:#fff}
+.ck-row .n{flex:1;min-width:0;font-size:14px}
+.ck-row .g{font-family:var(--hand);font-size:12px;color:var(--ink2);white-space:nowrap}
+.ck-row .rm{color:var(--muted);font-size:14px;padding:0 3px}
+.ck-row .rm:hover{color:var(--red)}
+.ck-sum{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;font-family:var(--hand);font-size:13px}
+.ck-sum span{background:var(--n2);border-radius:50px;padding:3px 11px}
+.ck-note{font-size:11.5px;color:var(--ink2);line-height:1.7;margin-top:8px}
 .d-img{width:84px;height:84px;border-radius:50% 45% 55% 40%;background:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:42px;overflow:hidden;flex-shrink:0}
 .d-img img{width:100%;height:100%;object-fit:cover}
 .d-meta{flex:1;min-width:0}
@@ -479,7 +511,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.2</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.3</span></div>
         </div>
         <div class="mode-tabs" id="mode-tabs"></div>
         <div class="th-box wob2">
@@ -549,6 +581,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 </div>
 
 <!-- ── 第一次使用的引導 ── -->
+<div id="tour" hidden><div id="tour-hole"></div><div id="tour-box"></div></div>
 <div class="overlay" id="guide-modal" style="z-index:130">
   <div class="sheet"><div class="sheet-body" id="guide-body" style="padding-top:20px"></div></div>
 </div>
@@ -558,6 +591,14 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.9.3 - 2026年10月14日</div>
+        <div class="changelog-content">
+          🫵 使用說明改成一步一步指著畫面上的東西，每一步都可以跳過<br>
+          ✓ 料理詳情新增「煮了這道」，可以選哪一餐、調整這次放的食材、記下實際吃的份數<br>
+          🔤 菜系文字加深，首頁與標籤按鈕改成實線
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.2 - 2026年10月13日</div>
         <div class="changelog-content">
@@ -737,7 +778,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.9.2';
+const APP_VERSION = '1.9.3';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -1316,7 +1357,7 @@ function comboCard(cb, key, title, target){
       <span class="${okP?'':'off'}">蛋白質 ${Math.round(tot.p)} g</span>
       <span>碳水 ${Math.round(tot.c)} g</span>
       <span>脂肪 ${Math.round(tot.f)} g</span>
-      <button class="cooked" data-cooked="${picks.map(x=>x.r.id).join(',')}">✓ 煮了這套</button>
+      <button class="cooked" data-cooked="${picks.map(x=>x.r.id).join(',')}" ${key==='lunch'||key==='dinner'?`data-meal="${key}"`:''}>✓ 煮了這套</button>
     </div>
     ${miss.ings.length
       ? `<div class="combo-miss">要補買：${miss.ings.map(n=>`<i>${esc(n)}</i>`).join('、')}</div>`
@@ -1390,7 +1431,7 @@ function renderHome(){
       <div class="week-note">${goal?`橫線是你的午晚餐目標 ${goal} kcal。`:''}煮完按「煮了這套」就會記進來。</div>
     </div>
     ${hist.length?`<div class="home-sec"><h3>最近煮過</h3>
-      <div class="hist">${hist.map(h=>`<div class="hrow"><span class="hd">${h.d.slice(5)}</span><span class="hn">${h.ids.map(id=>{const r=DB.recipes.find(x=>x.id===id); return r?esc(r.name):'';}).filter(Boolean).join('、')}</span><span class="hk">${h.kcal} kcal</span></div>`).join('')}</div>
+      <div class="hist">${hist.map(h=>`<div class="hrow"><span class="hd">${h.d.slice(5)}${h.meal?' '+MEALS[h.meal]:''}</span><span class="hn">${h.ids.map(id=>{const r=DB.recipes.find(x=>x.id===id); return r?esc(r.name):'';}).filter(Boolean).join('、')}${h.custom?'<span class="ja"> 有調整</span>':''}</span><span class="hk">${h.kcal} kcal</span></div>`).join('')}</div>
       </div>`:''}
     <div class="home-fridge">冰箱裡有 ${nIng} 樣食材。推薦都是從這些開始配的，缺的會另外列出來。
       <button class="home-help" onclick="openGuide(1)">使用說明</button></div>`;
@@ -1681,17 +1722,96 @@ function daySuggestion(){
 
 /* ── 煮過的紀錄（階段四）── */
 const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
-function logCooked(ids){
+function logCooked(ids, meal){
   if(!Array.isArray(DB.history)) DB.history = [];
   const rs = ids.map(id=>DB.recipes.find(r=>r.id===id)).filter(Boolean);
   if(!rs.length) return;
   const n = rs.map(recipeNutrition);
-  DB.history.unshift({ d:todayStr(), ids:rs.map(r=>r.id),
+  DB.history.unshift({ d:todayStr(), meal:meal||guessMeal(), ids:rs.map(r=>r.id),
     kcal:Math.round(n.reduce((s,x)=>s+x.kcal,0)), p:Math.round(n.reduce((s,x)=>s+x.p,0)) });
   DB.history = DB.history.slice(0,150);
   persist();
   toast(rs.length>1 ? `記下了：${rs.map(r=>r.name).join('、')}` : `記下了：${rs[0].name}`);
 }
+/* ── 煮了這道：記錄這一次實際煮的內容 ──
+   食材可以勾掉沒放的、也可以加上這次臨時加的，只影響這一筆紀錄，食譜本身不動。 */
+const MEALS = { breakfast:'早餐', lunch:'午餐', dinner:'晚餐', snack:'點心' };
+const guessMeal = () => { const h = new Date().getHours(); return h<10 ? 'breakfast' : h<15 ? 'lunch' : h<21 ? 'dinner' : 'snack'; };
+let cookDraft = null;
+
+function openCookSheet(rid){
+  const r = DB.recipes.find(x=>x.id===rid); if(!r) return;
+  cookDraft = { rid, meal:guessMeal(), eaten:1,
+    use:r.ings.map(x=>!x.opt), extras:[] };
+  renderCookSheet();
+}
+function cookTotals(){
+  const r = DB.recipes.find(x=>x.id===cookDraft.rid);
+  let kcal=0,p=0,c=0,f=0;
+  const add = (it,g)=>{ if(!it||!g||it.kcal===undefined) return; kcal+=it.kcal*g/100; p+=it.p*g/100; c+=it.c*g/100; f+=it.f*g/100; };
+  r.ings.forEach((x,i)=>{ if(cookDraft.use[i]) add(itemById(x.id), x.g); });
+  r.seas.forEach(id=>{ const it=itemById(id); if(it) add(it, it.g); });
+  cookDraft.extras.forEach(e=>add(itemById(e.id), e.g));
+  const per = cookDraft.eaten / (r.servings||2);
+  return { kcal:Math.round(kcal*per), p:Math.round(p*per*10)/10, c:Math.round(c*per*10)/10, f:Math.round(f*per*10)/10 };
+}
+function renderCookSheet(){
+  const r = DB.recipes.find(x=>x.id===cookDraft.rid);
+  const t = cookTotals();
+  const row = (name, ja, g, on, act, rm) =>
+    `<div class="ck-row ${on?'on':'off'}" ${act}><span class="b">${on?'✓':''}</span><span class="n">${esc(name)}${ja?`<span class="ja">${esc(ja)}</span>`:''}</span><span class="g">${g?g+' g':''}</span>${rm||''}</div>`;
+  openForm(`煮了「${r.name}」`, `
+    <div class="ck-sec">
+      <h4>這是哪一餐</h4>
+      <div class="ck-meals">${Object.entries(MEALS).map(([k,l])=>`<button data-ckmeal="${k}" class="${cookDraft.meal===k?'on':''}">${l}</button>`).join('')}</div>
+    </div>
+    <div class="ck-sec">
+      <h4>這鍋放了什麼（點一下可以取消沒放的）</h4>
+      ${r.ings.map((x,i)=>{ const it=itemById(x.id); return it?row(it.name, it.ja, x.g, cookDraft.use[i], `data-ckuse="${i}"`):''; }).join('')}
+      ${cookDraft.extras.map((e,i)=>{ const it=itemById(e.id); return it?row('＋ '+it.name, it.ja, e.g, true, '', `<button class="rm" data-ckrm="${i}">✕</button>`):''; }).join('')}
+      <div class="b-search" style="margin-top:7px"><input type="text" id="ck-q" placeholder="這次還加了什麼？輸入食材名稱…" autocomplete="off"><div class="b-sug" id="ck-sug"></div></div>
+    </div>
+    <div class="ck-sec">
+      <h4>你吃了幾人份<span class="ja">（本食譜 ${r.servings||2} 人份）</span></h4>
+      <span class="nin"><input type="text" id="ck-eaten" value="${cookDraft.eaten}"><em>人份</em></span>
+    </div>
+    <div class="ck-sum">
+      <span>約 ${t.kcal} kcal</span><span>蛋白質 ${t.p} g</span><span>碳水 ${t.c} g</span><span>脂肪 ${t.f} g</span>
+    </div>
+    <div class="ck-note">這些調整只記在這一筆，不會改到食譜本身。下次再煮這道，食材還是原來的。</div>`,
+    `<button class="btn" onclick="closeForm()">取消</button><button class="btn primary" onclick="saveCook()">記下來</button>`);
+  bindCookSearch();
+}
+function bindCookSearch(){
+  const inp = $('#ck-q'), sug = $('#ck-sug'); if(!inp) return;
+  const show = ()=>{
+    const q = inp.value.trim().toLowerCase();
+    if(!q){ sug.classList.remove('open'); return; }
+    const hits = DB.items.filter(i=>(i.name+i.ja).toLowerCase().includes(q)).slice(0,8);
+    sug.innerHTML = hits.map(i=>`<div data-ckadd="${i.id}">${i.emoji||''} ${esc(i.name)} <span class="ja">${esc(i.ja)}</span></div>`).join('') || '<div class="ja" style="padding:9px 12px">找不到這個食材</div>';
+    sug.classList.add('open');
+  };
+  inp.addEventListener('input', show);
+  inp.addEventListener('focus', show);
+  inp.addEventListener('blur', ()=>setTimeout(()=>sug.classList.remove('open'),150));
+  sug.addEventListener('mousedown', e=>{
+    const d = e.target.closest('[data-ckadd]'); if(!d) return;
+    e.preventDefault();
+    const it = itemById(d.dataset.ckadd);
+    cookDraft.extras.push({ id:it.id, g:it.g || 50 });
+    renderCookSheet();
+  });
+}
+function saveCook(){
+  const r = DB.recipes.find(x=>x.id===cookDraft.rid);
+  const t = cookTotals();
+  if(!Array.isArray(DB.history)) DB.history = [];
+  DB.history.unshift({ d:todayStr(), meal:cookDraft.meal, ids:[r.id], kcal:t.kcal, p:t.p, custom:cookDraft.extras.length>0||cookDraft.use.some(v=>!v) });
+  DB.history = DB.history.slice(0,150);
+  persist(); closeForm(); ui.mealData=null; ui.dayData=null; renderAll();
+  toast(`記下了：${MEALS[cookDraft.meal]} ${r.name} 約 ${t.kcal} kcal`);
+}
+
 function recentIds(days){
   const out = new Set();
   const cut = new Date(Date.now() - days*86400000);
@@ -1747,6 +1867,7 @@ function renderRecipeModal(){
   };
   $('#rm-body').innerHTML = `
     <div class="d-hero">${r.image?`<div class="d-img"><img src="${esc(r.image)}" alt=""></div>`:`<div class="d-img">${r.emoji||'🍽️'}</div>`}
+      <button class="cooked d-cook" data-cook="${r.id}">✓ 煮了這道</button>
       <div class="d-meta"><div class="d-ja">${esc(r.ja)}</div><span class="ctag hand" style="margin:0;font-size:15px">${CUISINES[r.cuisine]||CUISINES.other}</span>
         ${(r.tags||[]).length?`<div class="d-tags">${(r.tags||[]).map(id=>{const t=tagById(id); return t?`<span class="tchip mini" style="background:${esc(t.color||'#fff')};border-color:var(--ink)">${t.emoji||''} ${esc(t.name)}</span>`:'';}).join('')}</div>`:''}
       </div>
@@ -1789,7 +1910,54 @@ function dayShare(z){
 }
 function editCurrentRecipe(){ const id=ui.openRecipe; closeRecipe(); openAdmin('recipe'); openRecipeForm(id); }
 
-/* ── 第一次使用的引導 ── */
+/* ── 第一次使用的引導 ──
+   前面幾步用小框指著畫面上真正的東西，最後一步才是置中的個人資料表單。 */
+const TOUR = [
+  { sel:()=>document.body.classList.contains('fridge-closed') ? '.fr-rail' : '#page-fridge .page-head .row',
+    h:'右邊是你的冰箱', p:'手邊有什麼就加什麼。冰箱裡的東西，就是所有推薦的起點。',
+    before:()=>{} },
+  { sel:()=>'#fridge-now',
+    h:'冰箱長這樣', p:'上層放食材、下層放調味料。點便條紙可以只看用得到它的料理，點便條紙上的 ✕ 就移出冰箱。',
+    before:()=>{ setFridgeOpen(true); } },
+  { sel:()=>'#lib-list',
+    h:'從食材庫點進去', p:'下面照分類列出所有食材，點一下就進冰箱。可以用中文或日文搜尋。',
+    before:()=>{ setFridgeOpen(true); } },
+  { sel:()=>'#page-recipes .page-body',
+    h:'左邊會告訴你煮什麼', p:'依冰箱裡現有的食材配出整天或一餐的組合，缺什麼也會列出來。也可以直接翻食譜。',
+    before:()=>{ ui.mode='home'; renderRecipes(); } },
+];
+let tourStep = 0;
+function startTour(){ tourStep = 0; showTourStep(); }
+function showTourStep(){
+  const st = TOUR[tourStep];
+  if(!st){ $('#tour').hidden = true; openGuide(2); return; }
+  st.before();
+  const el = document.querySelector(st.sel());
+  if(!el){ tourStep++; return showTourStep(); }
+  const r = el.getBoundingClientRect(), pad = 6;
+  const hole = $('#tour-hole'), box = $('#tour-box');
+  $('#tour').hidden = false;
+  hole.style.left = (r.left-pad)+'px'; hole.style.top = (r.top-pad)+'px';
+  hole.style.width = (r.width+pad*2)+'px'; hole.style.height = (r.height+pad*2)+'px';
+  box.innerHTML = `
+    <div class="tb-n">${tourStep+1} / ${TOUR.length+1}</div>
+    <div class="tb-h">${st.h}</div>
+    <div class="tb-p">${st.p}</div>
+    <div class="tb-btns"><button class="tb-next" data-tour-next>下一步</button><button class="tb-skip" data-tour-skip>跳過引導</button></div>`;
+  // 放在空間最大的那一側，箭頭指回目標
+  const vw = innerWidth, vh = innerHeight, bw = Math.min(300, vw-32);
+  box.className = '';
+  let left, top;
+  if(r.left > bw + 24){ box.classList.add('pt-right'); left = r.left - bw - 22; top = r.top; }
+  else if(vw - r.right > bw + 24){ box.classList.add('pt-left'); left = r.right + 22; top = r.top; }
+  else if(r.top > 200){ box.classList.add('pt-down'); left = Math.max(16, r.left); top = r.top - box.offsetHeight - 26; }
+  else { box.classList.add('pt-up'); left = Math.max(16, r.left); top = r.bottom + 22; }
+  box.style.left = Math.max(16, Math.min(left, vw-bw-16))+'px';
+  box.style.top  = Math.max(16, Math.min(top, vh-box.offsetHeight-16))+'px';
+}
+function tourNext(){ tourStep++; showTourStep(); }
+function tourSkip(){ $('#tour').hidden = true; openGuide(2); }
+
 function openGuide(step){
   const b = $('#guide-body');
   if(step===2){
@@ -1821,7 +1989,7 @@ function openGuide(step){
       </ol>
       <div class="g-btns">
         <button class="btn" onclick="finishGuide(false)">我自己摸索</button>
-        <button class="btn primary" onclick="openGuide(2)">下一步</button>
+        <button class="btn primary" onclick="$('#guide-modal').classList.remove('open');startTour()">下一步</button>
       </div>`;
   }
   $('#guide-modal').classList.add('open');
@@ -1837,7 +2005,7 @@ function finishGuide(save){
     toast('之後可以到右上角「後台」的「個人資料」補上');
   }
   DB.settings.seenGuide = true; persist();
-  $('#guide-modal').classList.remove('open');
+  $('#guide-modal').classList.remove('open'); $('#tour').hidden = true;
   renderAll();
 }
 
@@ -2208,7 +2376,13 @@ document.addEventListener('click', e=>{
     (key==='lunch'||key==='dinner') ? renderDay() : renderMeal();
     return;
   }
-  if(x=el('[data-cooked]')){ logCooked(x.dataset.cooked.split(',')); ui.mealData=null; ui.dayData=null; renderRecipes(); return; }
+  if(x=el('[data-cooked]')){ logCooked(x.dataset.cooked.split(','), x.dataset.meal); ui.mealData=null; ui.dayData=null; renderRecipes(); return; }
+  if(el('[data-tour-next]')){ tourNext(); return; }
+  if(el('[data-tour-skip]')){ tourSkip(); return; }
+  if(x=el('[data-cook]')){ openCookSheet(x.dataset.cook); return; }
+  if(x=el('[data-ckmeal]')){ cookDraft.meal=x.dataset.ckmeal; renderCookSheet(); return; }
+  if(x=el('[data-ckuse]')){ const i=+x.dataset.ckuse; cookDraft.use[i]=!cookDraft.use[i]; renderCookSheet(); return; }
+  if(x=el('[data-ckrm]')){ cookDraft.extras.splice(+x.dataset.ckrm,1); renderCookSheet(); return; }
   if(x=el('[data-cui]')){ ui.cuisine=x.dataset.cui; ui.page=0; renderRecipes(); return; }
   if(el('[data-tag-toggle]')){ ui.tagOpen=!ui.tagOpen; renderRecipes(); return; }
   if(el('[data-tag-clear]')){ ui.tags.clear(); ui.page=0; renderRecipes(); return; }
@@ -2267,6 +2441,7 @@ document.addEventListener('input', e=>{
     slot.g = parseAmountToG(t.value, itemById(slot.id));          // 用量改了就重算克數
     const gi = $(`[data-gram="${i}"]`); if(gi) gi.value = slot.g ?? '';
   }
+  else if(t.id==='ck-eaten'){ const v=parseFloat(t.value); cookDraft.eaten = (isNaN(v)||v<=0) ? 1 : v; const s=$('.ck-sum'); if(s){ const z=cookTotals(); s.innerHTML=`<span>約 ${z.kcal} kcal</span><span>蛋白質 ${z.p} g</span><span>碳水 ${z.c} g</span><span>脂肪 ${z.f} g</span>`; } }
   else if(t.dataset.gram!==undefined){
     const v = t.value.trim(), n = parseFloat(v);
     rDraft.ings[+t.dataset.gram].g = (!v || isNaN(n)) ? null : Math.round(n);
