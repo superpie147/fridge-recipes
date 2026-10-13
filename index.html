@@ -40,9 +40,40 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .bind{width:3px;flex-shrink:0;background:rgba(44,42,40,0.16);box-shadow:0 0 22px 6px rgba(44,42,40,0.07)}
 .page-head{padding:18px 26px 8px;flex-shrink:0;display:flex;flex-direction:column;gap:9px}
 #page-recipes.meal .th-box,#page-recipes.meal #r-search-box{display:none}
-.mode-tabs{display:flex;gap:4px;background:rgba(44,42,40,0.07);border-radius:50px;padding:3px}
-.mode-tab{font-family:var(--hand);font-size:14px;padding:4px 13px;border-radius:50px;color:var(--ink2);white-space:nowrap}
-.mode-tab.on{background:#fff;color:var(--ink);box-shadow:var(--shadow);font-family:var(--hand-b);font-weight:600}
+.mode-tabs{display:flex;gap:4px}
+.mode-back{font-family:var(--hand);font-size:14px;padding:4px 13px;border-radius:50px;color:var(--ink2);border:1.5px dashed var(--line);white-space:nowrap}
+.mode-back:hover{background:var(--yellow2);border-color:var(--ink);color:var(--ink)}
+/* 首頁 */
+.home-opts{display:flex;flex-direction:column;gap:11px;margin-top:4px}
+.home-opt{display:flex;align-items:center;gap:13px;background:#fff;padding:14px 16px;text-align:left;width:100%;cursor:pointer}
+.home-opt:hover{box-shadow:4px 5px 0 rgba(44,42,40,0.14)}
+.home-opt .ho-e{font-size:24px;flex-shrink:0;line-height:1}
+.home-opt .ho-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.home-opt .ho-t b{font-family:var(--hand-b);font-weight:600;font-size:19px;color:var(--ink);-webkit-text-stroke:0.3px currentColor}
+.home-opt .ho-t em{font-style:normal;font-size:12.5px;color:var(--ink2);line-height:1.6}
+.home-opt .ho-a{font-family:var(--hand);font-size:17px;color:var(--muted);flex-shrink:0}
+.home-tip{font-family:var(--hand);font-size:13px;color:var(--ink2);background:var(--n1);border-radius:10px;padding:9px 13px;margin-top:12px;line-height:1.7}
+.home-sec{margin-top:20px}
+.home-sec h3{font-family:var(--hand-b);font-weight:600;font-size:16px;color:var(--ink);margin-bottom:8px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;align-items:end}
+.wd{text-align:center;min-width:0}
+.wbar{position:relative;height:56px;background:rgba(44,42,40,0.05);border-radius:5px;display:flex;align-items:flex-end;overflow:hidden}
+.wbar i{display:block;width:100%;background:var(--green);border-radius:4px 4px 0 0;min-height:0}
+.wbar u{position:absolute;left:0;right:0;height:0;border-top:1.5px dashed var(--red);text-decoration:none}
+.wl{font-family:var(--hand);font-size:12px;color:var(--ink2);margin-top:3px}
+.wk{font-family:var(--hand);font-size:10.5px;color:var(--muted);line-height:1.3;font-variant-numeric:tabular-nums}
+.week-note{font-size:11.5px;color:var(--ink2);margin-top:7px;line-height:1.7}
+.hist{display:flex;flex-direction:column;gap:5px}
+.hrow{display:flex;align-items:baseline;gap:9px;background:#fff;border:1.5px dashed var(--line);border-radius:10px;padding:6px 11px}
+.hrow .hd{font-family:var(--hand);font-size:12px;color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums}
+.hrow .hn{flex:1;min-width:0;font-size:13.5px}
+.hrow .hk{font-family:var(--hand);font-size:12px;color:var(--ink2);white-space:nowrap}
+.home-fridge{font-size:12px;color:var(--ink2);margin-top:18px;line-height:1.7}
+.day-sum{font-family:var(--hand);font-size:15px;color:var(--ink);background:var(--n4);border-radius:12px;padding:9px 14px;line-height:1.7}
+.day-sum b{font-family:var(--hand-b);font-weight:600}
+.day-sum .ok{color:var(--green)}.day-sum .off{color:var(--red)}
+.cooked{font-family:var(--hand);font-size:12px;color:var(--green);border:1.5px solid var(--green);border-radius:50px;padding:2px 11px;margin-left:auto;white-space:nowrap}
+.cooked:hover{background:var(--green);color:#fff}
 /* 一餐推薦 */
 .meal-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--hand);font-size:14px;color:var(--ink2);margin:4px 0 12px}
 .meal-top b{font-family:var(--hand-b);font-weight:600;color:var(--ink)}
@@ -431,12 +462,9 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.0</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.1</span></div>
         </div>
-        <div class="mode-tabs" id="mode-tabs">
-          <button class="mode-tab" data-mode="browse">翻食譜</button>
-          <button class="mode-tab" data-mode="meal">這一餐</button>
-        </div>
+        <div class="mode-tabs" id="mode-tabs"></div>
         <div class="th-box wob2">
           <span class="th-l">門檻</span>
           <input type="range" id="th-range" min="0" max="100" step="5" value="70">
@@ -508,6 +536,15 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.9.1 - 2026年10月13日</div>
+        <div class="changelog-content">
+          🏠 左頁改成首頁，三個入口各自寫明用途：今天吃什麼、這一餐吃什麼、翻食譜<br>
+          🌞🌙 「今天吃什麼」一次配出午餐和晚餐，兩餐不重複，合計對照你一天的需求<br>
+          ✓ 每套組合可以按「煮了這套」記下來，三天內煮過的不會一直被推薦<br>
+          📊 首頁顯示本週午晚餐的熱量長條圖與最近煮過的紀錄
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.0 - 2026年10月13日</div>
         <div class="changelog-content">
@@ -671,7 +708,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.9.0';
+const APP_VERSION = '1.9.1';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -1157,7 +1194,7 @@ if(!Array.isArray(DB.tags)) DB.tags = [];
     r.ings.forEach(x=>{ if(x.g===undefined) x.g = parseAmountToG(x.amt, byId[x.id]); });
   });
 }
-const ui = { mode:'browse', mealData:null, rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
+const ui = { mode:'home', mealData:null, dayData:null, rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
 const tagById = id => DB.tags.find(t=>t.id===id);
 let fridgeSet = new Set(DB.fridge);
 
@@ -1221,62 +1258,121 @@ const GROUP_LABEL = {
 const ARROW_L = '<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M44 12.5 C 30 11, 18 13, 6 12"></path><path d="M13 5 C 10 8, 7 10, 4 12 C 7 14, 10 17, 13 19.5"></path></svg>';
 const ARROW_R = '<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 C 18 13, 30 11, 42 12"></path><path d="M35 5 C 38 8, 41 10, 44 12 C 41 14, 38 17, 35 19.5"></path></svg>';
 
+// 一套組合的卡片。key 是給「換」用的識別（meal 用索引，整日用 lunch/dinner）
+function comboCard(cb, key, title, target){
+  const picks = cb.picks.map(p=>p.list[p.i]);
+  const tot = comboTotals(picks);
+  const miss = comboMissing(cb);
+  const okK = Math.abs(tot.kcal-target.kcal) <= target.kcal*0.25;
+  const okP = tot.p >= target.p*0.8;
+  return `<div class="combo">
+    <div class="combo-h">${esc(title)}<span class="sc">${cb.tpl.map(r=>ROLES[r]).join(' ＋ ')}</span></div>
+    ${cb.picks.map((p,si)=>{
+      const x = p.list[p.i];
+      return `<div class="mslot">
+        <span class="rl">${ROLES[p.role]}</span>
+        <span class="nm" data-open="${x.r.id}">${x.r.emoji||''} ${esc(x.r.name)}</span>
+        <span class="kc">${x.n.kcal} kcal・食材 ${x.m.ingHave}/${x.m.ingTotal}</span>
+        <button class="sw" data-swap="${key}:${si}" ${p.list.length<2?'disabled':''}>換</button>
+      </div>`;
+    }).join('')}
+    <div class="combo-sum">
+      <span class="${okK?'':'off'}">合計 約 ${tot.kcal} kcal</span>
+      <span class="${okP?'':'off'}">蛋白質 ${Math.round(tot.p)} g</span>
+      <span>碳水 ${Math.round(tot.c)} g</span>
+      <span>脂肪 ${Math.round(tot.f)} g</span>
+      <button class="cooked" data-cooked="${picks.map(x=>x.r.id).join(',')}">✓ 煮了這套</button>
+    </div>
+    ${miss.ings.length
+      ? `<div class="combo-miss">要補買：${miss.ings.map(n=>`<i>${esc(n)}</i>`).join('、')}</div>`
+      : `<div class="combo-miss ok">✓ 生鮮都有，不用出門</div>`}
+    ${miss.seas.length?`<div class="combo-miss" style="color:var(--muted)">調味料還差：${esc(miss.seas.join('、'))}</div>`:''}
+  </div>`;
+}
+
 function renderMeal(){
   if(!ui.mealData) ui.mealData = mealSuggestions();
   const { target, combos, usedFloor } = ui.mealData;
-  const t = dailyTarget();
   const box = $('#meal-list');
   if(!combos.length){ box.innerHTML = `<div class="empty"><div class="big">🍽️</div>湊不出組合<br>先到右邊的冰箱加入幾樣食材</div>`; return; }
   box.innerHTML = `
     <div class="meal-top">
       <span>這一餐目標 <b>約 ${target.kcal} kcal</b>・蛋白質 ${target.p} g</span>
-      ${t?'':'<span class="n-day none" style="padding:2px 9px">還沒填身體資料，先用一般成人的概略值</span>'}
+      ${dailyTarget()?'':'<span class="n-day none" style="padding:2px 9px">還沒填身體資料，先用一般成人的概略值</span>'}
       <button class="hbtn wob2 yel" data-meal-again>再給我幾套</button>
     </div>
     ${usedFloor<60?`<div class="combo-miss" style="margin:-6px 0 12px">冰箱裡的東西不太夠，下面的組合有些要補買。</div>`:''}
-    ${combos.map((cb,ci)=>{
-      const picks = cb.picks.map(p=>p.list[p.i]);
-      const tot = comboTotals(picks);
-      const miss = comboMissing(cb);
-      const okK = Math.abs(tot.kcal-target.kcal) <= target.kcal*0.25;
-      const okP = tot.p >= target.p*0.8;
-      return `<div class="combo">
-        <div class="combo-h">組合 ${ci+1}<span class="sc">${cb.tpl.map(r=>ROLES[r]).join(' ＋ ')}</span></div>
-        ${cb.picks.map((p,si)=>{
-          const x = p.list[p.i];
-          return `<div class="mslot">
-            <span class="rl">${ROLES[p.role]}</span>
-            <span class="nm" data-open="${x.r.id}">${x.r.emoji||''} ${esc(x.r.name)}</span>
-            <span class="kc">${x.n.kcal} kcal・食材 ${x.m.ingHave}/${x.m.ingTotal}</span>
-            <button class="sw" data-swap="${ci}:${si}" ${p.list.length<2?'disabled':''}>換</button>
-          </div>`;
-        }).join('')}
-        <div class="combo-sum">
-          <span class="${okK?'':'off'}">合計 約 ${tot.kcal} kcal</span>
-          <span class="${okP?'':'off'}">蛋白質 ${Math.round(tot.p)} g</span>
-          <span>碳水 ${Math.round(tot.c)} g</span>
-          <span>脂肪 ${Math.round(tot.f)} g</span>
-        </div>
-        ${miss.ings.length
-          ? `<div class="combo-miss">要補買：${miss.ings.map(n=>`<i>${esc(n)}</i>`).join('、')}</div>`
-          : `<div class="combo-miss ok">✓ 生鮮都有，不用出門</div>`}
-        ${miss.seas.length?`<div class="combo-miss" style="color:var(--muted)">調味料還差：${esc(miss.seas.join('、'))}</div>`:''}
-      </div>`;
-    }).join('')}`;
+    ${combos.map((cb,ci)=>comboCard(cb, String(ci), `組合 ${ci+1}`, target)).join('')}`;
 }
 
+function renderDay(){
+  if(!ui.dayData) ui.dayData = daySuggestion();
+  const box = $('#meal-list'), d = ui.dayData;
+  if(!d){ box.innerHTML = `<div class="empty"><div class="big">🍽️</div>湊不出整天的組合<br>先到右邊的冰箱加入幾樣食材</div>`; return; }
+  const t = dailyTarget();
+  const tot = [d.lunch, d.dinner].map(cb=>comboTotals(cb.picks.map(p=>p.list[p.i])));
+  const sum = { kcal:tot[0].kcal+tot[1].kcal, p:Math.round(tot[0].p+tot[1].p) };
+  const dayGoal = t ? Math.round(t.kcal*MEAL_SHARE*2) : d.target.kcal*2;
+  box.innerHTML = `
+    <div class="meal-top">
+      <span>午晚兩餐目標 <b>約 ${dayGoal} kcal</b>${t?`（一天 ${t.kcal} kcal，扣掉早餐）`:''}</span>
+      ${t?'':'<span class="n-day none" style="padding:2px 9px">還沒填身體資料，先用一般成人的概略值</span>'}
+      <button class="hbtn wob2 yel" data-day-again>換一組</button>
+    </div>
+    ${comboCard(d.lunch, 'lunch', '🌞 午餐', d.target)}
+    ${comboCard(d.dinner, 'dinner', '🌙 晚餐', d.target)}
+    <div class="day-sum">兩餐合計 <b>約 ${sum.kcal} kcal</b>・蛋白質 ${sum.p} g
+      <span class="${Math.abs(sum.kcal-dayGoal)<=dayGoal*0.2?'ok':'off'}">${sum.kcal<dayGoal*0.8?'比目標少一些':sum.kcal>dayGoal*1.2?'比目標多一些':'落在目標範圍內'}</span></div>`;
+}
+
+function renderHome(){
+  const box = $('#meal-list');
+  const t = dailyTarget();
+  const nIng = [...fridgeSet].filter(id=>itemById(id)?.kind==='ingredient').length;
+  const week = weekDays(), maxK = Math.max(1, ...week.map(w=>w.kcal), t?Math.round(t.kcal*MEAL_SHARE*2):0);
+  const goal = t ? Math.round(t.kcal*MEAL_SHARE*2) : 0;
+  const hist = (DB.history||[]).slice(0,5);
+  const opt = (mode,emoji,title,desc) => `<button class="home-opt wob" data-mode="${mode}">
+      <span class="ho-e">${emoji}</span>
+      <span class="ho-t"><b>${title}</b><em>${desc}</em></span>
+      <span class="ho-a">→</span></button>`;
+  box.innerHTML = `
+    <div class="home-opts">
+      ${opt('day','🌞🌙','今天吃什麼','依你一天需要的熱量，一次配出午餐和晚餐，用冰箱現有的食材')}
+      ${opt('meal','🍽️','這一餐吃什麼','依你一餐需要的熱量，配出一套主食加主菜加配菜，可以逐道替換')}
+      ${opt('browse','📖','翻食譜','瀏覽全部 '+DB.recipes.length+' 道料理，看冰箱裡的食材能做出哪些')}
+    </div>
+    ${!t?`<div class="home-tip">還沒填身體資料，推薦會先用一般成人的概略值。到右上角「後台」的「我的」填身高體重，就會依你的需求來配。</div>`:''}
+    <div class="home-sec">
+      <h3>本週午晚餐</h3>
+      <div class="week">${week.map(w=>`<div class="wd">
+        <div class="wbar"><i style="height:${Math.round(w.kcal/maxK*100)}%"></i>${goal?`<u style="bottom:${Math.round(goal/maxK*100)}%"></u>`:''}</div>
+        <div class="wl">${w.label}</div>
+        <div class="wk">${w.kcal?w.kcal:''}</div>
+      </div>`).join('')}</div>
+      <div class="week-note">${goal?`橫線是你的午晚餐目標 ${goal} kcal。`:''}煮完按「煮了這套」就會記進來。</div>
+    </div>
+    ${hist.length?`<div class="home-sec"><h3>最近煮過</h3>
+      <div class="hist">${hist.map(h=>`<div class="hrow"><span class="hd">${h.d.slice(5)}</span><span class="hn">${h.ids.map(id=>{const r=DB.recipes.find(x=>x.id===id); return r?esc(r.name):'';}).filter(Boolean).join('、')}</span><span class="hk">${h.kcal} kcal</span></div>`).join('')}</div>
+      </div>`:''}
+    <div class="home-fridge">冰箱裡有 ${nIng} 樣食材。推薦都是從這些開始配的，缺的會另外列出來。</div>`;
+}
+
+// 左頁的總渲染：首頁 / 整日推薦 / 一餐推薦 / 翻食譜
 function renderRecipes(){
-  if(ui.mode==='meal'){
-    document.querySelectorAll('.mode-tab').forEach(b=>b.classList.toggle('on', b.dataset.mode==='meal'));
+  const HINT = { home:'從下面選一個開始', day:'依你一天的熱量需求配出午晚兩餐', meal:'依你一餐的熱量需求配一套', browse:'' };
+  if(ui.mode!=='browse'){
+    $('#mode-tabs').innerHTML = ui.mode==='home' ? '' : '<button class="mode-back" data-mode="home">← 首頁</button>';
     $('#recipe-list').innerHTML = ''; $('#pager').innerHTML = '';
     $('#tag-filter').innerHTML = ''; $('#cui-tabs').innerHTML = ''; $('#focus-bar').innerHTML = '';
     $('#page-recipes').classList.add('meal');
-    const nIng = [...fridgeSet].filter(id=>itemById(id)?.kind==='ingredient').length;
-    $('#recipe-hint').textContent = `依冰箱裡的 ${nIng} 樣食材配出整餐`;
-    renderMeal();
+    $('#recipe-hint').textContent = HINT[ui.mode];
+    if(ui.mode==='home') renderHome();
+    else if(ui.mode==='day') renderDay();
+    else renderMeal();
     return;
   }
-  document.querySelectorAll('.mode-tab').forEach(b=>b.classList.toggle('on', b.dataset.mode==='browse'));
+  $('#mode-tabs').innerHTML = '<button class="mode-back" data-mode="home">← 首頁</button>';
   $('#meal-list').innerHTML = ''; $('#page-recipes').classList.remove('meal');
   const th = DB.settings.threshold;
   const q = ui.rSearch.trim();
@@ -1431,7 +1527,7 @@ function setFridgeOpen(open){
 function toggleFridge(id){
   if(fridgeSet.has(id)){ fridgeSet.delete(id); if(ui.focus===id){ ui.focus=null; ui.page=0; } }
   else fridgeSet.add(id);
-  ui.mealData = null;                 // 冰箱變了，重新配
+  ui.mealData = null; ui.dayData = null;        // 冰箱變了，重新配
   persist(); renderAll();
 }
 function addStaples(){
@@ -1466,25 +1562,32 @@ const MEAL_TEMPLATES = [
 const DEFAULT_MEAL = { kcal:600, p:25, c:75, f:20 };
 
 function candidatesFor(role, floor){
+  const recent = recentIds(3);                                  // 三天內煮過的往後排
   return DB.recipes.filter(r=>r.role===role).map(r=>{
     const m = matchRecipe(r);
-    return { r, m, n:recipeNutrition(r), miss:m.ingTotal-m.ingHave, rnd:Math.random() };
+    return { r, m, n:recipeNutrition(r), miss:m.ingTotal-m.ingHave, old:recent.has(r.id)?1:0, rnd:Math.random() };
   }).filter(x=>x.m.ingPct>=floor)
-    .sort((a,b)=> a.miss-b.miss || b.m.ingPct-a.m.ingPct || a.rnd-b.rnd)
+    .sort((a,b)=> a.old-b.old || a.miss-b.miss || b.m.ingPct-a.m.ingPct || a.rnd-b.rnd)
     .slice(0,10);
 }
 function comboTotals(picks){
   return picks.reduce((s,x)=>({ kcal:s.kcal+x.n.kcal, p:s.p+x.n.p, c:s.c+x.n.c, f:s.f+x.n.f, miss:s.miss+x.miss }),
     {kcal:0,p:0,c:0,f:0,miss:0});
 }
-function scoreCombo(tot, target){
+// 同一餐裡重複用到同樣食材會扣一點分，免得配出烤馬鈴薯配馬鈴薯燉肉
+function overlapPenalty(picks){
+  const seen = new Set(); let dup = 0;
+  picks.forEach(x=>reqSlots(x.r).forEach(s=>{ if(seen.has(s.id)) dup++; else seen.add(s.id); }));
+  return Math.min(0.18, dup*0.06);
+}
+function scoreCombo(tot, target, picks){
   const kcalFit = Math.max(0, 1 - Math.abs(tot.kcal-target.kcal)/target.kcal);
   const protFit = Math.min(1, tot.p/Math.max(1,target.p));
   const fridgeFit = Math.max(0, 1 - tot.miss/6);
-  return kcalFit*0.4 + protFit*0.3 + fridgeFit*0.3;
+  return kcalFit*0.4 + protFit*0.3 + fridgeFit*0.3 - overlapPenalty(picks);
 }
 // 回傳最多 3 套組合，每套的每一格都帶著同角色的其他選擇
-function mealSuggestions(){
+function mealSuggestions(want){
   const t = dailyTarget();
   const target = t ? t.meal : DEFAULT_MEAL;
   let floor = 60, pools = {};
@@ -1500,7 +1603,7 @@ function mealSuggestions(){
     let best = null;
     const walk = (i, picks)=>{
       if(i===tpl.length){
-        const tot = comboTotals(picks), sc = scoreCombo(tot, target);
+        const tot = comboTotals(picks), sc = scoreCombo(tot, target, picks);
         if(!best || sc>best.score) best = { score:sc, picks:picks.slice(), tot };
         return;
       }
@@ -1518,9 +1621,56 @@ function mealSuggestions(){
     if(seen.has(leadId) || seen.has(key)) return;
     seen.add(leadId); seen.add(key); keep.push(cb);
   });
-  return { target, usedFloor:floor, combos:keep.slice(0,3) };
+  return { target, usedFloor:floor, combos:keep.slice(0, want||3) };
 }
 // 缺的東西分開列：生鮮是真的要跑一趟超市，調味料多半是家裡本來就有、只是沒登記
+/* ── 整日推薦（階段四）── 午晚兩餐不重複，合計對照一天的目標 */
+function daySuggestion(){
+  const one = mealSuggestions(12);
+  const pool = one.combos;
+  const ids = cb => new Set(cb.picks.map(p=>p.list[p.i].r.id));
+  let best = null;
+  for(let i=0;i<pool.length;i++) for(let j=0;j<pool.length;j++){
+    if(i===j) continue;
+    const a = ids(pool[i]), b = ids(pool[j]);
+    if([...a].some(id=>b.has(id))) continue;                 // 兩餐不能有同一道
+    const sc = pool[i].score + pool[j].score + (pool[i].tpl.join()===pool[j].tpl.join() ? 0 : 0.08);
+    if(!best || sc>best.sc) best = { sc, lunch:pool[i], dinner:pool[j] };
+  }
+  if(!best && pool.length) best = { lunch:pool[0], dinner:pool[1]||pool[0] };
+  return best ? { target:one.target, usedFloor:one.usedFloor, lunch:best.lunch, dinner:best.dinner } : null;
+}
+
+/* ── 煮過的紀錄（階段四）── */
+const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+function logCooked(ids){
+  if(!Array.isArray(DB.history)) DB.history = [];
+  const rs = ids.map(id=>DB.recipes.find(r=>r.id===id)).filter(Boolean);
+  if(!rs.length) return;
+  const n = rs.map(recipeNutrition);
+  DB.history.unshift({ d:todayStr(), ids:rs.map(r=>r.id),
+    kcal:Math.round(n.reduce((s,x)=>s+x.kcal,0)), p:Math.round(n.reduce((s,x)=>s+x.p,0)) });
+  DB.history = DB.history.slice(0,150);
+  persist();
+  toast(rs.length>1 ? `記下了：${rs.map(r=>r.name).join('、')}` : `記下了：${rs[0].name}`);
+}
+function recentIds(days){
+  const out = new Set();
+  const cut = new Date(Date.now() - days*86400000);
+  (DB.history||[]).forEach(h=>{ if(new Date(h.d) >= cut) h.ids.forEach(id=>out.add(id)); });
+  return out;
+}
+function weekDays(){
+  const out = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(Date.now() - i*86400000);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const hs = (DB.history||[]).filter(h=>h.d===key);
+    out.push({ key, label:'日一二三四五六'[d.getDay()], kcal:hs.reduce((s,h)=>s+h.kcal,0), n:hs.length });
+  }
+  return out;
+}
+
 function comboMissing(cb){
   const ings = new Map(), seas = new Map();
   cb.picks.forEach(p=>{
@@ -1950,9 +2100,17 @@ document.addEventListener('click', e=>{
   if(x=el('[data-focus]')){ ui.focus = ui.focus===x.dataset.focus ? null : x.dataset.focus; ui.page=0; renderAll(); return; }
   if(el('[data-focus-clear]')){ ui.focus=null; ui.page=0; renderAll(); return; }
   if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.tags.clear(); ui.page=0; renderAll(); return; }
-  if(x=el('[data-mode]')){ ui.mode=x.dataset.mode; if(ui.mode==='meal' && !ui.mealData) ui.mealData=mealSuggestions(); renderRecipes(); return; }
-  if(el('[data-meal-again]')){ ui.mealData=mealSuggestions(); renderRecipes(); return; }
-  if(x=el('[data-swap]')){ const [ci,si]=x.dataset.swap.split(':').map(Number); const p=ui.mealData.combos[ci].picks[si]; p.i=(p.i+1)%p.list.length; renderMeal(); return; }
+  if(x=el('[data-mode]')){ ui.mode=x.dataset.mode; ui.page=0; renderRecipes(); return; }
+  if(el('[data-meal-again]')){ ui.mealData=mealSuggestions(); renderMeal(); return; }
+  if(el('[data-day-again]')){ ui.dayData=daySuggestion(); renderDay(); return; }
+  if(x=el('[data-swap]')){
+    const [key,si]=x.dataset.swap.split(':');
+    const cb = key==='lunch' ? ui.dayData.lunch : key==='dinner' ? ui.dayData.dinner : ui.mealData.combos[+key];
+    const p = cb.picks[+si]; p.i=(p.i+1)%p.list.length;
+    (key==='lunch'||key==='dinner') ? renderDay() : renderMeal();
+    return;
+  }
+  if(x=el('[data-cooked]')){ logCooked(x.dataset.cooked.split(',')); ui.mealData=null; ui.dayData=null; renderRecipes(); return; }
   if(x=el('[data-cui]')){ ui.cuisine=x.dataset.cui; ui.page=0; renderRecipes(); return; }
   if(el('[data-tag-toggle]')){ ui.tagOpen=!ui.tagOpen; renderRecipes(); return; }
   if(el('[data-tag-clear]')){ ui.tags.clear(); ui.page=0; renderRecipes(); return; }
