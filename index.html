@@ -307,7 +307,10 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .ck-row .b{width:20px;height:20px;border:2px solid var(--ink);border-radius:5px 3px 6px 3px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-family:var(--hand)}
 .ck-row.on .b{background:var(--green);color:#fff}
 .ck-row .n{flex:1;min-width:0;font-size:14px}
-.ck-row .g{font-family:var(--hand);font-size:12px;color:var(--ink2);white-space:nowrap}
+.ck-row .g{font-family:var(--hand);font-size:12px;color:var(--ink2);white-space:nowrap;display:inline-flex;align-items:center;gap:3px;flex-shrink:0}
+.ck-row .g input{width:52px;text-align:right;background:var(--paper);border:1.5px solid var(--line);border-radius:7px;padding:4px 7px;font-size:13px;font-family:var(--body)}
+.ck-row .g input:focus{border-color:var(--ink);background:#fff}
+.ck-row.off .g input{opacity:0.6}
 .ck-row .rm{color:var(--muted);font-size:14px;padding:0 3px}
 .ck-row .rm:hover{color:var(--red)}
 .ck-sum{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;font-family:var(--hand);font-size:13px}
@@ -511,7 +514,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.3</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.4</span></div>
         </div>
         <div class="mode-tabs" id="mode-tabs"></div>
         <div class="th-box wob2">
@@ -591,6 +594,12 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.9.4 - 2026年10月14日</div>
+        <div class="changelog-content">
+          ⚖️ 「煮了這道」裡每樣食材的克數都可以直接改
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.3 - 2026年10月14日</div>
         <div class="changelog-content">
@@ -778,7 +787,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.9.3';
+const APP_VERSION = '1.9.4';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -1742,14 +1751,14 @@ let cookDraft = null;
 function openCookSheet(rid){
   const r = DB.recipes.find(x=>x.id===rid); if(!r) return;
   cookDraft = { rid, meal:guessMeal(), eaten:1,
-    use:r.ings.map(x=>!x.opt), extras:[] };
+    use:r.ings.map(x=>!x.opt), g:r.ings.map(x=>x.g||0), extras:[] };
   renderCookSheet();
 }
 function cookTotals(){
   const r = DB.recipes.find(x=>x.id===cookDraft.rid);
   let kcal=0,p=0,c=0,f=0;
   const add = (it,g)=>{ if(!it||!g||it.kcal===undefined) return; kcal+=it.kcal*g/100; p+=it.p*g/100; c+=it.c*g/100; f+=it.f*g/100; };
-  r.ings.forEach((x,i)=>{ if(cookDraft.use[i]) add(itemById(x.id), x.g); });
+  r.ings.forEach((x,i)=>{ if(cookDraft.use[i]) add(itemById(x.id), cookDraft.g[i]); });
   r.seas.forEach(id=>{ const it=itemById(id); if(it) add(it, it.g); });
   cookDraft.extras.forEach(e=>add(itemById(e.id), e.g));
   const per = cookDraft.eaten / (r.servings||2);
@@ -1758,8 +1767,9 @@ function cookTotals(){
 function renderCookSheet(){
   const r = DB.recipes.find(x=>x.id===cookDraft.rid);
   const t = cookTotals();
-  const row = (name, ja, g, on, act, rm) =>
-    `<div class="ck-row ${on?'on':'off'}" ${act}><span class="b">${on?'✓':''}</span><span class="n">${esc(name)}${ja?`<span class="ja">${esc(ja)}</span>`:''}</span><span class="g">${g?g+' g':''}</span>${rm||''}</div>`;
+  const row = (name, ja, g, on, act, rm, key) =>
+    `<div class="ck-row ${on?'on':'off'}" ${act}><span class="b">${on?'✓':''}</span><span class="n">${esc(name)}${ja?`<span class="ja">${esc(ja)}</span>`:''}</span>
+      <span class="g"><input type="text" inputmode="numeric" data-ckg="${key}" value="${g||''}"><em>g</em></span>${rm||''}</div>`;
   openForm(`煮了「${r.name}」`, `
     <div class="ck-sec">
       <h4>這是哪一餐</h4>
@@ -1767,8 +1777,8 @@ function renderCookSheet(){
     </div>
     <div class="ck-sec">
       <h4>這鍋放了什麼（點一下可以取消沒放的）</h4>
-      ${r.ings.map((x,i)=>{ const it=itemById(x.id); return it?row(it.name, it.ja, x.g, cookDraft.use[i], `data-ckuse="${i}"`):''; }).join('')}
-      ${cookDraft.extras.map((e,i)=>{ const it=itemById(e.id); return it?row('＋ '+it.name, it.ja, e.g, true, '', `<button class="rm" data-ckrm="${i}">✕</button>`):''; }).join('')}
+      ${r.ings.map((x,i)=>{ const it=itemById(x.id); return it?row(it.name, it.ja, cookDraft.g[i], cookDraft.use[i], `data-ckuse="${i}"`, '', 'slot:'+i):''; }).join('')}
+      ${cookDraft.extras.map((e,i)=>{ const it=itemById(e.id); return it?row('＋ '+it.name, it.ja, e.g, true, '', `<button class="rm" data-ckrm="${i}">✕</button>`, 'extra:'+i):''; }).join('')}
       <div class="b-search" style="margin-top:7px"><input type="text" id="ck-q" placeholder="這次還加了什麼？輸入食材名稱…" autocomplete="off"><div class="b-sug" id="ck-sug"></div></div>
     </div>
     <div class="ck-sec">
@@ -1781,6 +1791,11 @@ function renderCookSheet(){
     <div class="ck-note">這些調整只記在這一筆，不會改到食譜本身。下次再煮這道，食材還是原來的。</div>`,
     `<button class="btn" onclick="closeForm()">取消</button><button class="btn primary" onclick="saveCook()">記下來</button>`);
   bindCookSearch();
+}
+function updateCookSum(){
+  const s = $('.ck-sum'); if(!s) return;
+  const z = cookTotals();
+  s.innerHTML = `<span>約 ${z.kcal} kcal</span><span>蛋白質 ${z.p} g</span><span>碳水 ${z.c} g</span><span>脂肪 ${z.f} g</span>`;
 }
 function bindCookSearch(){
   const inp = $('#ck-q'), sug = $('#ck-sug'); if(!inp) return;
@@ -1800,6 +1815,9 @@ function bindCookSearch(){
     const it = itemById(d.dataset.ckadd);
     cookDraft.extras.push({ id:it.id, g:it.g || 50 });
     renderCookSheet();
+    // 加進來之後直接選取克數，方便馬上改成實際放的量
+    const gi = document.querySelector(`[data-ckg="extra:${cookDraft.extras.length-1}"]`);
+    if(gi){ gi.focus(); gi.select(); }
   });
 }
 function saveCook(){
@@ -2381,7 +2399,7 @@ document.addEventListener('click', e=>{
   if(el('[data-tour-skip]')){ tourSkip(); return; }
   if(x=el('[data-cook]')){ openCookSheet(x.dataset.cook); return; }
   if(x=el('[data-ckmeal]')){ cookDraft.meal=x.dataset.ckmeal; renderCookSheet(); return; }
-  if(x=el('[data-ckuse]')){ const i=+x.dataset.ckuse; cookDraft.use[i]=!cookDraft.use[i]; renderCookSheet(); return; }
+  if(x=el('[data-ckuse]')){ if(t.closest('[data-ckg]')) return; const i=+x.dataset.ckuse; cookDraft.use[i]=!cookDraft.use[i]; renderCookSheet(); return; }
   if(x=el('[data-ckrm]')){ cookDraft.extras.splice(+x.dataset.ckrm,1); renderCookSheet(); return; }
   if(x=el('[data-cui]')){ ui.cuisine=x.dataset.cui; ui.page=0; renderRecipes(); return; }
   if(el('[data-tag-toggle]')){ ui.tagOpen=!ui.tagOpen; renderRecipes(); return; }
@@ -2441,7 +2459,13 @@ document.addEventListener('input', e=>{
     slot.g = parseAmountToG(t.value, itemById(slot.id));          // 用量改了就重算克數
     const gi = $(`[data-gram="${i}"]`); if(gi) gi.value = slot.g ?? '';
   }
-  else if(t.id==='ck-eaten'){ const v=parseFloat(t.value); cookDraft.eaten = (isNaN(v)||v<=0) ? 1 : v; const s=$('.ck-sum'); if(s){ const z=cookTotals(); s.innerHTML=`<span>約 ${z.kcal} kcal</span><span>蛋白質 ${z.p} g</span><span>碳水 ${z.c} g</span><span>脂肪 ${z.f} g</span>`; } }
+  else if(t.id==='ck-eaten'){ const v=parseFloat(t.value); cookDraft.eaten = (isNaN(v)||v<=0) ? 1 : v; updateCookSum(); }
+  else if(t.dataset.ckg!==undefined){
+    const [kind,i] = t.dataset.ckg.split(':');
+    const v = parseFloat(t.value), g = (isNaN(v)||v<0) ? 0 : Math.round(v);
+    if(kind==='slot') cookDraft.g[+i] = g; else cookDraft.extras[+i].g = g;
+    updateCookSum();
+  }
   else if(t.dataset.gram!==undefined){
     const v = t.value.trim(), n = parseFloat(v);
     rDraft.ings[+t.dataset.gram].g = (!v || isNaN(n)) ? null : Math.round(n);
