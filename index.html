@@ -59,17 +59,20 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .home-sec h3{font-family:var(--hand-b);font-weight:600;font-size:16px;color:var(--ink);margin-bottom:8px}
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;align-items:end}
 .wd{text-align:center;min-width:0}
-.wbar{position:relative;height:56px;background:rgba(44,42,40,0.05);border-radius:5px;display:flex;align-items:flex-end;overflow:hidden}
-.wbar i{display:block;width:100%;background:var(--green);border-radius:4px 4px 0 0;min-height:0}
+.wbar{position:relative;height:56px;background:rgba(44,42,40,0.05);border-radius:5px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.wbar i{display:block;width:100%;background:var(--green);min-height:0}
+.wbar s{display:block;width:100%;background:var(--green);opacity:.32;text-decoration:none;min-height:0}
 .wbar u{position:absolute;left:0;right:0;height:0;border-top:1.5px dashed var(--red);text-decoration:none}
 .wl{font-family:var(--hand);font-size:12px;color:var(--ink2);margin-top:3px}
 .wk{font-family:var(--hand);font-size:10.5px;color:var(--muted);line-height:1.3;font-variant-numeric:tabular-nums}
 .week-note{font-size:11.5px;color:var(--ink2);margin-top:7px;line-height:1.7}
 .hist{display:flex;flex-direction:column;gap:5px}
-.hrow{display:flex;align-items:baseline;gap:9px;background:#fff;border:1.5px dashed var(--line);border-radius:10px;padding:6px 11px}
+.hrow{display:flex;align-items:baseline;gap:9px;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 11px}
 .hrow .hd{font-family:var(--hand);font-size:12px;color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums}
 .hrow .hn{flex:1;min-width:0;font-size:13.5px}
 .hrow .hk{font-family:var(--hand);font-size:12px;color:var(--ink2);white-space:nowrap}
+.hrow .hx{font-family:var(--hand);font-size:13px;color:var(--muted);line-height:1;padding:2px 0 2px 4px;flex-shrink:0}
+.hrow .hx:hover{color:var(--red)}
 .home-fridge{font-size:12px;color:var(--ink2);margin-top:18px;line-height:1.7}
 .day-sum{font-family:var(--hand);font-size:15px;color:var(--ink);background:var(--n4);border-radius:12px;padding:9px 14px;line-height:1.7}
 .day-sum b{font-family:var(--hand-b);font-weight:600}
@@ -514,7 +517,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
       <div class="row">
         <div>
           <div class="title"><span class="u">今天煮什麼？</span></div>
-          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" onclick="openChangelog()">ver.1.9.4</span></div>
+          <div class="hint"><span id="recipe-hint"></span><span class="version-badge" id="ver-badge" onclick="openChangelog()">ver.1.9.5</span></div>
         </div>
         <div class="mode-tabs" id="mode-tabs"></div>
         <div class="th-box wob2">
@@ -594,6 +597,14 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.9.5 - 2026年10月19日</div>
+        <div class="changelog-content">
+          📊 本週熱量把早餐、點心和午晚餐分開顯示，目標線只對午晚餐<br>
+          🗑 最近煮過的每一筆都可以刪掉<br>
+          🔤 最近煮過的外框改成實線
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.4 - 2026年10月14日</div>
         <div class="changelog-content">
@@ -787,7 +798,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.9.4';
+const APP_VERSION = '1.9.5';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -1416,8 +1427,9 @@ function renderHome(){
   const box = $('#meal-list');
   const t = dailyTarget();
   const nIng = [...fridgeSet].filter(id=>itemById(id)?.kind==='ingredient').length;
-  const week = weekDays(), maxK = Math.max(1, ...week.map(w=>w.kcal), t?Math.round(t.kcal*mealShare()*2):0);
   const goal = t ? Math.round(t.kcal*mealShare()*2) : 0;
+  // 留一點頂部空間，目標線才不會貼在最上面被切掉
+  const week = weekDays(), maxK = Math.max(1, ...week.map(w=>w.kcal), goal) * 1.1;
   const hist = (DB.history||[]).slice(0,5);
   const opt = (mode,emoji,title,desc) => `<button class="home-opt wob" data-mode="${mode}">
       <span class="ho-e">${emoji}</span>
@@ -1431,16 +1443,16 @@ function renderHome(){
     </div>
     ${!t?`<div class="home-tip">還沒填身體資料，推薦會先用一般成人的概略值。到右上角「後台」的「個人資料」填身高體重，就會依你的需求來配。</div>`:''}
     <div class="home-sec">
-      <h3>本週午晚餐</h3>
+      <h3>本週熱量</h3>
       <div class="week">${week.map(w=>`<div class="wd">
-        <div class="wbar"><i style="height:${Math.round(w.kcal/maxK*100)}%"></i>${goal?`<u style="bottom:${Math.round(goal/maxK*100)}%"></u>`:''}</div>
+        <div class="wbar">${w.other?`<s style="height:${Math.round(w.other/maxK*100)}%"></s>`:''}<i style="height:${Math.round(w.ld/maxK*100)}%"></i>${goal?`<u style="bottom:${Math.round(goal/maxK*100)}%"></u>`:''}</div>
         <div class="wl">${w.label}</div>
         <div class="wk">${w.kcal?w.kcal:''}</div>
       </div>`).join('')}</div>
-      <div class="week-note">${goal?`橫線是你的午晚餐目標 ${goal} kcal。`:''}煮完按「煮了這套」就會記進來。</div>
+      <div class="week-note">深色是午晚餐${goal?`，橫線是你的午晚餐目標 ${goal} kcal`:''}；淺色是早餐和點心，不算進這條線。煮完按「煮了這道」就會記進來。</div>
     </div>
     ${hist.length?`<div class="home-sec"><h3>最近煮過</h3>
-      <div class="hist">${hist.map(h=>`<div class="hrow"><span class="hd">${h.d.slice(5)}${h.meal?' '+MEALS[h.meal]:''}</span><span class="hn">${h.ids.map(id=>{const r=DB.recipes.find(x=>x.id===id); return r?esc(r.name):'';}).filter(Boolean).join('、')}${h.custom?'<span class="ja"> 有調整</span>':''}</span><span class="hk">${h.kcal} kcal</span></div>`).join('')}</div>
+      <div class="hist">${hist.map((h,i)=>`<div class="hrow"><span class="hd">${h.d.slice(5)}${h.meal?' '+MEALS[h.meal]:''}</span><span class="hn">${h.ids.map(id=>{const r=DB.recipes.find(x=>x.id===id); return r?esc(r.name):'';}).filter(Boolean).join('、')}${h.custom?'<span class="ja"> 有調整</span>':''}</span><span class="hk">${h.kcal} kcal</span><button class="hx" data-hdel="${i}" title="刪掉這筆">✕</button></div>`).join('')}</div>
       </div>`:''}
     <div class="home-fridge">冰箱裡有 ${nIng} 樣食材。推薦都是從這些開始配的，缺的會另外列出來。
       <button class="home-help" onclick="openGuide(1)">使用說明</button></div>`;
@@ -1830,6 +1842,14 @@ function saveCook(){
   toast(`記下了：${MEALS[cookDraft.meal]} ${r.name} 約 ${t.kcal} kcal`);
 }
 
+// 記錯了可以刪掉，本週熱量也跟著重算
+function delHistory(i){
+  const h = (DB.history||[])[i]; if(!h) return;
+  const names = h.ids.map(id=>DB.recipes.find(r=>r.id===id)?.name).filter(Boolean).join('、') || '這筆紀錄';
+  if(!confirm(`要刪掉「${h.d.slice(5)} ${MEALS[h.meal]||''} ${names}」這筆紀錄嗎？`)) return;
+  DB.history.splice(i,1); persist(); renderRecipes(); toast('刪掉了');
+}
+
 function recentIds(days){
   const out = new Set();
   const cut = new Date(Date.now() - days*86400000);
@@ -1842,7 +1862,11 @@ function weekDays(){
     const d = new Date(Date.now() - i*86400000);
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     const hs = (DB.history||[]).filter(h=>h.d===key);
-    out.push({ key, label:'日一二三四五六'[d.getDay()], kcal:hs.reduce((s,h)=>s+h.kcal,0), n:hs.length });
+    // 午晚餐和早餐／點心分開算：目標那條線只管午晚餐
+    const sum = f => hs.filter(f).reduce((s,h)=>s+h.kcal,0);
+    const ld = sum(h=>h.meal==='lunch'||h.meal==='dinner');
+    const other = sum(h=>h.meal!=='lunch'&&h.meal!=='dinner');
+    out.push({ key, label:'日一二三四五六'[d.getDay()], ld, other, kcal:ld+other, n:hs.length });
   }
   return out;
 }
@@ -2383,6 +2407,7 @@ document.addEventListener('click', e=>{
   if(x=el('[data-focus]')){ ui.focus = ui.focus===x.dataset.focus ? null : x.dataset.focus; ui.page=0; renderAll(); return; }
   if(el('[data-focus-clear]')){ ui.focus=null; ui.page=0; renderAll(); return; }
   if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.tags.clear(); ui.page=0; renderAll(); return; }
+  if(x=el('[data-hdel]')){ delHistory(+x.dataset.hdel); return; }
   if(x=el('[data-mode]')){ ui.mode=x.dataset.mode; ui.page=0; renderRecipes(); return; }
   if(x=el('[data-meals]')){ setMeals(x.dataset.meals); return; }
   if(el('[data-meal-again]')){ ui.mealData=mealSuggestions(); renderMeal(); return; }
@@ -2479,6 +2504,7 @@ document.addEventListener('keydown', e=>{
 let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz=setTimeout(renderRecipes,150); });
 
 /* ── 啟動 ── */
+$('#ver-badge').textContent = 'ver.' + APP_VERSION;   // 版號只在 APP_VERSION 改一次
 if(DB.settings.fridgeOpen === false) document.body.classList.add('fridge-closed');
 syncThresholdPills();
 renderAll();
