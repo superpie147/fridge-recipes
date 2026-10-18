@@ -41,7 +41,7 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .page{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .bind{width:3px;flex-shrink:0;background:rgba(44,42,40,0.16);box-shadow:0 0 22px 6px rgba(44,42,40,0.07)}
 .page-head{padding:18px 26px 8px;flex-shrink:0;display:flex;flex-direction:column;gap:9px}
-#page-recipes.meal .th-box,#page-recipes.meal #r-search-box{display:none}
+#page-recipes.meal .th-box,#page-recipes.meal #r-search-row{display:none}
 .mode-tabs{display:flex;gap:4px}
 .mode-back{font-family:var(--hand);font-size:14px;padding:4px 13px;border-radius:50px;color:var(--ink2);border:1.5px solid var(--line);white-space:nowrap}
 .mode-back:hover{background:var(--yellow2);border-color:var(--ink);color:var(--ink)}
@@ -190,6 +190,30 @@ h1,h2,h3{font-family:var(--hand);font-weight:400}
 .group-h{grid-column:1/-1;font-family:var(--hand);font-size:17px;display:flex;align-items:center;gap:8px;margin-top:6px;-webkit-text-stroke:0.3px currentColor}
 .group-h i{display:inline-block;width:12px;height:12px;border:2px solid var(--ink);border-radius:3px 6px 2px 7px;flex-shrink:0}
 .group-h.ready i{background:var(--green)}.group-h.near i{background:var(--yellow)}.group-h.rest i{background:#d8d2c4}.group-h.all i{background:var(--blue)}
+/* 條列式瀏覽：一次看一整排，右邊是食材齊全度 */
+.search-row{display:flex;align-items:center;gap:8px}
+.vtog{display:flex;flex-shrink:0;background:#fff;border:1.5px solid var(--line);border-radius:9px;overflow:hidden}
+.vtog button{display:flex;align-items:center;justify-content:center;width:33px;height:30px;color:var(--muted)}
+.vtog button+button{border-left:1.5px solid var(--line)}
+.vtog button.on{background:var(--yellow2);color:var(--ink)}
+.rgrid.list,body.fridge-closed .rgrid.list{grid-template-columns:1fr;gap:5px}
+.lrow{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:7px 12px;cursor:pointer}
+.lrow:hover{border-color:var(--ink)}
+.lrow.dim{background:none;border-color:#e2dcd0}
+.lrow.dim .ln{color:var(--ink-soft)}
+.lrow .le{font-size:17px;line-height:1;flex-shrink:0}
+.lrow .le img{width:22px;height:22px;object-fit:cover;border-radius:4px;display:block}
+.lrow .ln{flex:1 1 auto;min-width:0;font-size:14.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .ln em{font-family:var(--hand);font-style:normal;font-size:11.5px;color:var(--muted);margin-left:6px}
+.lrow .lc{flex-shrink:0;font-family:var(--hand);font-size:11.5px;color:var(--ink3)}
+.lrow .lb{flex:0 0 94px;display:flex;flex-direction:column;gap:3px}
+.lrow .lb i{display:block;height:7px;border-radius:4px;background:#e6e0d3;position:relative;overflow:hidden}
+.lrow .lb i::after{content:'';position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--ink)}
+.lrow .lb i.grn::after{background:var(--green)}
+.lrow .lb i.sea{height:4px}
+.lrow .lb i.sea::after{background:var(--blue)}
+.lrow.dim .lb i::after{background:#b3aca3}
+.lrow .lp{flex:0 0 40px;text-align:right;font-family:var(--hand);font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
 .rcard{position:relative;padding:14px 16px 12px;background:#fff;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;display:flex;flex-direction:column;gap:4px}
 .rcard:hover{box-shadow:4px 5px 0 rgba(44,42,40,0.14)}
 /* 食材不夠：不再整張變透明，改成「底色變白、膠帶拿掉、進度條轉灰」，名稱留在 ink-soft 這一層，看得清但明顯次要 */
@@ -481,6 +505,9 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   #recipe-hint{display:none}
   .hint{margin-top:4px}
   .rgrid{grid-template-columns:1fr;gap:18px 0}
+  .rgrid.list{gap:5px}
+  .lrow .lc,.lrow .ln em{display:none}
+  .lrow .lb{flex:0 0 70px}
   .rname{font-size:22px}
   .th-box{flex:1 1 140px;min-width:140px;padding:5px 10px;gap:6px;transform:none}
   .th-l{display:none}
@@ -526,9 +553,15 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
           <span class="th-v" id="th-val">70%</span>
         </div>
       </div>
-      <div class="search wob" id="r-search-box">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2c2a28" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 L20 20"></path></svg>
-        <input id="r-search" placeholder="搜尋料理或食材…"><button class="clr" data-clear="r-search">✕</button>
+      <div class="search-row" id="r-search-row">
+        <div class="search wob" id="r-search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2c2a28" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 L20 20"></path></svg>
+          <input id="r-search" placeholder="搜尋料理或食材…"><button class="clr" data-clear="r-search">✕</button>
+        </div>
+        <div class="vtog" id="view-toggle">
+          <button data-view="card" title="便條紙"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"></rect><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"></rect><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"></rect><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"></rect></svg></button>
+          <button data-view="list" title="條列"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+        </div>
       </div>
       <div class="cui-tabs" id="cui-tabs"></div>
       <div id="tag-filter"></div>
@@ -597,6 +630,12 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   <div class="sheet">
     <div class="sheet-head"><h2>更新紀錄</h2><button class="sheet-close" onclick="closeChangelog()">✕</button></div>
     <div class="sheet-body">
+      <div class="changelog-entry">
+        <div class="changelog-ver">ver.1.9.6 - 2026年10月19日</div>
+        <div class="changelog-content">
+          📋 翻食譜可以切換兩種瀏覽方式：便條紙或條列式，條列式一次看一整排
+        </div>
+      </div>
       <div class="changelog-entry">
         <div class="changelog-ver">ver.1.9.5 - 2026年10月19日</div>
         <div class="changelog-content">
@@ -798,7 +837,7 @@ body.fridge-closed .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
      recipes : [{id, name, ja, cuisine, emoji, image, ings:[{id, amt}], seas:[id], note}]
      fridge  : [id, ...]
    ===================================================================== */
-const APP_VERSION = '1.9.5';
+const APP_VERSION = '1.9.6';
 const STORAGE_KEY = 'fridge_recipes_v1';
 const Store = {
   load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
@@ -1286,7 +1325,7 @@ if(!Array.isArray(DB.tags)) DB.tags = [];
     r.ings.forEach(x=>{ if(x.g===undefined) x.g = parseAmountToG(x.amt, byId[x.id]); });
   });
 }
-const ui = { mode:'home', mealData:null, dayData:null, rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
+const ui = { mode:'home', view:(DB.settings.view==='list'?'list':'card'), mealData:null, dayData:null, rSearch:'', fSearch:'', fCat:'all', cuisine:'all', focus:null, tags:new Set(), tagOpen:false, page:0, adminTab:'ingredient', aSearch:'', openRecipe:null };
 const tagById = id => DB.tags.find(t=>t.id===id);
 let fridgeSet = new Set(DB.fridge);
 
@@ -1303,8 +1342,11 @@ const gridCols = () => {
   return Math.max(1, n);
 };
 const PAGE_SIZE = () => {
-  const body = $('#page-recipes .page-body'), cols = gridCols();
-  const rows = body ? Math.floor((body.clientHeight - 40) / 215) : 2;
+  const body = $('#page-recipes .page-body');
+  const h = body ? body.clientHeight - 40 : 420;
+  if(ui.view === 'list') return Math.max(12, Math.floor(h / 39));   // 條列式一列約 39px
+  const cols = gridCols();
+  const rows = Math.floor(h / 215);
   return Math.min(cols*4, Math.max(cols===1 ? 3 : cols*2, rows*cols));
 };
 
@@ -1536,6 +1578,17 @@ function renderRecipes(){
     </div>`;
   };
 
+  // 條列式：一列一道，右邊兩條是食材與調味料的齊全度
+  const lrow = ({r,m,g}) => `<div class="lrow ${g==='rest'?'dim':''}" data-open="${r.id}">
+      ${recipeImg(r,'le')}<span class="ln">${esc(r.name)}<em>${esc(r.ja)}</em></span>
+      <span class="lc">${CUISINES[r.cuisine]||CUISINES.other}</span>
+      ${fridgeEmpty ? '' : `<span class="lb"><i class="${m.ingPct===100?'grn':''}" style="--w:${m.ingPct}%"></i><i class="sea" style="--w:${m.seaPct}%"></i></span>
+      <span class="lp">${m.ingHave}／${m.ingTotal}</span>`}
+    </div>`;
+
+  document.querySelectorAll('#view-toggle button').forEach(b=>b.classList.toggle('on', b.dataset.view===ui.view));
+  $('#recipe-list').classList.toggle('list', ui.view==='list');
+
   const size = PAGE_SIZE();
   const pages = Math.max(1, Math.ceil(rows.length/size));
   if(ui.page >= pages) ui.page = pages-1;
@@ -1551,7 +1604,7 @@ function renderRecipes(){
     let lastG = ui.page>0 ? rows[ui.page*size-1].g : null;
     slice.forEach((x,i)=>{
       if(x.g!==lastG){ html += `<div class="group-h ${x.g}">${GROUP_LABEL[x.g]}</div>`; lastG = x.g; }
-      html += card(x, ui.page*size+i);
+      html += ui.view==='list' ? lrow(x) : card(x, ui.page*size+i);
     });
   }
   $('#recipe-list').innerHTML = html;
@@ -2408,6 +2461,7 @@ document.addEventListener('click', e=>{
   if(el('[data-focus-clear]')){ ui.focus=null; ui.page=0; renderAll(); return; }
   if(el('[data-filter-clear]')){ ui.focus=null; ui.cuisine='all'; ui.tags.clear(); ui.page=0; renderAll(); return; }
   if(x=el('[data-hdel]')){ delHistory(+x.dataset.hdel); return; }
+  if(x=el('[data-view]')){ ui.view=x.dataset.view; DB.settings.view=ui.view; persist(); ui.page=0; renderRecipes(); return; }
   if(x=el('[data-mode]')){ ui.mode=x.dataset.mode; ui.page=0; renderRecipes(); return; }
   if(x=el('[data-meals]')){ setMeals(x.dataset.meals); return; }
   if(el('[data-meal-again]')){ ui.mealData=mealSuggestions(); renderMeal(); return; }
